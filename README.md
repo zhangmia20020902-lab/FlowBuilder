@@ -8,6 +8,10 @@ The platform’s value proposition spans three pillars: a **Centralized Manageme
 
 For the **MVP**, FlowBuilder delivers a complete end‑to‑end procurement workflow using one primary persona (Construction Admin), with **pre‑defined suppliers/materials** to reduce setup complexity, while keeping the AI recommendation engine in scope.
 
+For more details access here:
+- [FlowBuilder Proposal](https://docs.google.com/document/d/1dcIq8v57Mj9Xqpqe_KVXfqcjYuPzLEL-bFu9XqtypC4/edit?usp=sharing)
+- [FlowBuilder Data Model](https://docs.google.com/document/d/10kxlk-s-Pgy1t9cLtLFgyy80KDP1RSMHZ_i7Q3SuRB4/edit?usp=sharing)
+
 ---
 
 ## 2) Page Map

@@ -12,33 +12,33 @@ For the **MVP**, FlowBuilder delivers a complete end‑to‑end procurement work
 
 ## 2) Page Map
 
-### Flowchart
+### Flowchart Diagram (and Jobdesk)
 
 ```mermaid
 graph TD
 
 %% Phase 1 / MVP
-A[Sign In]:::high --> B(Dashboard)
-B --> C(Projects)
+A[Sign In - 陳宇任]:::high --> B(Dashboard - Krisna)
+B --> C(Projects - 陳宇任)
 
-C --> C1(Project Detail)
-C --> C2(Manage RFQ)
-C --> C3(Manage Quote)
+C --> C1(Project Detail - 陳宇任)
+C --> C2(Manage RFQ - Krisna)
+C --> C3(Manage Quote - 張梓榆)
 
-C2 --> C21(Create RFQ)
-C2 --> C22(Distribute RFQ)
+C2 --> C21(Create RFQ - Krisna)
+C2 --> C22(Distribute RFQ - Krisna)
 
-C3 --> C31(Submit Quote)
-C3 --> C32(Compare Quote)
-C3 --> C33(Generate PO)
+C3 --> C31(Submit Quote - 張梓榆)
+C3 --> C32(Compare Quote - 張梓榆)
+C3 --> C33(Generate PO - 張梓榆)
 
-C --> D(PO Tracker)
+C --> D(PO Tracker - 陳宇任)
 
 
 %% Phase 2 / Enhancements
-B --> M(Suppliers Directory)
-B --> N(Material Catalog)
-B --> O(Company & Users Management)
+B --> M(Suppliers Directory - 陳宇任)
+B --> N(Material Catalog - 張梓榆)
+B --> O(Company & Users Management - Krisna)
 
 
 %% Priority color classes

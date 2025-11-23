@@ -81,4 +81,151 @@ class M,N,O,C22 medium;
 - M11402802 I Putu Krisna Erlangga (CTO)
 - M11405507 陳宇任 (CFO)
 
+---
 
+## 5) Entity Relationship Diagram (ERD)
+
+```mermaid
+erDiagram
+
+    Role {
+        INTEGER id PK
+        VARCHAR name
+        TIMESTAMP created_at
+        TIMESTAMP updated_at
+    }
+
+    User {
+        INTEGER id PK
+        INTEGER role_id FK
+        INTEGER company_id FK
+        VARCHAR name
+        VARCHAR email
+        VARCHAR password
+        TIMESTAMP created_at
+        TIMESTAMP updated_at
+    }
+
+    Company {
+        INTEGER id PK
+        VARCHAR name
+        TEXT address
+        TIMESTAMP created_at
+        TIMESTAMP updated_at
+    }
+
+    CompanySupplier {
+        INTEGER company_id FK
+        INTEGER supplier_id FK
+        TEXT notes
+        VARCHAR status
+        TIMESTAMP created_at
+        TIMESTAMP updated_at
+    }
+
+    Supplier {
+        INTEGER id PK
+        INTEGER company_id FK
+        VARCHAR name
+        VARCHAR email
+        VARCHAR password
+        TIMESTAMP created_at
+        TIMESTAMP updated_at
+    }
+
+    Project {
+        INTEGER id PK
+        INTEGER company_id FK
+        VARCHAR name
+        VARCHAR description
+        TIMESTAMP created_at
+        TIMESTAMP updated_at
+    }
+
+    Material {
+        INTEGER id PK
+        INTEGER company_id FK
+        VARCHAR name
+        VARCHAR sku
+        VARCHAR unit
+        TIMESTAMP createdAt
+        TIMESTAMP updatedAt
+    }
+
+    RFQ {
+        INTEGER id PK
+        INTEGER project_id FK
+        VARCHAR name
+        TIMESTAMP deadline
+        VARCHAR status
+        INTEGER created_by
+        TIMESTAMP created_at
+        TIMESTAMP updated_at
+    }
+
+    RFQSupplier {
+        INTEGER rfq_id FK
+        INTEGER supplier_id FK
+    }
+
+    RFQMaterial {
+        INTEGER rfq_id FK
+        INTEGER material_id FK
+        INTEGER quantity
+    }
+
+    Quote {
+        INTEGER id PK
+        INTEGER rfq_id FK
+        INTEGER supplier_id FK
+        TIMESTAMP duration
+        VARCHAR status
+        TIMESTAMP created_at
+        TIMESTAMP updated_at
+    }
+
+    QuoteItem {
+        INTEGER id PK
+        INTEGER quote_id FK
+        INTEGER material_id FK
+        INTEGER price
+        VARCHAR status
+        TIMESTAMP created_at
+        TIMESTAMP updated_at
+    }
+
+    PO {
+        INTEGER id PK
+        INTEGER quote_id FK
+        VARCHAR status
+        INTEGER created_by
+        TIMESTAMP created_at
+        TIMESTAMP updated_at
+    }
+
+    %% Relationships
+    Role ||--o{ User : "assigned_to"
+    Company ||--o{ User : "employs"
+    Company ||--o{ Project : "owns"
+    Company ||--o{ Material : "stocks"
+    Company ||--o{ Supplier : "manages_record"
+    
+    Company ||--o{ CompanySupplier : "partners_with"
+    Supplier ||--o{ CompanySupplier : "partnered_by"
+
+    Project ||--o{ RFQ : "initiates"
+    
+    RFQ ||--o{ RFQSupplier : "sent_to"
+    Supplier ||--o{ RFQSupplier : "receives"
+
+    RFQ ||--o{ RFQMaterial : "requests"
+    Material ||--o{ RFQMaterial : "listed_in"
+
+    RFQ ||--o{ Quote : "generates"
+    Supplier ||--o{ Quote : "submits"
+
+    Quote ||--o{ QuoteItem : "contains"
+    Material ||--o{ QuoteItem : "priced_as"
+
+    Quote ||--o{ PO : "converts_to"
+```

@@ -72,11 +72,17 @@
     Distributing this RFQ will send notifications to all selected suppliers and change the status to "open".
   </div>
   
+  {{#ifNotEquals rfq.status "open"}}
   <div class="d-flex justify-content-between">
     <a href="/rfqs/{{ rfq.id }}" class="btn btn-secondary">Cancel</a>
     <button type="submit" class="btn btn-primary">
       <i class="bi bi-send"></i> Distribute to Suppliers
     </button>
   </div>
+ {{else}} 
+  <div class="alert alert-warning">
+    <i class="bi bi-exclamation-triangle"></i> 
+    This RFQ has already been distributed and is currently "open". No further action is needed.
+  {{/ifNotEquals}}
 </form>
 

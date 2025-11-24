@@ -1,0 +1,78 @@
+<div class="row mb-4">
+  <div class="col">
+    <h2>Manage RFQs - {{ project.name }}</h2>
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/dashboard">Dashboard</a></li>
+        <li class="breadcrumb-item"><a href="/projects">Projects</a></li>
+        <li class="breadcrumb-item"><a href="/projects/{{ project.id }}">{{ project.name }}</a></li>
+        <li class="breadcrumb-item active">Manage RFQs</li>
+      </ol>
+    </nav>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header d-flex justify-content-between align-items-center">
+    <h5 class="mb-0">Request for Quotations</h5>
+    <a href="/projects/{{ project.id }}/rfqs/create" class="btn btn-primary">
+      <i class="bi bi-plus-circle"></i> Create New RFQ
+    </a>
+  </div>
+  <div class="card-body">
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th>RFQ Name</th>
+          <th>Deadline</th>
+          <th>Status</th>
+          <th>Created</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#rfqs}}
+        <tr>
+          <td><strong>{{ name }}</strong></td>
+          <td>{{ deadline }}</td>
+          <td><span class="badge status-{{ status }}">{{ status }}</span></td>
+          <td>{{ created_at }}</td>
+          <td>
+            <a href="/rfqs/{{ id }}" class="btn btn-sm btn-secondary m-1">
+              <i class="bi bi-eye"></i> View
+            </a>
+            {{#ifEquals status "draft"}}
+            <a href="/rfqs/{{ id }}/edit" class="btn btn-sm btn-secondary m-1">
+              <i class="bi bi-pencil"></i> Edit
+            </a>
+            <button type="button" class="btn btn-sm btn-danger m-1" 
+              data-bs-toggle="modal" 
+              data-bs-target="#deleteModal"
+              data-item-name="{{ name }}"
+              data-delete-url="/rfqs/{{ id }}/delete">
+              <i class="bi bi-trash"></i> Delete
+            </button>
+            {{/ifEquals}}
+            {{#ifNotEquals status "draft"}}
+            <a href="/rfqs/{{ id }}/distribute" class="btn btn-sm btn-primary m-1">
+              <i class="bi bi-send"></i> Distribute
+            </a>
+            <a href="/quotes/compare?rfq_id={{ id }}" class="btn btn-sm btn-success m-1">
+              <i class="bi bi-file-bar-graph"></i> Compare
+            </a>
+            {{/ifNotEquals}}
+          </td>
+        </tr>
+        {{/rfqs}}
+        {{^rfqs}}
+        <tr>
+          <td colspan="5" class="text-center text-muted">No RFQs yet. Create your first RFQ to get started!</td>
+        </tr>
+        {{/rfqs}}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{{> delete-modal}}
+

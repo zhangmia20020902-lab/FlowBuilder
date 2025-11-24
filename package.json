@@ -1,0 +1,38 @@
+{
+  "name": "flowbuilder",
+  "version": "1.0.0",
+  "description": "Smart procurement SaaS for construction",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
+    "docker:up": "docker-compose up --build",
+    "docker:down": "docker-compose down",
+    "docker:clean": "docker-compose down -v"
+  },
+  "keywords": [
+    "construction",
+    "procurement",
+    "rfq"
+  ],
+  "author": "FlowBuilder Team",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "express-handlebars": "^7.1.3",
+    "express-mysql-session": "^3.0.0",
+    "express-session": "^1.17.3",
+    "hjs": "^0.0.6",
+    "morgan": "^1.10.1",
+    "mysql2": "^3.6.5",
+    "winston": "^3.18.3",
+    "winston-daily-rotate-file": "^5.0.0"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "nodemon": "^3.0.2",
+    "supertest": "^6.3.3"
+  }
+}

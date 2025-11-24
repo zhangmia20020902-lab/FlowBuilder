@@ -1,0 +1,81 @@
+<div class="row mb-4">
+  <div class="col">
+    <h2>Compare Quotes - {{ rfq.name }}</h2>
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/dashboard">Dashboard</a></li>
+        <li class="breadcrumb-item"><a href="/projects">Projects</a></li>
+        <li class="breadcrumb-item active">Compare Quotes</li>
+      </ol>
+    </nav>
+  </div>
+</div>
+
+<div class="card mb-4">
+  <div class="card-header">
+    <h5 class="mb-0">RFQ: {{ rfq.name }}</h5>
+  </div>
+  <div class="card-body">
+    <p class="mb-0">Project: <strong>{{ rfq.project_name }}</strong> | Deadline: <strong>{{ rfq.deadline }}</strong></p>
+  </div>
+</div>
+
+{{#quotes}}
+<div class="card mb-3">
+  <div class="card-header d-flex justify-content-between align-items-center">
+    <div>
+      <h5 class="mb-0">{{ supplier_name }}</h5>
+      <small class="text-muted">Quote #{{ id }}</small>
+    </div>
+    <div>
+      <span class="badge status-{{ status }}">{{ status }}</span>
+    </div>
+  </div>
+  <div class="card-body">
+    <div class="row mb-3">
+      <div class="col-md-6">
+        <strong>Delivery Duration:</strong> {{ duration }} days
+      </div>
+      <div class="col-md-6 text-end">
+        <strong>Total:</strong> <span class="fs-4 text-primary">${{ total }}</span>
+      </div>
+    </div>
+    
+    <table class="table table-sm">
+      <thead>
+        <tr>
+          <th>Material</th>
+          <th>Quantity</th>
+          <th>Unit</th>
+          <th>Unit Price</th>
+          <th>Subtotal</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#items}}
+        <tr>
+          <td>{{ material_name }}</td>
+          <td>{{ quantity }}</td>
+          <td>{{ unit }}</td>
+          <td>${{ price }}</td>
+          <td>${{ price }} × {{ quantity }}</td>
+        </tr>
+        {{/items}}
+      </tbody>
+    </table>
+    
+    <form action="/quotes/{{ id }}/generate-po" method="POST" class="text-end">
+      <button type="submit" class="btn btn-success">
+        <i class="bi bi-receipt"></i> Generate Purchase Order
+      </button>
+    </form>
+  </div>
+</div>
+{{/quotes}}
+
+{{^quotes}}
+<div class="alert alert-info">
+  <i class="bi bi-info-circle"></i> No quotes received yet for this RFQ.
+</div>
+{{/quotes}}
+

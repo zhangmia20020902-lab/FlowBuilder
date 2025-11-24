@@ -1,0 +1,67 @@
+version: "3.8"
+
+services:
+  db:
+    image: mysql:8.0
+    container_name: flowbuilder_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: flowbuilder
+      MYSQL_USER: flowbuilder_user
+      MYSQL_PASSWORD: flowbuilder_pass
+    ports:
+      - "3307:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "mysqladmin",
+          "ping",
+          "-h",
+          "localhost",
+          "-u",
+          "root",
+          "-p root_password",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - flowbuilder_network
+
+  app:
+    build: .
+    container_name: flowbuilder_app
+    restart: always
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    environment:
+      # Override network-specific values for Docker deployment
+      DB_HOST: db
+      DB_PORT: 3306
+      ENABLE_FILE_LOGGING: "true"
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./src:/usr/src/app/src
+      - ./public:/usr/src/app/public
+      - ./database:/usr/src/app/database
+      - ./logs:/usr/src/app/logs
+      - /usr/src/app/node_modules
+    networks:
+      - flowbuilder_network
+
+volumes:
+  db_data:
+
+networks:
+  flowbuilder_network:
+    driver: bridge

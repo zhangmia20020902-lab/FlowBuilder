@@ -1,0 +1,134 @@
+<div class="row mb-4">
+  <div class="col">
+    <h2>Create RFQ - {{project.name}}</h2>
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/dashboard">Dashboard</a></li>
+        <li class="breadcrumb-item"><a href="/projects">Projects</a></li>
+        <li class="breadcrumb-item"><a
+            href="/projects/{{project.id}}"
+          >{{project.name}}</a></li>
+        <li class="breadcrumb-item"><a
+            href="/projects/{{project.id}}/rfqs"
+          >Manage RFQs</a></li>
+        <li class="breadcrumb-item active">Create RFQ</li>
+      </ol>
+    </nav>
+  </div>
+</div>
+
+<form action="/projects/{{project.id}}/rfqs" method="POST">
+  <div class="card mb-4">
+    <div class="card-header">
+      <h5 class="mb-0">RFQ Details</h5>
+    </div>
+    <div class="card-body">
+      <div class="mb-3">
+        <label for="name" class="form-label">RFQ Name *</label>
+        <input
+          type="text"
+          class="form-control"
+          id="name"
+          name="name"
+          required
+        />
+      </div>
+
+      <div class="mb-3">
+        <label for="deadline" class="form-label">Deadline *</label>
+        <input
+          type="datetime-local"
+          class="form-control"
+          id="deadline"
+          name="deadline"
+          required
+        />
+      </div>
+    </div>
+  </div>
+
+  <div class="card mb-4">
+    <div class="card-header">
+      <h5 class="mb-0">Select Materials</h5>
+    </div>
+    <div class="card-body">
+      <p class="text-muted">Select materials and quantities for this RFQ</p>
+      <div class="table-responsive">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Select</th>
+              <th>Material</th>
+              <th>Category</th>
+              <th>Unit</th>
+              <th>Quantity</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{#materials}}
+              <tr>
+                <td>
+                  <input
+                    type="checkbox"
+                    class="form-check-input"
+                    name="materials[{{id}}][selected]"
+                    value="{{id}}"
+                  />
+                </td>
+                <td>{{name}}</td>
+                <td><span class="badge bg-secondary">{{category}}</span></td>
+                <td>{{unit}}</td>
+                <td>
+                  <input
+                    type="number"
+                    class="form-control form-control-sm"
+                    name="materials[{{id}}][quantity]"
+                    min="1"
+                    style="width: 100px;"
+                  />
+                </td>
+              </tr>
+            {{/materials}}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="card mb-4">
+    <div class="card-header">
+      <h5 class="mb-0">Select Suppliers</h5>
+    </div>
+    <div class="card-body">
+      <p class="text-muted">Choose suppliers to send this RFQ to</p>
+      <div class="row">
+        {{#suppliers}}
+          <div class="col-md-6 mb-3">
+            <div class="form-check">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                name="suppliers[]"
+                value="{{id}}"
+                id="supplier{{id}}"
+              />
+              <label class="form-check-label" for="supplier{{id}}">
+                <strong>{{name}}</strong>
+                <br />
+                <small class="text-muted">{{trade_specialty}}</small>
+              </label>
+            </div>
+          </div>
+        {{/suppliers}}
+      </div>
+    </div>
+  </div>
+
+  <div class="d-flex justify-content-between">
+    <a href="/projects/{{project.id}}/rfqs" class="btn btn-secondary">Cancel</a>
+    <button type="submit" class="btn btn-primary">
+      <i class="bi bi-check-circle"></i>
+      Create RFQ
+    </button>
+  </div>
+</form>

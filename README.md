@@ -9,8 +9,9 @@ The platform’s value proposition spans three pillars: a **Centralized Manageme
 For the **MVP**, FlowBuilder delivers a complete end‑to‑end procurement workflow using one primary persona (Construction Admin), with **pre‑defined suppliers/materials** to reduce setup complexity, while keeping the AI recommendation engine in scope.
 
 For more details access here:
-- [FlowBuilder Proposal](https://docs.google.com/document/d/1dcIq8v57Mj9Xqpqe_KVXfqcjYuPzLEL-bFu9XqtypC4/edit?usp=sharing)
-- [FlowBuilder Data Model](https://docs.google.com/document/d/10kxlk-s-Pgy1t9cLtLFgyy80KDP1RSMHZ_i7Q3SuRB4/edit?usp=sharing)
+
+- Project Proposal: [FlowBuilder Proposal](https://docs.google.com/document/d/1dcIq8v57Mj9Xqpqe_KVXfqcjYuPzLEL-bFu9XqtypC4/edit?usp=sharing)
+- Data Model: [FlowBuilder Data Model](https://docs.google.com/document/d/10kxlk-s-Pgy1t9cLtLFgyy80KDP1RSMHZ_i7Q3SuRB4/edit?usp=sharing)
 
 ---
 
@@ -69,13 +70,14 @@ class M,N,O,C22 medium;
 
 ## 3) Tech Stack
 
-- Frontend: **HTMX** + **TailwindCSS**
-- Backend: **Express (TypeScript)**
-- Database: **PostgreSQL**
+- Frontend: **HTMX** + **Boostrap** + **HJS**
+- Backend: **Express**
+- Database: **MySQL**
+- Logging: **Winston** + **Morgan**
 
 ---
 
-## 4) Team Member
+## 5) Team Member
 
 - M11405103 張梓榆 (CEO)
 - M11402802 I Putu Krisna Erlangga (CTO)
@@ -83,7 +85,7 @@ class M,N,O,C22 medium;
 
 ---
 
-## 5) Entity Relationship Diagram (ERD)
+## 6) Entity Relationship Diagram (ERD)
 
 ```mermaid
 erDiagram
@@ -209,12 +211,12 @@ erDiagram
     Company ||--o{ Project : "owns"
     Company ||--o{ Material : "stocks"
     Company ||--o{ Supplier : "manages_record"
-    
+
     Company ||--o{ CompanySupplier : "partners_with"
     Supplier ||--o{ CompanySupplier : "partnered_by"
 
     Project ||--o{ RFQ : "initiates"
-    
+
     RFQ ||--o{ RFQSupplier : "sent_to"
     Supplier ||--o{ RFQSupplier : "receives"
 

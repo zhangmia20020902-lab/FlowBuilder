@@ -1,0 +1,52 @@
+<!-- Delete Confirmation Modal -->
+<div
+  class="modal fade"
+  id="deleteModal"
+  tabindex="-1"
+  aria-labelledby="deleteModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to delete
+          <strong id="deleteItemName"></strong>?</p>
+        <p class="text-danger" id="deleteWarning"></p>
+      </div>
+      <div class="modal-footer">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          data-bs-dismiss="modal"
+        >Cancel</button>
+        <form id="deleteForm" method="POST" style="display: inline;">
+          <button type="submit" class="btn btn-danger">Delete</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() { const deleteModalEl
+  = document.getElementById('deleteModal');
+  deleteModalEl.addEventListener('show.bs.modal', function(event) { const button
+  = event.relatedTarget; const itemName = button.getAttribute('data-item-name');
+  const deleteUrl = button.getAttribute('data-delete-url'); const warning =
+  button.getAttribute('data-warning'); const modalTitleItem =
+  deleteModalEl.querySelector('#deleteItemName'); const modalForm =
+  deleteModalEl.querySelector('#deleteForm'); const modalWarning =
+  deleteModalEl.querySelector('#deleteWarning'); modalTitleItem.textContent =
+  itemName; modalForm.action = deleteUrl; if (warning) {
+  modalWarning.textContent = warning; modalWarning.style.display = 'block'; }
+  else { modalWarning.style.display = 'none'; } }); });
+</script>

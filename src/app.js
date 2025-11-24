@@ -29,17 +29,22 @@ app.engine(
         return arg1 != arg2 ? options.fn(this) : options.inverse(this);
       },
       // Helper to check if material is selected
-      isSelected: function (materialId, selectedMaterials) {
+      isSelected: function (materialId, selectedMaterials, options) {
+        let isSelected = false;
+
         if (
           selectedMaterials &&
           typeof selectedMaterials === "object" &&
           !Array.isArray(selectedMaterials)
         ) {
-          return selectedMaterials.hasOwnProperty(materialId);
+          isSelected = selectedMaterials.hasOwnProperty(materialId);
+        } else if (selectedMaterials && Array.isArray(selectedMaterials)) {
+          isSelected = selectedMaterials.some(
+            (m) => m.material_id == materialId
+          );
         }
-        if (!selectedMaterials || !Array.isArray(selectedMaterials))
-          return false;
-        return selectedMaterials.some((m) => m.material_id == materialId);
+
+        return isSelected ? options.fn(this) : options.inverse(this);
       },
       // Helper to get quantity for selected material
       getQuantity: function (materialId, selectedMaterials) {
@@ -59,18 +64,23 @@ app.engine(
         return material ? material.quantity : "";
       },
       // Helper to check if supplier is selected
-      isSupplierSelected: function (supplierId, selectedSuppliers) {
+      isSupplierSelected: function (supplierId, selectedSuppliers, options) {
+        let isSelected = false;
+
         if (selectedSuppliers && Array.isArray(selectedSuppliers)) {
           if (
             selectedSuppliers.length > 0 &&
             typeof selectedSuppliers[0] !== "object"
           ) {
-            return selectedSuppliers.includes(parseInt(supplierId));
+            isSelected = selectedSuppliers.includes(parseInt(supplierId));
+          } else {
+            isSelected = selectedSuppliers.some(
+              (s) => s.supplier_id == supplierId
+            );
           }
-          // Array of objects with supplier_id
-          return selectedSuppliers.some((s) => s.supplier_id == supplierId);
         }
-        return false;
+
+        return isSelected ? options.fn(this) : options.inverse(this);
       },
       // Helper to get item price from quote items
       getItemPrice: function (materialId, quoteItems) {

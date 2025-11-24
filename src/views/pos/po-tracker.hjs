@@ -39,7 +39,7 @@
           </td>
           <td>{{ created_at }}</td>
           <td>
-            <button class="btn btn-sm btn-outline-primary" disabled>
+            <button class="btn btn-sm btn-primary" disabled>
               <i class="bi bi-pencil"></i> Update Status
             </button>
           </td>

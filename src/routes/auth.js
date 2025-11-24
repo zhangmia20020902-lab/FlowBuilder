@@ -6,16 +6,28 @@ const { guestOnly } = require("../middleware/auth");
 const { validateLogin } = require("../middleware/validation");
 const logger = require("../config/logger");
 
-// Show login page
+// Redirect root to signin page
 router.get("/", guestOnly, (req, res) => {
+  res.redirect("/auth/signin");
+});
+
+// Show login page
+router.get("/auth/signin", guestOnly, (req, res) => {
+  const flash = req.session.flash || {};
+
+  if (req.session.flash) {
+    delete req.session.flash;
+  }
+
   res.render("auth/signin", {
     title: "Sign In - FlowBuilder",
-    error: req.query.error,
+    error: flash.error || req.query.error,
+    success: flash.success,
   });
 });
 
 // Handle login
-router.post("/auth/login", validateLogin, async (req, res) => {
+router.post("/auth/signin", validateLogin, async (req, res) => {
   const { email, password } = req.body;
 
   try {
@@ -33,16 +45,20 @@ router.post("/auth/login", validateLogin, async (req, res) => {
     if (!users || users.length === 0) {
       logger.warn("Login failed - user not found", { email, ip: req.ip });
 
-      return res.status(401).render("signin", {
-        title: "Sign In - FlowBuilder",
-        layout: false,
+      req.session.flash = {
         error: "Invalid email or password",
+      };
+      req.session.save((err) => {
+        if (err) {
+          logger.error("Session save error", { error: err.message, email });
+        }
+        res.redirect("/auth/signin");
       });
+      return;
     }
 
     const user = users[0];
 
-    // Verify password with bcrypt
     const isValid = await bcrypt.compare(password, user.password);
 
     if (!isValid) {
@@ -52,11 +68,16 @@ router.post("/auth/login", validateLogin, async (req, res) => {
         ip: req.ip,
       });
 
-      return res.status(401).render("signin", {
-        title: "Sign In - FlowBuilder",
-        layout: false,
+      req.session.flash = {
         error: "Invalid email or password",
+      };
+      req.session.save((err) => {
+        if (err) {
+          logger.error("Session save error", { error: err.message, email });
+        }
+        res.redirect("/auth/signin");
       });
+      return;
     }
 
     // Set session
@@ -64,7 +85,6 @@ router.post("/auth/login", validateLogin, async (req, res) => {
     req.session.userRole = user.role_name;
     req.session.companyId = user.company_id;
 
-    // Save session before redirect to ensure it's written to the store
     req.session.save((err) => {
       if (err) {
         logger.error("Session save error", {
@@ -73,11 +93,15 @@ router.post("/auth/login", validateLogin, async (req, res) => {
           email: user.email,
         });
 
-        return res.status(500).render("signin", {
-          title: "Sign In - FlowBuilder",
-          layout: false,
+        req.session.flash = {
           error: "An error occurred. Please try again.",
+        };
+        req.session.save((saveErr) => {
+          if (saveErr)
+            logger.error("Session save error", { error: saveErr.message });
+          res.redirect("/auth/signin");
         });
+        return;
       }
 
       logger.info("Login successful", {
@@ -101,10 +125,14 @@ router.post("/auth/login", validateLogin, async (req, res) => {
       ip: req.ip,
     });
 
-    res.status(500).render("signin", {
-      title: "Sign In - FlowBuilder",
-      layout: false,
+    req.session.flash = {
       error: "An error occurred. Please try again.",
+    };
+    req.session.save((err) => {
+      if (err) {
+        logger.error("Session save error", { error: err.message });
+      }
+      res.redirect("/auth/signin");
     });
   }
 });

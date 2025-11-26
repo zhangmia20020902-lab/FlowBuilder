@@ -10,14 +10,49 @@
   </div>
 </div>
 
+<div class="card mb-3">
+  <div class="card-body">
+    <form method="GET" action="/projects" class="row g-3">
+      <div class="col-md-4">
+        <input
+          type="text"
+          class="form-control"
+          name="search"
+          placeholder="Search by name or description..."
+          value="{{search}}"
+        />
+      </div>
+      <div class="col-md-3">
+        <select class="form-select" name="sortBy">
+          <option value="created_desc" {{#ifEquals sortBy "created_desc"}}selected{{/ifEquals}}>Newest First</option>
+          <option value="created_asc" {{#ifEquals sortBy "created_asc"}}selected{{/ifEquals}}>Oldest First</option>
+          <option value="name_asc" {{#ifEquals sortBy "name_asc"}}selected{{/ifEquals}}>Name (A-Z)</option>
+          <option value="name_desc" {{#ifEquals sortBy "name_desc"}}selected{{/ifEquals}}>Name (Z-A)</option>
+        </select>
+      </div>
+      <div class="col-md-3">
+        <button type="submit" class="btn btn-primary">
+          <i class="bi bi-search"></i> Search
+        </button>
+        <a href="/projects" class="btn btn-secondary">
+          <i class="bi bi-arrow-clockwise"></i> Reset
+        </a>
+      </div>
+      <div class="col-md-2 text-end">
+        <a href="/projects/create" class="btn btn-success">
+          <i class="bi bi-plus-circle"></i> Create Project
+        </a>
+      </div>
+    </form>
+  </div>
+</div>
+
 <div class="card">
   <div class="card-header d-flex justify-content-between align-items-center">
     <h5 class="mb-0">All Projects</h5>
-    <a href="/projects/create" class="btn btn-primary">
-      <i class="bi bi-plus-circle"></i> Create Project
-    </a>
   </div>
   <div class="card-body">
+    <!-- Projects List -->
     {{#projects}}
     <div class="row mb-3 pb-3 border-bottom">
       <div class="col-md-8">
@@ -47,7 +82,21 @@
     {{/projects}}
     
     {{^projects}}
-    <p class="text-muted text-center mb-0">No projects found. Create your first project to get started!</p>
+    <div class="text-center py-5">
+      <i class="bi bi-folder2-open fs-1 text-muted mb-3 d-block"></i>
+      <p class="text-muted mb-3">
+        {{#if search}}
+        No projects match your search criteria.
+        {{else}}
+        No projects found. Create your first project to get started!
+        {{/if}}
+      </p>
+      {{#if search}}
+      <a href="/projects" class="btn btn-outline-secondary">Clear Filters</a>
+      {{else}}
+      <a href="/projects/create" class="btn btn-primary">Create Project</a>
+      {{/if}}
+    </div>
     {{/projects}}
   </div>
 </div>

@@ -12,7 +12,7 @@
         </nav>
       </div>
       <div class="btn-group">
-        <a href="/projects/{{ project.id }}/edit" class="btn btn-secondary">
+        <a href="/projects/{{ project.id }}/edit" class="btn btn-info">
           <i class="bi bi-pencil"></i> Edit
         </a>
         <button type="button" class="btn btn-danger" 
@@ -28,6 +28,48 @@
   </div>
 </div>
 
+<!-- Project Statistics -->
+<div class="row mb-4">
+  <div class="col-md-3">
+  <div class="card stat-card">
+      <div class="card-body text-center">
+        <h6 class="text-muted mb-2">Total RFQs</h6>
+        <h3 class="mb-0">{{ rfqStats.total }}</h3>
+        <small class="text-muted">
+          Draft: {{ rfqStats.draft }} | Open: {{ rfqStats.open }} | Closed: {{ rfqStats.closed }}
+        </small>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card stat-card success">
+      <div class="card-body text-center">
+        <h6 class="text-muted mb-2">Quotes Received</h6>
+        <h3 class="mb-0">{{ totalQuotes }}</h3>
+        <small class="text-muted">From all RFQs</small>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card stat-card info">
+      <div class="card-body text-center">
+        <h6 class="text-muted mb-2">Active POs</h6>
+        <h3 class="mb-0">{{ activePosCount }}</h3>
+        <small class="text-muted">In progress</small>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card stat-card warning">
+      <div class="card-body text-center">
+        <h6 class="text-muted mb-2">Total POs</h6>
+        <h3 class="mb-0">{{ pos.length }}</h3>
+        <small class="text-muted">All statuses</small>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- Project Info -->
 <div class="card mb-4">
   <div class="card-header">
@@ -35,7 +77,7 @@
   </div>
   <div class="card-body">
     <p>{{ project.description }}</p>
-    <p class="mb-0"><small class="text-muted">Created: {{ project.created_at }}</small></p>
+    <p class="mb-0"><small class="text-muted">Created: {{ formatDate project.created_at }}</small></p>
   </div>
 </div>
 
@@ -70,8 +112,7 @@
   </div>
 </div>
 
-<!-- Recent RFQs -->
-<div class="card mb-4">
+<!-- Recent RFQs --><div class="card mb-4">
   <div class="card-header d-flex justify-content-between align-items-center">
     <h5 class="mb-0">Recent RFQs</h5>
     <a href="/projects/{{ project.id }}/rfqs/create" class="btn btn-sm btn-primary">
@@ -91,13 +132,23 @@
       <tbody>
         {{#rfqs}}
         <tr>
-          <td>{{ name }}</td>
-          <td>{{ deadline }}</td>
+          <td><a href="/rfqs/{{ id }}">{{ name }}</a></td>
+          <td>{{ formatDate deadline }}</td>
           <td><span class="badge status-{{ status }}">{{ status }}</span></td>
           <td>
-            <a href="/rfqs/{{ id }}/distribute" class="btn btn-sm btn-secondary">
+            <a href="/rfqs/{{ id }}" class="btn btn-sm btn-primary">
+              <i class="bi bi-eye"></i> View
+            </a>
+            {{#ifEquals status "draft"}}
+            <a href="/rfqs/{{ id }}/distribute" class="btn btn-sm btn-info">
               <i class="bi bi-send"></i> Distribute
             </a>
+            {{/ifEquals}}
+            {{#ifNotEquals status "draft"}}
+            <a href="/quotes/compare?rfq_id={{ id }}" class="btn btn-sm btn-success">
+              <i class="bi bi-file-bar-graph"></i> Quotes
+            </a>
+            {{/ifNotEquals}}
           </td>
         </tr>
         {{/rfqs}}
@@ -129,10 +180,10 @@
       <tbody>
         {{#pos}}
         <tr>
-          <td>#{{ id }}</td>
+          <td><a href="/pos/{{ id }}">#{{ id }}</a></td>
           <td>{{ supplier_name }}</td>
           <td><span class="badge status-{{ status }}">{{ status }}</span></td>
-          <td>{{ created_at }}</td>
+          <td>{{ formatDate created_at }}</td>
         </tr>
         {{/pos}}
         {{^pos}}

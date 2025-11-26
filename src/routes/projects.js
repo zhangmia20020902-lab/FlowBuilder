@@ -11,15 +11,38 @@ const {
 router.get("/projects", requireAuth, async (req, res) => {
   try {
     const companyId = req.session.companyId;
+    const { search, sortBy, order } = req.query;
 
-    const projects = await query(
-      "SELECT * FROM projects WHERE company_id = ? ORDER BY created_at DESC",
-      [companyId]
-    );
+    // Build dynamic SQL query
+    let sql = "SELECT * FROM projects WHERE company_id = ?";
+    const params = [companyId];
+
+    // Add search filter
+    if (search && search.trim()) {
+      sql += " AND (name LIKE ? OR description LIKE ?)";
+      const searchPattern = `%${search.trim()}%`;
+      params.push(searchPattern, searchPattern);
+    }
+
+    // Add sorting
+    const validSortColumns = {
+      name_asc: "name ASC",
+      name_desc: "name DESC",
+      created_asc: "created_at ASC",
+      created_desc: "created_at DESC",
+    };
+
+    const sortColumn = validSortColumns[sortBy] || "created_at DESC";
+    sql += ` ORDER BY ${sortColumn}`;
+
+    const projects = await query(sql, params);
 
     res.render("projects/projects", {
       title: "Projects - FlowBuilder",
       projects,
+      search: search || "",
+      sortBy: sortBy || "created_desc",
+      resultCount: projects.length,
     });
   } catch (error) {
     console.error("Projects list error:", error);
@@ -182,9 +205,29 @@ router.get("/projects/:id", requireAuth, async (req, res) => {
 
     const project = projects[0];
 
-    // Get RFQs for this project
+    // Get RFQs for this project with status counts
     const rfqs = await query(
       "SELECT * FROM rfqs WHERE project_id = ? ORDER BY created_at DESC",
+      [projectId]
+    );
+
+    // Get RFQ statistics
+    const rfqStats = await query(
+      `SELECT 
+        COUNT(*) as total,
+        SUM(CASE WHEN status = 'draft' THEN 1 ELSE 0 END) as draft,
+        SUM(CASE WHEN status = 'open' THEN 1 ELSE 0 END) as open,
+        SUM(CASE WHEN status = 'closed' THEN 1 ELSE 0 END) as closed
+       FROM rfqs WHERE project_id = ?`,
+      [projectId]
+    );
+
+    // Get total quotes for this project
+    const quoteStats = await query(
+      `SELECT COUNT(DISTINCT q.id) as total_quotes
+       FROM quotes q
+       JOIN rfqs r ON q.rfq_id = r.id
+       WHERE r.project_id = ?`,
       [projectId]
     );
 
@@ -200,11 +243,19 @@ router.get("/projects/:id", requireAuth, async (req, res) => {
       [projectId]
     );
 
+    // Get active POs count (not delivered or cancelled)
+    const activePosCount = pos.filter(
+      (po) => po.status !== "delivered" && po.status !== "cancelled"
+    ).length;
+
     res.render("projects/project-detail", {
       title: `${project.name} - FlowBuilder`,
       project,
       rfqs,
       pos,
+      rfqStats: rfqStats[0] || { total: 0, draft: 0, open: 0, closed: 0 },
+      totalQuotes: quoteStats[0]?.total_quotes || 0,
+      activePosCount,
     });
   } catch (error) {
     console.error("Project detail error:", error);

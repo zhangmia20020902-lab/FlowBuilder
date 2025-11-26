@@ -1,0 +1,214 @@
+<div class="row mb-4">
+  <div class="col">
+    <h2>Purchase Order #{{po.id}}</h2>
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/dashboard">Dashboard</a></li>
+        <li class="breadcrumb-item"><a href="/pos">Purchase Orders</a></li>
+        <li class="breadcrumb-item active">PO #{{po.id}}</li>
+      </ol>
+    </nav>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-8">
+    <div class="card mb-3">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">Purchase Order Details</h5>
+        <span class="badge status-{{po.status}} fs-6">{{po.status}}</span>
+      </div>
+      <div class="card-body">
+        <dl class="row">
+          <dt class="col-sm-3">PO Number</dt>
+          <dd class="col-sm-9"><strong>#{{po.id}}</strong></dd>
+
+          <dt class="col-sm-3">Project</dt>
+          <dd class="col-sm-9"><a href="/projects/{{po.project_id}}">{{po.project_name}}</a></dd>
+
+          <dt class="col-sm-3">RFQ</dt>
+          <dd class="col-sm-9"><a href="/rfqs/{{po.rfq_id}}">{{po.rfq_name}}</a></dd>
+
+          <dt class="col-sm-3">Supplier</dt>
+          <dd class="col-sm-9">
+            <strong><a href="/suppliers/{{po.supplier_id}}">{{po.supplier_name}}</a></strong><br>
+            <small class="text-muted">
+              {{#if po.supplier_email}}{{po.supplier_email}}{{/if}}
+              {{#if po.trade_specialty}}<br>Specialty: {{po.trade_specialty}}{{/if}}
+            </small>
+          </dd>
+
+          <dt class="col-sm-3">Delivery Duration</dt>
+          <dd class="col-sm-9">{{po.duration}} days</dd>
+
+          <dt class="col-sm-3">Status</dt>
+          <dd class="col-sm-9"><span class="badge status-{{po.status}} fs-6">{{po.status}}</span></dd>
+
+          <dt class="col-sm-3">Created By</dt>
+          <dd class="col-sm-9">{{po.created_by_name}}</dd>
+
+          <dt class="col-sm-3">Created</dt>
+          <dd class="col-sm-9">{{formatDate po.created_at}}</dd>
+
+          {{#if po.cancelled_at}}
+          <dt class="col-sm-3">Cancelled</dt>
+          <dd class="col-sm-9 text-danger">{{formatDate po.cancelled_at}}</dd>
+          {{/if}}
+
+          {{#if po.notes}}
+          <dt class="col-sm-3">Notes</dt>
+          <dd class="col-sm-9">{{po.notes}}</dd>
+          {{/if}}
+        </dl>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <h5 class="mb-0">Order Items</h5>
+      </div>
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>SKU</th>
+                <th>Material</th>
+                <th>Quantity</th>
+                <th>Unit Price</th>
+                <th class="text-end">Subtotal</th>
+              </tr>
+            </thead>
+            <tbody>
+              {{#quoteItems}}
+              <tr>
+                <td><code>{{sku}}</code></td>
+                <td>{{material_name}}</td>
+                <td>{{quantity}} {{unit}}</td>
+                <td>${{price}}</td>
+                <td class="text-end"><strong>${{price}}</strong></td>
+              </tr>
+              {{/quoteItems}}
+            </tbody>
+            <tfoot>
+              <tr>
+                <th colspan="4" class="text-end">Total:</th>
+                <th class="text-end">${{total}}</th>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-4">
+    <div class="card mb-3">
+      <div class="card-header">
+        <h5 class="mb-0">Status Management</h5>
+      </div>
+      <div class="card-body">
+        {{#ifEquals po.status 'cancelled'}}
+        <div class="alert alert-danger">
+          <i class="bi bi-x-circle"></i> This PO has been cancelled
+        </div>
+        {{else}}
+        {{#ifEquals po.status 'delivered'}}
+        <div class="alert alert-success">
+          <i class="bi bi-check-circle"></i> This PO has been delivered
+        </div>
+        {{else}}
+        <form method="POST" action="/pos/{{po.id}}/status">
+          <div class="mb-3">
+            <label for="status" class="form-label">Update Status</label>
+            <select class="form-select" id="status" name="status">
+              {{#ifEquals po.status 'ordered'}}
+              <option value="confirmed">Mark as Confirmed</option>
+              {{/ifEquals}}
+              {{#ifEquals po.status 'confirmed'}}
+              <option value="shipped">Mark as Shipped</option>
+              {{/ifEquals}}
+              {{#ifEquals po.status 'shipped'}}
+              <option value="delivered">Mark as Delivered</option>
+              {{/ifEquals}}
+            </select>
+          </div>
+          <button type="submit" class="btn btn-success w-100 mb-2">
+            <i class="bi bi-arrow-right-circle"></i> Update Status
+          </button>
+        </form>
+        {{/ifEquals}}
+        {{/ifEquals}}
+
+        {{#ifNotEquals po.status 'delivered'}}
+        {{#ifNotEquals po.status 'cancelled'}}
+        <button type="button" class="btn btn-danger w-100" 
+          data-bs-toggle="modal" 
+          data-bs-target="#cancelModal">
+          <i class="bi bi-x-circle"></i> Cancel PO
+        </button>
+        {{/ifNotEquals}}
+        {{/ifNotEquals}}
+      </div>
+    </div>
+
+    <div class="card mb-3">
+      <div class="card-header">
+        <h5 class="mb-0">Status Timeline</h5>
+      </div>
+      <div class="card-body">
+        <div class="timeline">
+          <div class="timeline-item {{#ifEquals po.status 'ordered'}}active{{/ifEquals}}">
+            <i class="bi bi-circle-fill"></i> Ordered
+          </div>
+          <div class="timeline-item {{#ifEquals po.status 'confirmed'}}active{{/ifEquals}}">
+            <i class="bi bi-circle-fill"></i> Confirmed
+          </div>
+          <div class="timeline-item {{#ifEquals po.status 'shipped'}}active{{/ifEquals}}">
+            <i class="bi bi-circle-fill"></i> Shipped
+          </div>
+          <div class="timeline-item {{#ifEquals po.status 'delivered'}}active{{/ifEquals}}">
+            <i class="bi bi-circle-fill"></i> Delivered
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <h5 class="mb-0">Actions</h5>
+      </div>
+      <div class="card-body d-grid gap-2">
+        <a href="/pos/{{po.id}}/edit" class="btn btn-secondary">
+          <i class="bi bi-pencil"></i> Edit Notes
+        </a>
+        <a href="/pos" class="btn btn-outline-secondary">
+          <i class="bi bi-arrow-left"></i> Back to POs
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Cancel PO Modal -->
+<div class="modal fade" id="cancelModal" tabindex="-1" aria-labelledby="cancelModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="cancelModalLabel">Confirm Cancel PO</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to cancel Purchase Order <strong>#{{po.id}}</strong>?</p>
+        <p class="text-danger">This action cannot be undone.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <form method="POST" action="/pos/{{po.id}}/cancel" style="display: inline;">
+          <button type="submit" class="btn btn-danger">Cancel PO</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+

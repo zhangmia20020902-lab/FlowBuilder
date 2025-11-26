@@ -39,7 +39,7 @@
           </td>
           <td>{{ created_at }}</td>
           <td>
-            <button class="btn btn-sm btn-primary" disabled>
+            <button class="btn btn-sm btn-warning" disabled>
               <i class="bi bi-pencil"></i> Update Status
             </button>
           </td>
@@ -55,7 +55,7 @@
   </div>
 </div>
 
-<!-- PO Status Legend -->
+{{!-- 
 <div class="card mt-4">
   <div class="card-header">
     <h6 class="mb-0">Status Legend</h6>
@@ -66,5 +66,5 @@
     <span class="badge status-shipped me-2">Shipped</span>
     <span class="badge status-delivered me-2">Delivered</span>
   </div>
-</div>
+</div> --}}
 

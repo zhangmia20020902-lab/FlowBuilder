@@ -1,0 +1,93 @@
+<div class="row mb-4">
+  <div class="col">
+    <h2>Purchase Orders</h2>
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/dashboard">Dashboard</a></li>
+        <li class="breadcrumb-item active">Purchase Orders</li>
+      </ol>
+    </nav>
+  </div>
+</div>
+
+<div class="card mb-3">
+  <div class="card-body">
+    <form method="GET" action="/pos" class="row g-3">
+      <div class="col-md-4">
+        <select class="form-select" name="project_id">
+          <option value="all" {{#ifEquals selectedProject 'all'}}selected{{/ifEquals}}>All Projects</option>
+          {{#projects}}
+          <option value="{{id}}" {{#ifEquals ../selectedProject id}}selected{{/ifEquals}}>{{name}}</option>
+          {{/projects}}
+        </select>
+      </div>
+      <div class="col-md-3">
+        <select class="form-select" name="status">
+          <option value="all" {{#ifEquals selectedStatus 'all'}}selected{{/ifEquals}}>All Statuses</option>
+          <option value="ordered" {{#ifEquals selectedStatus 'ordered'}}selected{{/ifEquals}}>Ordered</option>
+          <option value="confirmed" {{#ifEquals selectedStatus 'confirmed'}}selected{{/ifEquals}}>Confirmed</option>
+          <option value="shipped" {{#ifEquals selectedStatus 'shipped'}}selected{{/ifEquals}}>Shipped</option>
+          <option value="delivered" {{#ifEquals selectedStatus 'delivered'}}selected{{/ifEquals}}>Delivered</option>
+          <option value="cancelled" {{#ifEquals selectedStatus 'cancelled'}}selected{{/ifEquals}}>Cancelled</option>
+        </select>
+      </div>
+      <div class="col-md-3">
+        <button type="submit" class="btn btn-primary">
+          <i class="bi bi-filter"></i> Filter
+        </button>
+        <a href="/pos" class="btn btn-secondary">
+          <i class="bi bi-arrow-clockwise"></i> Reset
+        </a>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <h5 class="mb-0">All Purchase Orders</h5>
+  </div>
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>PO ID</th>
+            <th>Project</th>
+            <th>RFQ</th>
+            <th>Supplier</th>
+            <th>Status</th>
+            <th>Created By</th>
+            <th>Created</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#pos}}
+          <tr>
+            <td><strong>#{{id}}</strong></td>
+            <td><a href="/projects/{{project_id}}">{{project_name}}</a></td>
+            <td><a href="/rfqs/{{rfq_id}}">{{rfq_name}}</a></td>
+            <td>{{supplier_name}}</td>
+            <td><span class="badge status-{{status}}">{{status}}</span></td>
+            <td>{{created_by_name}}</td>
+            <td>{{formatDate created_at}}</td>
+            <td>
+              <a href="/pos/{{id}}" class="btn btn-sm btn-primary">
+                <i class="bi bi-eye"></i> View
+              </a>
+            </td>
+          </tr>
+          {{/pos}}
+          
+          {{^pos}}
+          <tr>
+            <td colspan="8" class="text-center text-muted">No purchase orders found</td>
+          </tr>
+          {{/pos}}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+

@@ -10,21 +10,20 @@
   </div>
 </div>
 
-<div class="card mb-4">
-  <div class="card-header">
-    <h5 class="mb-0">RFQ Details</h5>
-  </div>
-  <div class="card-body">
-    <dl class="row mb-0">
-      <dt class="col-sm-3">RFQ Name:</dt>
-      <dd class="col-sm-9">{{rfq.name}}</dd>
-
-      <dt class="col-sm-3">Project:</dt>
-      <dd class="col-sm-9">{{rfq.project_name}}</dd>
-
-      <dt class="col-sm-3">Deadline:</dt>
-      <dd class="col-sm-9">{{rfq.deadline}}</dd>
-    </dl>
+<div class="alert alert-info">
+  <div class="row">
+    <div class="col-md-8">
+      <h5 class="alert-heading mb-2"><i class="bi bi-file-text"></i> {{ rfq.name }}</h5>
+      <p class="mb-1"><strong>Project:</strong> {{ rfq.project_name }}</p>
+      <p class="mb-0"><strong>Requested Materials:</strong> {{ materials.length }} item(s)</p>
+    </div>
+    <div class="col-md-4 text-end">
+      <div class="mb-2">
+        <strong>Deadline:</strong><br>
+        <span class="badge bg-danger fs-6">{{ formatDate rfq.deadline }}</span>
+      </div>
+      <small class="text-muted">Please submit your quote before the deadline</small>
+    </div>
   </div>
 </div>
 
@@ -63,55 +62,52 @@
   <div class="card mb-4">
     <div class="card-header">
       <h5 class="mb-0">Material Pricing</h5>
+      <small class="text-muted">Enter unit prices for each material. Total will be calculated automatically.</small>
     </div>
     <div class="card-body">
-      <table class="table">
-        <thead>
-          <tr>
-            <th>Material</th>
-            <th>Requested Quantity</th>
-            <th>Unit</th>
-            <th>Unit Price *</th>
-            <th>Total</th>
-          </tr>
-        </thead>
-        <tbody>
-          {{#materials}}
+      <div class="table-responsive">
+        <table class="table table-hover">
+          <thead class="table-light">
             <tr>
-              <td>{{name}}</td>
-              <td>{{quantity}}</td>
-              <td>{{unit}}</td>
-              <td>
-                <input
-                  type="number"
-                  class="form-control"
-                  name="items[{{id}}][price]"
-                  step="0.01"
-                  min="0"
-                  required
-                />
-                <input
-                  type="hidden"
-                  name="items[{{id}}][material_id]"
-                  value="{{id}}"
-                />
-                <input
-                  type="hidden"
-                  name="items[{{id}}][quantity]"
-                  value="{{quantity}}"
-                />
-              </td>
-              <td class="item-total">-</td>
+              <th>Material</th>
+              <th>Requested Qty</th>
+              <th>Unit</th>
+              <th width="150px">Unit Price * ($)</th>
+              <th width="120px" class="text-end">Subtotal</th>
             </tr>
-          {{/materials}}
-        </tbody>
-        <tfoot>
-          <tr>
-            <th colspan="4" class="text-end">Grand Total:</th>
-            <th id="grand-total">-</th>
-          </tr>
-        </tfoot>
-      </table>
+          </thead>
+          <tbody>
+            {{#materials}}
+              <tr>
+                <td><strong>{{name}}</strong></td>
+                <td>{{quantity}}</td>
+                <td><span class="badge bg-secondary">{{unit}}</span></td>
+                <td>
+                  <input
+                    type="number"
+                    class="form-control price-input"
+                    name="items[{{id}}][price]"
+                    step="0.01"
+                    min="0.01"
+                    placeholder="0.00"
+                    required
+                    data-quantity="{{quantity}}"
+                  />
+                  <input type="hidden" name="items[{{id}}][material_id]" value="{{id}}" />
+                  <input type="hidden" name="items[{{id}}][quantity]" value="{{quantity}}" />
+                </td>
+                <td class="item-total text-end fw-bold">$0.00</td>
+              </tr>
+            {{/materials}}
+          </tbody>
+          <tfoot class="table-light">
+            <tr>
+              <th colspan="4" class="text-end">Grand Total:</th>
+              <th id="grand-total" class="text-end fs-5 text-primary">$0.00</th>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
     </div>
   </div>
 
@@ -123,3 +119,33 @@
     </button>
   </div>
 </form>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const priceInputs = document.querySelectorAll('.price-input');
+    
+    function calculateTotals() {
+      let grandTotal = 0;
+      
+      priceInputs.forEach(input => {
+        const row = input.closest('tr');
+        const totalCell = row.querySelector('.item-total');
+        const price = parseFloat(input.value) || 0;
+        const quantity = parseFloat(input.dataset.quantity) || 0;
+        const total = price * quantity;
+        
+        totalCell.textContent = '$' + total.toFixed(2);
+        grandTotal += total;
+      });
+      
+      document.getElementById('grand-total').textContent = '$' + grandTotal.toFixed(2);
+    }
+    
+    priceInputs.forEach(input => {
+      input.addEventListener('input', calculateTotals);
+    });
+    
+    // Initial calculation
+    calculateTotals();
+  });
+</script>

@@ -16,16 +16,60 @@
     <h5 class="mb-0">RFQ: {{ rfq.name }}</h5>
   </div>
   <div class="card-body">
-    <p class="mb-0">Project: <strong>{{ rfq.project_name }}</strong> | Deadline: <strong>{{ rfq.deadline }}</strong></p>
+    <div class="row">
+      <div class="col-md-6">
+        <p class="mb-2"><strong>Project:</strong> {{ rfq.project_name }}</p>
+        <p class="mb-2"><strong>Deadline:</strong> {{ formatDate rfq.deadline }}
+          {{#if daysUntilDeadline}}
+          {{#if (daysUntilDeadline > 0)}}
+          <span class="badge bg-info text-dark">{{ daysUntilDeadline }} days remaining</span>
+          {{else}}
+          <span class="badge bg-danger">Deadline passed</span>
+          {{/if}}
+          {{/if}}
+        </p>
+        <p class="mb-0"><strong>Status:</strong> <span class="badge status-{{ rfq.status }}">{{ rfq.status }}</span></p>
+      </div>
+      <div class="col-md-6">
+        <div class="card bg-light">
+          <div class="card-body py-2">
+            <h6 class="mb-2">Response Statistics</h6>
+            <div class="row text-center">
+              <div class="col-4">
+                <div class="fs-4 fw-bold text-primary">{{ totalSuppliers }}</div>
+                <small class="text-muted">Total</small>
+              </div>
+              <div class="col-4">
+                <div class="fs-4 fw-bold text-success">{{ quotesReceived }}</div>
+                <small class="text-muted">Received</small>
+              </div>
+              <div class="col-4">
+                <div class="fs-4 fw-bold text-warning">{{ quotesPending }}</div>
+                <small class="text-muted">Pending</small>
+              </div>
+            </div>
+            <div class="mt-2 text-center">
+              <span class="badge bg-primary">{{ responseRate }}% Response Rate</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
+<!-- Submitted Quotes Section -->
+<h4 class="mb-3">
+  <i class="bi bi-check-circle-fill text-success"></i> Submitted Quotes 
+  <span class="badge bg-success">{{ quotesReceived }}</span>
+</h4>
+
 {{#quotes}}
-<div class="card mb-3">
-  <div class="card-header d-flex justify-content-between align-items-center">
+<div class="card mb-3 border-success">
+  <div class="card-header d-flex justify-content-between align-items-center bg-light">
     <div>
       <h5 class="mb-0">{{ supplier_name }}</h5>
-      <small class="text-muted">Quote #{{ id }}</small>
+      <small class="text-muted">Quote #{{ id }} | {{ supplier_email }}</small>
     </div>
     <div>
       <span class="badge status-{{ status }}">{{ status }}</span>
@@ -33,22 +77,25 @@
   </div>
   <div class="card-body">
     <div class="row mb-3">
-      <div class="col-md-6">
+      <div class="col-md-4">
         <strong>Delivery Duration:</strong> {{ duration }} days
       </div>
-      <div class="col-md-6 text-end">
+      <div class="col-md-4">
+        <strong>Submitted:</strong> {{ formatDate created_at }}
+      </div>
+      <div class="col-md-4 text-end">
         <strong>Total:</strong> <span class="fs-4 text-primary">${{ total }}</span>
       </div>
     </div>
     
-    <table class="table table-sm">
+    <table class="table table-sm table-hover">
       <thead>
         <tr>
           <th>Material</th>
           <th>Quantity</th>
           <th>Unit</th>
           <th>Unit Price</th>
-          <th>Subtotal</th>
+          <th class="text-end">Subtotal</th>
         </tr>
       </thead>
       <tbody>
@@ -58,24 +105,77 @@
           <td>{{ quantity }}</td>
           <td>{{ unit }}</td>
           <td>${{ price }}</td>
-          <td>${{ price }} × {{ quantity }}</td>
+          <td class="text-end">${{ price }} × {{ quantity }}</td>
         </tr>
         {{/items}}
       </tbody>
     </table>
     
+    {{#ifEquals status "submitted"}}
     <form action="/quotes/{{ id }}/generate-po" method="POST" class="text-end">
-      <button type="submit" class="btn btn-success">
-        <i class="bi bi-receipt"></i> Generate Purchase Order
+      <button type="submit" class="btn btn-success" onclick="return confirm('Generate Purchase Order for {{ supplier_name }}?');">
+        <i class="bi bi-receipt-cutoff"></i> Award & Generate PO
       </button>
     </form>
+    {{/ifEquals}}
+    {{#ifEquals status "awarded"}}
+    <div class="alert alert-success mb-0">
+      <i class="bi bi-check-circle-fill"></i> This quote has been awarded and a Purchase Order has been generated.
+    </div>
+    {{/ifEquals}}
   </div>
 </div>
 {{/quotes}}
 
 {{^quotes}}
-<div class="alert alert-info">
-  <i class="bi bi-info-circle"></i> No quotes received yet for this RFQ.
+<div class="alert alert-info mb-4">
+  <i class="bi bi-info-circle"></i> No quotes have been submitted yet for this RFQ.
 </div>
 {{/quotes}}
+
+<!-- Pending Suppliers Section -->
+{{#if pendingSuppliers}}
+<h4 class="mb-3 mt-4">
+  <i class="bi bi-clock-history text-warning"></i> Pending Suppliers 
+  <span class="badge bg-warning text-dark">{{ quotesPending }}</span>
+</h4>
+
+<div class="card mb-4 border-warning">
+  <div class="card-header bg-light">
+    <h6 class="mb-0">Awaiting Responses</h6>
+  </div>
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table table-sm mb-0">
+        <thead>
+          <tr>
+            <th>Supplier Name</th>
+            <th>Trade Specialty</th>
+            <th>Email</th>
+            <th>Notified</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#pendingSuppliers}}
+          <tr>
+            <td><strong>{{ name }}</strong></td>
+            <td><span class="badge bg-secondary">{{ trade_specialty }}</span></td>
+            <td>{{ email }}</td>
+            <td>
+              {{#if notified_at}}
+              {{ formatDate notified_at }}
+              {{else}}
+              <span class="text-muted">Not notified</span>
+              {{/if}}
+            </td>
+            <td><span class="badge bg-warning text-dark">Awaiting Response</span></td>
+          </tr>
+          {{/pendingSuppliers}}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{{/if}}
 

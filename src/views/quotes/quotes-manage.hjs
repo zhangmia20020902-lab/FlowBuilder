@@ -12,11 +12,52 @@
   </div>
 </div>
 
+<div class="card mb-3">
+  <div class="card-body">
+    <form method="GET" action="/projects/{{ project.id }}/quotes" class="row g-3">
+      <div class="col-md-4">
+        <input
+          type="text"
+          class="form-control"
+          name="search"
+          placeholder="Search by quote ID or supplier..."
+          value="{{search}}"
+        />
+      </div>
+      <div class="col-md-3">
+        <select class="form-select" name="rfq_id">
+          <option value="all" {{#ifEquals selectedRfqId "all"}}selected{{/ifEquals}}>All RFQs</option>
+          {{#rfqs}}
+          <option value="{{id}}" {{#ifEquals id ../selectedRfqId}}selected{{/ifEquals}}>{{name}}</option>
+          {{/rfqs}}
+        </select>
+      </div>
+      <div class="col-md-2">
+        <select class="form-select" name="status">
+          <option value="all" {{#ifEquals selectedStatus "all"}}selected{{/ifEquals}}>All Statuses</option>
+          <option value="pending" {{#ifEquals selectedStatus "pending"}}selected{{/ifEquals}}>Pending{{#if statusCounts.pending}} ({{statusCounts.pending}}){{/if}}</option>
+          <option value="submitted" {{#ifEquals selectedStatus "submitted"}}selected{{/ifEquals}}>Submitted{{#if statusCounts.submitted}} ({{statusCounts.submitted}}){{/if}}</option>
+          <option value="awarded" {{#ifEquals selectedStatus "awarded"}}selected{{/ifEquals}}>Awarded{{#if statusCounts.awarded}} ({{statusCounts.awarded}}){{/if}}</option>
+        </select>
+      </div>
+      <div class="col-md-3">
+        <button type="submit" class="btn btn-primary">
+          <i class="bi bi-search"></i> Search
+        </button>
+        <a href="/projects/{{ project.id }}/quotes" class="btn btn-secondary">
+          <i class="bi bi-arrow-clockwise"></i> Reset
+        </a>
+      </div>
+    </form>
+  </div>
+</div>
+
 <div class="card">
   <div class="card-header">
     <h5 class="mb-0">Received Quotes</h5>
   </div>
   <div class="card-body">
+    <!-- Quotes Table -->
     <table class="table table-hover">
       <thead>
         <tr>
@@ -33,11 +74,11 @@
         {{#quotes}}
         <tr>
           <td><strong>#{{ id }}</strong></td>
-          <td>{{ rfq_name }}</td>
+          <td><a href="/rfqs/{{ rfq_id }}">{{ rfq_name }}</a></td>
           <td>{{ supplier_name }}</td>
-          <td>{{ duration }}</td>
+          <td>{{ duration }} days</td>
           <td><span class="badge status-{{ status }}">{{ status }}</span></td>
-          <td>{{ created_at }}</td>
+          <td>{{ formatDate created_at }}</td>
           <td>
             {{#ifNotEquals status "awarded"}}
             <a href="/quotes/{{ id }}/edit" class="btn btn-sm btn-secondary">

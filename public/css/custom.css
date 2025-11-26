@@ -5,6 +5,8 @@
   --danger-color: #dc3545;
   --warning-color: #ffc107;
   --info-color: #0dcaf0;
+  --sidebar-width: 250px;
+  --topbar-height: 56px;
 }
 
 body {
@@ -12,9 +14,173 @@ body {
   background-color: #f8f9fa;
 }
 
+/* ===== Top Navigation Bar ===== */
+.topbar {
+  height: var(--topbar-height);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1040;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 0 1rem;
+}
+
+.topbar .navbar-brand {
+  font-weight: 700;
+  font-size: 1.25rem;
+}
+
+/* ===== Sidebar ===== */
+.sidebar {
+  position: fixed;
+  top: var(--topbar-height);
+  left: 0;
+  bottom: 0;
+  width: var(--sidebar-width);
+  background-color: #fff;
+  border-right: 1px solid #e9ecef;
+  overflow-y: auto;
+  overflow-x: hidden;
+  z-index: 1030;
+  transition: transform 0.3s ease-in-out;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.05);
+}
+
+.sidebar-header {
+  padding: 1.5rem 1rem 1rem;
+  border-bottom: 1px solid #e9ecef;
+  display: none; /* Hidden on desktop, shown on mobile */
+}
+
+.sidebar-brand {
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: var(--primary-color);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.sidebar-brand:hover {
+  color: var(--primary-color);
+  text-decoration: none;
+}
+
+.sidebar-nav {
+  padding: 1rem 0;
+}
+
+.sidebar .nav-link {
+  color: #495057;
+  padding: 0.75rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  transition: all 0.2s ease;
+  border-left: 3px solid transparent;
+  font-weight: 500;
+}
+
+.sidebar .nav-link i {
+  font-size: 1.1rem;
+  width: 20px;
+  text-align: center;
+}
+
+.sidebar .nav-link:hover {
+  background-color: #f8f9fa;
+  color: var(--primary-color);
+  text-decoration: none;
+  border-left-color: var(--primary-color);
+}
+
+.sidebar .nav-link.active {
+  background-color: #e7f1ff;
+  color: var(--primary-color);
+  border-left-color: var(--primary-color);
+}
+
+.sidebar .nav-link.collapsed .collapse-icon {
+  transition: transform 0.3s ease;
+}
+
+.sidebar .nav-link:not(.collapsed) .collapse-icon {
+  transform: rotate(180deg);
+}
+
+.sidebar-divider {
+  margin: 0.5rem 1.5rem;
+  border-color: #e9ecef;
+}
+
+/* Company submenu */
+.sidebar #companySubmenu {
+  background-color: #f8f9fa;
+}
+
+.sidebar #companySubmenu .nav-link {
+  padding: 0.6rem 1.5rem;
+  font-size: 0.9rem;
+  font-weight: 400;
+}
+
+/* Sidebar overlay for mobile */
+.sidebar-overlay {
+  position: fixed;
+  top: var(--topbar-height);
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1020;
+  display: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.sidebar-overlay.show {
+  display: block;
+  opacity: 1;
+}
+
+/* ===== Main Content Area ===== */
+.main-content {
+  margin-left: var(--sidebar-width);
+  margin-top: var(--topbar-height);
+  padding: 1.5rem;
+  min-height: calc(100vh - var(--topbar-height));
+  transition: margin-left 0.3s ease-in-out;
+}
+
+/* ===== Responsive Design ===== */
+@media (max-width: 991px) {
+  .sidebar {
+    transform: translateX(-100%);
+  }
+
+  .sidebar.show {
+    transform: translateX(0);
+  }
+
+  .sidebar-header {
+    display: block;
+  }
+
+  .main-content {
+    margin-left: 0;
+  }
+}
+
+/* ===== Original Styles (Updated) ===== */
 .navbar-brand {
   font-weight: 700;
   font-size: 1.5rem;
+}
+
+main {
+  padding-top: 1rem;
 }
 
 .card {
@@ -76,6 +242,116 @@ body {
   background-color: #198754;
 }
 
+.status-cancelled {
+  background-color: #6c757d;
+}
+
+.status-closed {
+  background-color: #495057;
+}
+
+/* Partnership status badges */
+.partnership-active {
+  background-color: #198754;
+}
+
+.partnership-inactive {
+  background-color: #6c757d;
+}
+
+/* Role badges */
+.role-badge {
+  background-color: #0d6efd;
+}
+
+/* Notification styles */
+.list-group-item-primary {
+  background-color: #cfe2ff;
+  border-color: #b6d4fe;
+}
+
+#notificationBadge {
+  font-size: 0.65rem;
+  padding: 0.25em 0.4em;
+}
+
+/* Timeline styles for PO status */
+.timeline {
+  position: relative;
+  padding-left: 0;
+}
+
+.timeline-item {
+  position: relative;
+  padding-left: 30px;
+  padding-bottom: 20px;
+  color: #6c757d;
+}
+
+.timeline-item:last-child {
+  padding-bottom: 0;
+}
+
+.timeline-item::before {
+  content: "";
+  position: absolute;
+  left: 7px;
+  top: 20px;
+  bottom: -10px;
+  width: 2px;
+  background-color: #e9ecef;
+}
+
+.timeline-item:last-child::before {
+  display: none;
+}
+
+.timeline-item i {
+  position: absolute;
+  left: 0;
+  top: 3px;
+  font-size: 16px;
+  color: #dee2e6;
+}
+
+.timeline-item.active {
+  color: #198754;
+  font-weight: 600;
+}
+
+.timeline-item.active i {
+  color: #198754;
+}
+
+/* Enhanced table styles */
+.table-hover tbody tr:hover {
+  background-color: #f8f9fa;
+}
+
+.table thead th {
+  border-bottom: 2px solid #dee2e6;
+  text-transform: uppercase;
+  font-size: 0.875rem;
+  letter-spacing: 0.5px;
+}
+
+/* Stat card improvements */
+.stat-card .card-body {
+  padding: 1.25rem;
+}
+
+.stat-card h3 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 0;
+}
+
+.stat-card h6 {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
 .form-label {
   font-weight: 500;
   margin-bottom: 0.5rem;
@@ -130,4 +406,58 @@ body {
 .auth-card {
   max-width: 450px;
   width: 100%;
+}
+
+/* Focus states for accessibility */
+a:focus,
+button:focus,
+input:focus,
+select:focus,
+textarea:focus {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+.focused {
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+/* Enhanced navigation styles */
+.breadcrumb-item + .breadcrumb-item::before {
+  color: #6c757d;
+}
+
+.breadcrumb-item.active {
+  color: #495057;
+  font-weight: 500;
+}
+
+/* Loading spinner styles */
+.spinner-border-sm {
+  width: 1rem;
+  height: 1rem;
+  border-width: 0.15em;
+}
+
+/* Card hover effects */
+.card:hover {
+  box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease;
+}
+
+/* Status badge tooltips */
+.badge {
+  cursor: help;
+}
+
+/* Improved table responsiveness */
+@media (max-width: 768px) {
+  .table-responsive {
+    font-size: 0.875rem;
+  }
+
+  .btn-sm {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+  }
 }

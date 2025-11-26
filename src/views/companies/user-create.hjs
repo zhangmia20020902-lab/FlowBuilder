@@ -1,0 +1,90 @@
+<div class="row mb-4">
+  <div class="col">
+    <h2>Create New User</h2>
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/dashboard">Dashboard</a></li>
+        <li class="breadcrumb-item"><a href="/company/profile">Company</a></li>
+        <li class="breadcrumb-item"><a href="/company/users">Users</a></li>
+        <li class="breadcrumb-item active">Create User</li>
+      </ol>
+    </nav>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <h5 class="mb-0">User Information</h5>
+  </div>
+  <div class="card-body">
+    <form method="POST" action="/company/users">
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label for="name" class="form-label">Full Name
+            <span class="text-danger">*</span></label>
+          <input
+            type="text"
+            class="form-control"
+            id="name"
+            name="name"
+            required
+            placeholder="Enter user's full name"
+          />
+        </div>
+
+        <div class="col-md-6 mb-3">
+          <label for="email" class="form-label">Email
+            <span class="text-danger">*</span></label>
+          <input
+            type="email"
+            class="form-control"
+            id="email"
+            name="email"
+            required
+            placeholder="user@example.com"
+          />
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label for="role_id" class="form-label">Role
+            <span class="text-danger">*</span></label>
+          <select class="form-select" id="role_id" name="role_id" required>
+            <option value="">Select role...</option>
+            {{#roles}}
+            <option value="{{id}}">{{name}}</option>
+            {{/roles}}
+          </select>
+        </div>
+
+        <div class="col-md-6 mb-3">
+          <label for="password" class="form-label">Password
+            <span class="text-danger">*</span></label>
+          <input
+            type="password"
+            class="form-control"
+            id="password"
+            name="password"
+            required
+            minlength="6"
+            placeholder="Minimum 6 characters"
+          />
+          <div class="form-text">Minimum 6 characters</div>
+        </div>
+      </div>
+
+      <div class="d-flex gap-2">
+        <button type="submit" class="btn btn-primary">
+          <i class="bi bi-check-circle"></i>
+          Create User
+        </button>
+        <a href="/company/users" class="btn btn-secondary">
+          <i class="bi bi-x-circle"></i>
+          Cancel
+        </a>
+      </div>
+    </form>
+  </div>
+</div>
+

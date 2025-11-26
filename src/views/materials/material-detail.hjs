@@ -1,0 +1,98 @@
+<div class="row mb-4">
+  <div class="col">
+    <h2>{{material.name}}</h2>
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/dashboard">Dashboard</a></li>
+        <li class="breadcrumb-item"><a href="/materials">Materials</a></li>
+        <li class="breadcrumb-item active">{{material.name}}</li>
+      </ol>
+    </nav>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-8">
+    <div class="card mb-3">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">Material Details</h5>
+        <div>
+          <a href="/materials/{{material.id}}/edit" class="btn btn-sm btn-secondary">
+            <i class="bi bi-pencil"></i> Edit
+          </a>
+        </div>
+      </div>
+      <div class="card-body">
+        <dl class="row">
+          <dt class="col-sm-3">SKU</dt>
+          <dd class="col-sm-9"><code>{{material.sku}}</code></dd>
+
+          <dt class="col-sm-3">Name</dt>
+          <dd class="col-sm-9">{{material.name}}</dd>
+
+          <dt class="col-sm-3">Category</dt>
+          <dd class="col-sm-9"><span class="badge bg-info">{{material.category_name}}</span></dd>
+
+          <dt class="col-sm-3">Unit</dt>
+          <dd class="col-sm-9">{{material.unit}}</dd>
+
+          <dt class="col-sm-3">Created</dt>
+          <dd class="col-sm-9">{{formatDate material.created_at}}</dd>
+
+          <dt class="col-sm-3">Last Updated</dt>
+          <dd class="col-sm-9">{{formatDate material.updated_at}}</dd>
+        </dl>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <h5 class="mb-0">Usage in RFQs</h5>
+      </div>
+      <div class="card-body">
+        {{#rfqUsage}}
+        <div class="row mb-2 pb-2 border-bottom">
+          <div class="col-md-8">
+            <strong><a href="/rfqs/{{id}}">{{name}}</a></strong><br>
+            <small class="text-muted">Project: {{project_name}}</small>
+          </div>
+          <div class="col-md-4 text-end">
+            Qty: <strong>{{quantity}}</strong> {{../material.unit}}
+          </div>
+        </div>
+        {{/rfqUsage}}
+        
+        {{^rfqUsage}}
+        <p class="text-muted mb-0">This material has not been used in any RFQs yet.</p>
+        {{/rfqUsage}}
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-4">
+    <div class="card">
+      <div class="card-header">
+        <h5 class="mb-0">Actions</h5>
+      </div>
+      <div class="card-body d-grid gap-2">
+        <a href="/materials/{{material.id}}/edit" class="btn btn-secondary">
+          <i class="bi bi-pencil"></i> Edit Material
+        </a>
+        <button type="button" class="btn btn-danger" 
+          data-bs-toggle="modal" 
+          data-bs-target="#deleteModal"
+          data-item-name="{{material.name}}"
+          data-delete-url="/materials/{{material.id}}/delete"
+          data-warning="Warning: Material will be permanently deleted.">
+          <i class="bi bi-trash"></i> Delete Material
+        </button>
+        <a href="/materials" class="btn btn-outline-secondary">
+          <i class="bi bi-arrow-left"></i> Back to Materials
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+{{> delete-modal}}
+

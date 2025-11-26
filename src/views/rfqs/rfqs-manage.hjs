@@ -12,14 +12,57 @@
   </div>
 </div>
 
+<div class="card mb-3">
+  <div class="card-body">
+    <form method="GET" action="/projects/{{ project.id }}/rfqs" class="row g-3">
+      <div class="col-md-4">
+        <input
+          type="text"
+          class="form-control"
+          name="search"
+          placeholder="Search by RFQ name..."
+          value="{{search}}"
+        />
+      </div>
+      <div class="col-md-2">
+        <select class="form-select" name="status">
+          <option value="all" {{#ifEquals selectedStatus "all"}}selected{{/ifEquals}}>All Statuses</option>
+          <option value="draft" {{#ifEquals selectedStatus "draft"}}selected{{/ifEquals}}>Draft ({{statusCounts.draft}})</option>
+          <option value="open" {{#ifEquals selectedStatus "open"}}selected{{/ifEquals}}>Open ({{statusCounts.open}})</option>
+          <option value="closed" {{#ifEquals selectedStatus "closed"}}selected{{/ifEquals}}>Closed ({{statusCounts.closed}})</option>
+        </select>
+      </div>
+      <div class="col-md-2">
+        <select class="form-select" name="sortBy">
+          <option value="newest" {{#ifEquals sortBy "newest"}}selected{{/ifEquals}}>Newest First</option>
+          <option value="oldest" {{#ifEquals sortBy "oldest"}}selected{{/ifEquals}}>Oldest First</option>
+          <option value="deadline" {{#ifEquals sortBy "deadline"}}selected{{/ifEquals}}>Deadline</option>
+          <option value="name" {{#ifEquals sortBy "name"}}selected{{/ifEquals}}>Name (A-Z)</option>
+        </select>
+      </div>
+      <div class="col-md-2">
+        <button type="submit" class="btn btn-primary">
+          <i class="bi bi-search"></i> Search
+        </button>
+        <a href="/projects/{{ project.id }}/rfqs" class="btn btn-secondary">
+          <i class="bi bi-arrow-clockwise"></i> Reset
+        </a>
+      </div>
+      <div class="col-md-2 text-end">
+        <a href="/projects/{{ project.id }}/rfqs/create" class="btn btn-success">
+          <i class="bi bi-plus-circle"></i> Create New RFQ
+        </a>
+      </div>
+    </form>
+  </div>
+</div>
+
 <div class="card">
   <div class="card-header d-flex justify-content-between align-items-center">
     <h5 class="mb-0">Request for Quotations</h5>
-    <a href="/projects/{{ project.id }}/rfqs/create" class="btn btn-primary">
-      <i class="bi bi-plus-circle"></i> Create New RFQ
-    </a>
   </div>
   <div class="card-body">
+    <!-- RFQs Table -->
     <table class="table table-hover">
       <thead>
         <tr>
@@ -34,9 +77,9 @@
         {{#rfqs}}
         <tr>
           <td><strong>{{ name }}</strong></td>
-          <td>{{ deadline }}</td>
+          <td>{{ formatDate deadline }}</td>
           <td><span class="badge status-{{ status }}">{{ status }}</span></td>
-          <td>{{ created_at }}</td>
+          <td>{{ formatDate created_at }}</td>
           <td>
             <a href="/rfqs/{{ id }}" class="btn btn-sm btn-primary m-1">
               <i class="bi bi-eye"></i> View
@@ -54,7 +97,7 @@
             </button>
             {{/ifEquals}}
             {{#ifNotEquals status "draft"}}
-            <a href="/rfqs/{{ id }}/distribute" class="btn btn-sm btn-primary m-1">
+            <a href="/rfqs/{{ id }}/distribute" class="btn btn-sm btn-info m-1">
               <i class="bi bi-send"></i> Distribute
             </a>
             <a href="/quotes/compare?rfq_id={{ id }}" class="btn btn-sm btn-success m-1">

@@ -108,7 +108,11 @@
 <!-- Selected Suppliers Card -->
 <div class="card mb-4">
   <div class="card-header">
-    <h5 class="mb-0">Selected Suppliers</h5>
+    <h5 class="mb-0">Selected Suppliers 
+      {{#ifNotEquals rfq.status "draft"}}
+      <span class="badge bg-secondary ms-2">Tracking Status</span>
+      {{/ifNotEquals}}
+    </h5>
   </div>
   <div class="card-body">
     {{#if selectedSuppliers}}
@@ -119,6 +123,11 @@
             <th>Supplier Name</th>
             <th>Trade Specialty</th>
             <th>Email</th>
+            {{#ifNotEquals rfq.status "draft"}}
+            <th>Status</th>
+            <th>Notified</th>
+            <th>Response</th>
+            {{/ifNotEquals}}
           </tr>
         </thead>
         <tbody>
@@ -127,6 +136,34 @@
             <td><strong>{{ name }}</strong></td>
             <td><span class="badge bg-info">{{ trade_specialty }}</span></td>
             <td>{{ email }}</td>
+            {{#ifNotEquals ../rfq.status "draft"}}
+            <td>
+              {{#if quote_id}}
+              <span class="badge bg-success">Submitted</span>
+              {{else}}
+              {{#ifEquals tracking_status "pending"}}
+              <span class="badge bg-warning text-dark">Pending</span>
+              {{/ifEquals}}
+              {{#ifEquals tracking_status "submitted"}}
+              <span class="badge bg-success">Submitted</span>
+              {{/ifEquals}}
+              {{/if}}
+            </td>
+            <td>
+              {{#if notified_at}}
+              {{ formatDate notified_at }}
+              {{else}}
+              <span class="text-muted">-</span>
+              {{/if}}
+            </td>
+            <td>
+              {{#if quote_submitted_at}}
+              {{ formatDate quote_submitted_at }}
+              {{else}}
+              <span class="text-muted">Awaiting</span>
+              {{/if}}
+            </td>
+            {{/ifNotEquals}}
           </tr>
           {{/selectedSuppliers}}
         </tbody>
@@ -145,8 +182,25 @@
   </a>
   <div>
     {{#ifEquals rfq.status "draft"}}
-    <a href="/rfqs/{{ rfq.id }}/distribute" class="btn btn-primary">
-      <i class="bi bi-send"></i> Distribute to Suppliers
+    <form action="/rfqs/{{ rfq.id }}/distribute" method="POST" style="display: inline;">
+      <button type="submit" class="btn btn-primary">
+        <i class="bi bi-send"></i> Distribute to Suppliers
+      </button>
+    </form>
+    {{/ifEquals}}
+    {{#ifEquals rfq.status "open"}}
+    <a href="/quotes/compare?rfq_id={{ rfq.id }}" class="btn btn-success me-2">
+      <i class="bi bi-file-bar-graph"></i> View Quotes
+    </a>
+    <form action="/rfqs/{{ rfq.id }}/close" method="POST" style="display: inline;">
+      <button type="submit" class="btn btn-warning" onclick="return confirm('Are you sure you want to close this RFQ? No more quotes will be accepted.');">
+        <i class="bi bi-lock"></i> Close RFQ
+      </button>
+    </form>
+    {{/ifEquals}}
+    {{#ifEquals rfq.status "closed"}}
+    <a href="/quotes/compare?rfq_id={{ rfq.id }}" class="btn btn-success">
+      <i class="bi bi-file-bar-graph"></i> View Quotes
     </a>
     {{/ifEquals}}
   </div>

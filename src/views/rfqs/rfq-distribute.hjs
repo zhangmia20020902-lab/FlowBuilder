@@ -16,21 +16,24 @@
 
 <div class="card mb-4">
   <div class="card-header">
-    <h5 class="mb-0">RFQ Information</h5>
+    <h5 class="mb-0">RFQ Summary</h5>
   </div>
   <div class="card-body">
     <dl class="row mb-0">
       <dt class="col-sm-3">RFQ Name:</dt>
-      <dd class="col-sm-9">{{ rfq.name }}</dd>
+      <dd class="col-sm-9"><strong>{{ rfq.name }}</strong></dd>
       
       <dt class="col-sm-3">Project:</dt>
       <dd class="col-sm-9">{{ rfq.project_name }}</dd>
       
       <dt class="col-sm-3">Deadline:</dt>
-      <dd class="col-sm-9">{{ rfq.deadline }}</dd>
+      <dd class="col-sm-9">{{ formatDate rfq.deadline }}</dd>
       
       <dt class="col-sm-3">Status:</dt>
       <dd class="col-sm-9"><span class="badge status-{{ rfq.status }}">{{ rfq.status }}</span></dd>
+      
+      <dt class="col-sm-3">Suppliers:</dt>
+      <dd class="col-sm-9"><strong>{{ suppliers.length }}</strong> supplier(s) will be notified</dd>
     </dl>
   </div>
 </div>
@@ -66,23 +69,38 @@
   </div>
 </div>
 
+{{#ifEquals rfq.status "draft"}}
 <form action="/rfqs/{{ rfq.id }}/distribute" method="POST">
   <div class="alert alert-info">
     <i class="bi bi-info-circle"></i> 
-    Distributing this RFQ will send notifications to all selected suppliers and change the status to "open".
+    <strong>Ready to distribute!</strong> This action will:
+    <ul class="mb-0 mt-2">
+      <li>Notify all {{ suppliers.length }} selected supplier(s)</li>
+      <li>Change the RFQ status to "open"</li>
+      <li>Allow suppliers to submit quotes until the deadline</li>
+    </ul>
   </div>
   
-  {{#ifNotEquals rfq.status "open"}}
   <div class="d-flex justify-content-between">
-    <a href="/rfqs/{{ rfq.id }}" class="btn btn-secondary">Cancel</a>
-    <button type="submit" class="btn btn-primary">
-      <i class="bi bi-send"></i> Distribute to Suppliers
+    <a href="/rfqs/{{ rfq.id }}" class="btn btn-secondary">
+      <i class="bi bi-arrow-left"></i> Back to RFQ
+    </a>
+    <button type="submit" class="btn btn-primary btn-lg">
+      <i class="bi bi-send-fill"></i> Distribute to Suppliers
     </button>
   </div>
- {{else}} 
-  <div class="alert alert-warning">
-    <i class="bi bi-exclamation-triangle"></i> 
-    This RFQ has already been distributed and is currently "open". No further action is needed.
-  {{/ifNotEquals}}
 </form>
+{{else}}
+<div class="alert alert-warning">
+  <i class="bi bi-exclamation-triangle"></i> 
+  <strong>RFQ Already Distributed</strong><br>
+  This RFQ has already been distributed and is currently "{{ rfq.status }}". 
+  <a href="/rfqs/{{ rfq.id }}" class="alert-link">View RFQ Details</a>
+</div>
+<div class="d-flex justify-content-start">
+  <a href="/rfqs/{{ rfq.id }}" class="btn btn-secondary">
+    <i class="bi bi-arrow-left"></i> Back to RFQ
+  </a>
+</div>
+{{/ifEquals}}
 

@@ -13,6 +13,7 @@ router.get("/projects/:id/rfqs", requireAuth, async (req, res) => {
   try {
     const projectId = req.params.id;
     const companyId = req.session.companyId;
+    const { search, status, sortBy } = req.query;
 
     const projects = await query(
       "SELECT * FROM projects WHERE id = ? AND company_id = ?",
@@ -28,16 +29,58 @@ router.get("/projects/:id/rfqs", requireAuth, async (req, res) => {
 
     const project = projects[0];
 
-    // Get all RFQs for this project
-    const rfqs = await query(
-      "SELECT * FROM rfqs WHERE project_id = ? ORDER BY created_at DESC",
+    // Build dynamic SQL query
+    let sql = "SELECT * FROM rfqs WHERE project_id = ?";
+    const params = [projectId];
+
+    // Add search filter
+    if (search && search.trim()) {
+      sql += " AND name LIKE ?";
+      params.push(`%${search.trim()}%`);
+    }
+
+    // Add status filter
+    if (status && status !== "all") {
+      sql += " AND status = ?";
+      params.push(status);
+    }
+
+    // Add sorting
+    const validSortOptions = {
+      newest: "created_at DESC",
+      oldest: "created_at ASC",
+      deadline: "deadline ASC",
+      name: "name ASC",
+    };
+
+    const sortColumn = validSortOptions[sortBy] || "created_at DESC";
+    sql += ` ORDER BY ${sortColumn}`;
+
+    const rfqs = await query(sql, params);
+
+    // Get status counts for filter badges
+    const statusCounts = await query(
+      `SELECT status, COUNT(*) as count 
+       FROM rfqs 
+       WHERE project_id = ? 
+       GROUP BY status`,
       [projectId]
     );
+
+    const statusCountsMap = {};
+    statusCounts.forEach((sc) => {
+      statusCountsMap[sc.status] = sc.count;
+    });
 
     res.render("rfqs/rfqs-manage", {
       title: `Manage RFQs - ${project.name} - FlowBuilder`,
       project,
       rfqs,
+      search: search || "",
+      selectedStatus: status || "all",
+      sortBy: sortBy || "newest",
+      statusCounts: statusCountsMap,
+      resultCount: rfqs.length,
     });
   } catch (error) {
     logger.error("RFQs manage error", {
@@ -213,11 +256,17 @@ router.get("/rfqs/:id", requireAuth, async (req, res) => {
       [rfqId]
     );
 
-    // Get selected suppliers
+    // Get selected suppliers with tracking status
     const selectedSuppliers = await query(
-      `SELECT s.id, s.name, s.trade_specialty, s.email
+      `SELECT s.id, s.name, s.trade_specialty, s.email,
+              rs.status as tracking_status,
+              rs.notified_at,
+              rs.responded_at,
+              q.id as quote_id,
+              q.created_at as quote_submitted_at
        FROM suppliers s 
        JOIN rfq_suppliers rs ON s.id = rs.supplier_id 
+       LEFT JOIN quotes q ON q.rfq_id = rs.rfq_id AND q.supplier_id = s.id
        WHERE rs.rfq_id = ?
        ORDER BY s.name`,
       [rfqId]
@@ -576,14 +625,82 @@ router.post("/rfqs/:id/delete", requireAuth, async (req, res) => {
 router.post("/rfqs/:id/distribute", requireAuth, async (req, res) => {
   try {
     const rfqId = req.params.id;
+    const companyId = req.session.companyId;
+
+    // Verify RFQ belongs to user's company and is in draft status
+    const rfqs = await query(
+      `SELECT r.*, p.company_id 
+       FROM rfqs r 
+       JOIN projects p ON r.project_id = p.id 
+       WHERE r.id = ? AND p.company_id = ?`,
+      [rfqId, companyId]
+    );
+
+    if (!rfqs || rfqs.length === 0) {
+      return res.status(404).render("shared/error", {
+        message: "RFQ not found",
+        error: { status: 404, stack: "" },
+      });
+    }
+
+    const rfq = rfqs[0];
+
+    // Only allow distributing draft RFQs
+    if (rfq.status !== "draft") {
+      req.session.flash = {
+        error: "Only draft RFQs can be distributed",
+      };
+      req.session.save((err) => {
+        if (err) console.error("Session save error:", err);
+        return res.redirect(`/rfqs/${rfqId}`);
+      });
+      return;
+    }
+
+    // Check if RFQ has materials and suppliers
+    const materials = await query(
+      "SELECT COUNT(*) as count FROM rfq_materials WHERE rfq_id = ?",
+      [rfqId]
+    );
+    const suppliers = await query(
+      "SELECT COUNT(*) as count FROM rfq_suppliers WHERE rfq_id = ?",
+      [rfqId]
+    );
+
+    if (materials[0].count === 0 || suppliers[0].count === 0) {
+      req.session.flash = {
+        error:
+          "Cannot distribute RFQ without materials and suppliers. Please edit the RFQ first.",
+      };
+      req.session.save((err) => {
+        if (err) console.error("Session save error:", err);
+        return res.redirect(`/rfqs/${rfqId}`);
+      });
+      return;
+    }
 
     // Update RFQ status to open
     await query("UPDATE rfqs SET status = ? WHERE id = ?", ["open", rfqId]);
 
+    // Update supplier tracking status to 'pending' and set notified_at
+    await query(
+      "UPDATE rfq_suppliers SET status = 'pending', notified_at = NOW() WHERE rfq_id = ?",
+      [rfqId]
+    );
+
+    // Log distribution
+    logger.info("RFQ distributed", {
+      rfqId,
+      rfqName: rfq.name,
+      suppliersCount: suppliers[0].count,
+      materialsCount: materials[0].count,
+      userId: req.session.userId,
+    });
+
     // In a real system, send emails to suppliers here
 
     req.session.flash = {
-      success: "RFQ distributed successfully to suppliers",
+      success: `RFQ distributed successfully to ${suppliers[0].count} supplier(s)`,
     };
     req.session.save((err) => {
       if (err) console.error("Session save error:", err);
@@ -599,6 +716,127 @@ router.post("/rfqs/:id/distribute", requireAuth, async (req, res) => {
       message: "Error distributing RFQ",
       error: { status: 500, stack: error.stack },
     });
+  }
+});
+
+// Close RFQ API
+router.post("/rfqs/:id/close", requireAuth, async (req, res) => {
+  try {
+    const rfqId = req.params.id;
+    const companyId = req.session.companyId;
+
+    // Verify RFQ belongs to user's company
+    const rfqs = await query(
+      `SELECT r.*, p.company_id, p.id as project_id 
+       FROM rfqs r 
+       JOIN projects p ON r.project_id = p.id 
+       WHERE r.id = ? AND p.company_id = ?`,
+      [rfqId, companyId]
+    );
+
+    if (!rfqs || rfqs.length === 0) {
+      return res.status(404).render("shared/error", {
+        message: "RFQ not found",
+        error: { status: 404, stack: "" },
+      });
+    }
+
+    const rfq = rfqs[0];
+
+    // Only allow closing open RFQs
+    if (rfq.status !== "open") {
+      req.session.flash = {
+        error: "Only open RFQs can be closed",
+      };
+      req.session.save((err) => {
+        if (err) console.error("Session save error:", err);
+        return res.redirect(`/rfqs/${rfqId}`);
+      });
+      return;
+    }
+
+    // Close the RFQ
+    await query("UPDATE rfqs SET status = 'closed' WHERE id = ?", [rfqId]);
+
+    logger.info("RFQ closed", {
+      rfqId,
+      rfqName: rfq.name,
+      userId: req.session.userId,
+    });
+
+    req.session.flash = {
+      success: "RFQ closed successfully",
+    };
+    req.session.save((err) => {
+      if (err) console.error("Session save error:", err);
+      res.redirect(`/rfqs/${rfqId}`);
+    });
+  } catch (error) {
+    logger.error("RFQ close error", {
+      error: error.message,
+      stack: error.stack,
+      userId: req.session?.userId,
+    });
+    req.session.flash = {
+      error: "Error closing RFQ",
+    };
+    req.session.save((err) => {
+      if (err) console.error("Session save error:", err);
+      res.redirect(`/rfqs/${req.params.id}`);
+    });
+  }
+});
+
+// Get supplier status for an RFQ
+router.get("/rfqs/:id/suppliers-status", requireAuth, async (req, res) => {
+  try {
+    const rfqId = req.params.id;
+    const companyId = req.session.companyId;
+
+    // Verify RFQ belongs to user's company
+    const rfqs = await query(
+      `SELECT r.* 
+       FROM rfqs r 
+       JOIN projects p ON r.project_id = p.id 
+       WHERE r.id = ? AND p.company_id = ?`,
+      [rfqId, companyId]
+    );
+
+    if (!rfqs || rfqs.length === 0) {
+      return res.status(404).json({ error: "RFQ not found" });
+    }
+
+    // Get supplier status with quote information
+    const supplierStatus = await query(
+      `SELECT 
+        s.id as supplier_id,
+        s.name as supplier_name,
+        s.email,
+        s.trade_specialty,
+        rs.status,
+        rs.notified_at,
+        rs.responded_at,
+        q.id as quote_id,
+        q.created_at as quote_submitted_at
+       FROM rfq_suppliers rs
+       JOIN suppliers s ON rs.supplier_id = s.id
+       LEFT JOIN quotes q ON q.rfq_id = rs.rfq_id AND q.supplier_id = s.id
+       WHERE rs.rfq_id = ?
+       ORDER BY s.name`,
+      [rfqId]
+    );
+
+    res.json({
+      success: true,
+      suppliers: supplierStatus,
+    });
+  } catch (error) {
+    logger.error("Get supplier status error", {
+      error: error.message,
+      stack: error.stack,
+      userId: req.session?.userId,
+    });
+    res.status(500).json({ error: "Error fetching supplier status" });
   }
 });
 

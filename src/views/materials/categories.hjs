@@ -1,0 +1,144 @@
+<div class="row mb-4">
+  <div class="col">
+    <h2>Material Categories</h2>
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/dashboard">Dashboard</a></li>
+        <li class="breadcrumb-item"><a href="/materials">Materials</a></li>
+        <li class="breadcrumb-item active">Categories</li>
+      </ol>
+    </nav>
+  </div>
+</div>
+
+<div class="card mb-3">
+  <div class="card-header d-flex justify-content-between align-items-center">
+    <h5 class="mb-0">Add New Category</h5>
+  </div>
+  <div class="card-body">
+    <form method="POST" action="/materials/categories" class="row g-3">
+      <div class="col-md-4">
+        <input
+          type="text"
+          class="form-control"
+          name="name"
+          placeholder="Category name"
+          required
+          maxlength="100"
+        />
+      </div>
+      <div class="col-md-6">
+        <input
+          type="text"
+          class="form-control"
+          name="description"
+          placeholder="Description (optional)"
+        />
+      </div>
+      <div class="col-md-2">
+        <button type="submit" class="btn btn-primary w-100">
+          <i class="bi bi-plus-circle"></i> Add
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <h5 class="mb-0">All Categories</h5>
+  </div>
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Materials Count</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#categories}}
+          <tr>
+            <td><strong>{{name}}</strong></td>
+            <td>{{description}}</td>
+            <td><span class="badge bg-secondary">{{material_count}}</span></td>
+            <td>
+              <button type="button" class="btn btn-sm btn-secondary" 
+                data-bs-toggle="modal" 
+                data-bs-target="#editCategoryModal"
+                data-category-id="{{id}}"
+                data-category-name="{{name}}"
+                data-category-description="{{description}}">
+                <i class="bi bi-pencil"></i> Edit
+              </button>
+              {{#ifEquals material_count 0}}
+              <button type="button" class="btn btn-sm btn-danger" 
+                data-bs-toggle="modal" 
+                data-bs-target="#deleteModal"
+                data-item-name="{{name}}"
+                data-delete-url="/materials/categories/{{id}}/delete">
+                <i class="bi bi-trash"></i> Delete
+              </button>
+              {{/ifEquals}}
+            </td>
+          </tr>
+          {{/categories}}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Category Modal -->
+<div class="modal fade" id="editCategoryModal" tabindex="-1" aria-labelledby="editCategoryModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editCategoryModalLabel">Edit Category</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form id="editCategoryForm" method="POST">
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="editCategoryName" class="form-label">Category Name</label>
+            <input type="text" class="form-control" id="editCategoryName" name="name" required maxlength="100">
+          </div>
+          <div class="mb-3">
+            <label for="editCategoryDescription" class="form-label">Description</label>
+            <input type="text" class="form-control" id="editCategoryDescription" name="description">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary">Update Category</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+{{> delete-modal}}
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const editModal = document.getElementById('editCategoryModal');
+    editModal.addEventListener('show.bs.modal', function(event) {
+      const button = event.relatedTarget;
+      const categoryId = button.getAttribute('data-category-id');
+      const categoryName = button.getAttribute('data-category-name');
+      const categoryDescription = button.getAttribute('data-category-description');
+      
+      const form = editModal.querySelector('#editCategoryForm');
+      const nameInput = editModal.querySelector('#editCategoryName');
+      const descriptionInput = editModal.querySelector('#editCategoryDescription');
+      
+      form.action = `/materials/categories/${categoryId}/update`;
+      nameInput.value = categoryName;
+      descriptionInput.value = categoryDescription || '';
+    });
+  });
+</script>
+

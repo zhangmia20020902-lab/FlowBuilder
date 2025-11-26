@@ -1,0 +1,115 @@
+<div class="row mb-4">
+  <div class="col">
+    <h2>Suppliers Directory</h2>
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/dashboard">Dashboard</a></li>
+        <li class="breadcrumb-item active">Suppliers</li>
+      </ol>
+    </nav>
+  </div>
+</div>
+
+<div class="card mb-3">
+  <div class="card-body">
+    <form method="GET" action="/suppliers" class="row g-3">
+      <div class="col-md-5">
+        <input
+          type="text"
+          class="form-control"
+          name="search"
+          placeholder="Search by name, email, or specialty..."
+          value="{{search}}"
+        />
+      </div>
+      <div class="col-md-3">
+        <select class="form-select" name="trade_specialty">
+          <option value="all" {{#ifEquals selectedSpecialty 'all'}}selected{{/ifEquals}}>All Specialties</option>
+          {{#specialties}}
+          <option value="{{trade_specialty}}" {{#ifEquals ../selectedSpecialty trade_specialty}}selected{{/ifEquals}}>{{trade_specialty}}</option>
+          {{/specialties}}
+        </select>
+      </div>
+      <div class="col-md-2">
+        <button type="submit" class="btn btn-primary">
+          <i class="bi bi-search"></i> Search
+        </button>
+        <a href="/suppliers" class="btn btn-secondary">
+          <i class="bi bi-arrow-clockwise"></i> Reset
+        </a>
+      </div>
+      <div class="col-md-2 text-end">
+        <a href="/suppliers/create" class="btn btn-success">
+          <i class="bi bi-plus-circle"></i> Add Supplier
+        </a>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <h5 class="mb-0">All Suppliers</h5>
+  </div>
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Trade Specialty</th>
+            <th>Email</th>
+            <th>Partnership</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#suppliers}}
+          <tr>
+            <td><strong>{{name}}</strong></td>
+            <td>
+              {{#if trade_specialty}}
+              <span class="badge bg-secondary">{{trade_specialty}}</span>
+              {{else}}
+              <span class="text-muted">-</span>
+              {{/if}}
+            </td>
+            <td>{{email}}</td>
+            <td>
+              {{#ifEquals partnership_status 'partnered'}}
+              <span class="badge partnership-{{partnership_status_detail}}">{{partnership_status_detail}}</span>
+              {{else}}
+              <span class="badge bg-light text-dark">Not Partnered</span>
+              {{/ifEquals}}
+            </td>
+            <td>
+              <a href="/suppliers/{{id}}" class="btn btn-sm btn-primary">
+                <i class="bi bi-eye"></i> View
+              </a>
+              <a href="/suppliers/{{id}}/edit" class="btn btn-sm btn-secondary">
+                <i class="bi bi-pencil"></i> Edit
+              </a>
+              <button type="button" class="btn btn-sm btn-danger" 
+                data-bs-toggle="modal" 
+                data-bs-target="#deleteModal"
+                data-item-name="{{name}}"
+                data-delete-url="/suppliers/{{id}}/delete">
+                <i class="bi bi-trash"></i> Delete
+              </button>
+            </td>
+          </tr>
+          {{/suppliers}}
+          
+          {{^suppliers}}
+          <tr>
+            <td colspan="5" class="text-center text-muted">No suppliers found</td>
+          </tr>
+          {{/suppliers}}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+{{> delete-modal}}
+

@@ -1,0 +1,74 @@
+<div class="row mb-4">
+  <div class="col">
+    <h2>Create New Supplier</h2>
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/dashboard">Dashboard</a></li>
+        <li class="breadcrumb-item"><a href="/suppliers">Suppliers</a></li>
+        <li class="breadcrumb-item active">Create Supplier</li>
+      </ol>
+    </nav>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <h5 class="mb-0">Supplier Information</h5>
+  </div>
+  <div class="card-body">
+    <form method="POST" action="/suppliers">
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label for="name" class="form-label">Supplier Name
+            <span class="text-danger">*</span></label>
+          <input
+            type="text"
+            class="form-control"
+            id="name"
+            name="name"
+            required
+            maxlength="255"
+            placeholder="Enter supplier name"
+          />
+        </div>
+
+        <div class="col-md-6 mb-3">
+          <label for="email" class="form-label">Email</label>
+          <input
+            type="email"
+            class="form-control"
+            id="email"
+            name="email"
+            placeholder="supplier@example.com (optional)"
+          />
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label for="trade_specialty" class="form-label">Trade Specialty</label>
+          <input
+            type="text"
+            class="form-control"
+            id="trade_specialty"
+            name="trade_specialty"
+            maxlength="100"
+            placeholder="e.g., Concrete, Steel, Electrical"
+          />
+        </div>
+      </div>
+
+      <div class="d-flex gap-2">
+        <button type="submit" class="btn btn-primary">
+          <i class="bi bi-check-circle"></i>
+          Create Supplier
+        </button>
+        <a href="/suppliers" class="btn btn-secondary">
+          <i class="bi bi-x-circle"></i>
+          Cancel
+        </a>
+      </div>
+    </form>
+  </div>
+</div>
+

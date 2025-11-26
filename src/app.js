@@ -174,12 +174,20 @@ const dashboardRoutes = require("./routes/dashboard");
 const projectRoutes = require("./routes/projects");
 const rfqRoutes = require("./routes/rfqs");
 const quoteRoutes = require("./routes/quotes");
+const companyRoutes = require("./routes/companies");
+const supplierRoutes = require("./routes/suppliers");
+const materialRoutes = require("./routes/materials");
+const poRoutes = require("./routes/pos");
 
 app.use("/", authRoutes);
 app.use("/", dashboardRoutes);
 app.use("/", projectRoutes);
 app.use("/", rfqRoutes);
 app.use("/", quoteRoutes);
+app.use("/", companyRoutes);
+app.use("/", supplierRoutes);
+app.use("/", materialRoutes);
+app.use("/", poRoutes);
 
 app.use((req, res, next) => {
   res.status(404).render("shared/error", {

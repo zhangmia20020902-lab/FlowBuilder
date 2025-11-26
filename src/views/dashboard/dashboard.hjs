@@ -8,14 +8,14 @@
 <!-- Statistics Cards -->
 <div class="row mb-4">
   <div class="col-md-3">
-    <div class="card stat-card">
+    <div class="card stat-card primary">
       <div class="card-body">
         <div class="d-flex justify-content-between align-items-center">
           <div>
             <h6 class="text-muted mb-1">Total Projects</h6>
             <h3 class="mb-0">{{ stats.projects }}</h3>
           </div>
-          <div class="fs-1 text-primary">
+          <div class="fs-1 text-secondary">
             <i class="bi bi-folder"></i>
           </div>
         </div>
@@ -24,14 +24,14 @@
   </div>
   
   <div class="col-md-3">
-    <div class="card stat-card info">
+    <div class="card stat-card">
       <div class="card-body">
         <div class="d-flex justify-content-between align-items-center">
           <div>
             <h6 class="text-muted mb-1">Total RFQs</h6>
             <h3 class="mb-0">{{ stats.rfqs }}</h3>
           </div>
-          <div class="fs-1 text-info">
+          <div class="fs-1 text-secondary">
             <i class="bi bi-file-earmark-text"></i>
           </div>
         </div>
@@ -40,14 +40,14 @@
   </div>
   
   <div class="col-md-3">
-    <div class="card stat-card warning">
+    <div class="card stat-card">
       <div class="card-body">
         <div class="d-flex justify-content-between align-items-center">
           <div>
             <h6 class="text-muted mb-1">Open RFQs</h6>
             <h3 class="mb-0">{{ stats.openRfqs }}</h3>
           </div>
-          <div class="fs-1 text-warning">
+          <div class="fs-1 text-secondary">
             <i class="bi bi-hourglass-split"></i>
           </div>
         </div>
@@ -56,14 +56,14 @@
   </div>
   
   <div class="col-md-3">
-    <div class="card stat-card success">
+    <div class="card stat-card">
       <div class="card-body">
         <div class="d-flex justify-content-between align-items-center">
           <div>
-            <h6 class="text-muted mb-1">Purchase Orders</h6>
-            <h3 class="mb-0">{{ stats.pos }}</h3>
+            <h6 class="text-muted mb-1">Active POs</h6>
+            <h3 class="mb-0">{{ stats.activePOs }}</h3>
           </div>
-          <div class="fs-1 text-success">
+          <div class="fs-1 text-secondary">
             <i class="bi bi-receipt"></i>
           </div>
         </div>
@@ -72,9 +72,76 @@
   </div>
 </div>
 
-<!-- Recent Projects and RFQs -->
+<!-- Additional Statistics -->
+<div class="row mb-4">
+  <div class="col-md-3">
+    <div class="card stat-card">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <h6 class="text-muted mb-1">Suppliers</h6>
+            <h3 class="mb-0">{{ stats.suppliers }}</h3>
+          </div>
+          <div class="fs-1 text-secondary">
+            <i class="bi bi-truck"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-3">
+    <div class="card stat-card">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <h6 class="text-muted mb-1">Materials</h6>
+            <h3 class="mb-0">{{ stats.materials }}</h3>
+          </div>
+          <div class="fs-1 text-secondary">
+            <i class="bi bi-box-seam"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-3">
+    <div class="card stat-card">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <h6 class="text-muted mb-1">Users</h6>
+            <h3 class="mb-0">{{ stats.users }}</h3>
+          </div>
+          <div class="fs-1 text-secondary">
+            <i class="bi bi-people"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-3">
+    <div class="card stat-card">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <h6 class="text-muted mb-1">Total POs</h6>
+            <h3 class="mb-0">{{ stats.pos }}</h3>
+          </div>
+          <div class="fs-1 text-secondary">
+            <i class="bi bi-receipt-cutoff"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Recent Activities -->
 <div class="row">
-  <div class="col-md-6">
+  <div class="col-md-4">
     <div class="card">
       <div class="card-header d-flex justify-content-between align-items-center">
         <h5 class="mb-0">Recent Projects</h5>
@@ -82,7 +149,7 @@
       </div>
       <div class="card-body">
         {{#recentProjects}}
-        <div class="d-flex justify-content-between align-items-center mb-3">
+        <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
           <div>
             <a href="/projects/{{ id }}" class="text-decoration-none">
               <strong>{{ name }}</strong>
@@ -100,14 +167,14 @@
     </div>
   </div>
   
-  <div class="col-md-6">
+  <div class="col-md-4">
     <div class="card">
       <div class="card-header d-flex justify-content-between align-items-center">
         <h5 class="mb-0">Recent RFQs</h5>
       </div>
       <div class="card-body">
         {{#recentRfqs}}
-        <div class="d-flex justify-content-between align-items-center mb-3">
+        <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
           <div>
             <strong>{{ name }}</strong>
             <br>
@@ -120,6 +187,31 @@
         {{^recentRfqs}}
         <p class="text-muted text-center mb-0">No RFQs yet</p>
         {{/recentRfqs}}
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-4">
+    <div class="card">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">Recent POs</h5>
+        <a href="/pos" class="btn btn-sm btn-primary">View All</a>
+      </div>
+      <div class="card-body">
+        {{#recentPOs}}
+        <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
+          <div>
+            <strong>PO #{{ id }}</strong>
+            <br>
+            <small class="text-muted">{{ supplier_name }} - {{ project_name }}</small>
+          </div>
+          <span class="badge status-{{ status }}">{{ status }}</span>
+        </div>
+        {{/recentPOs}}
+        
+        {{^recentPOs}}
+        <p class="text-muted text-center mb-0">No POs yet</p>
+        {{/recentPOs}}
       </div>
     </div>
   </div>

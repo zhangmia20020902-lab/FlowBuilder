@@ -1,6 +1,4 @@
--- Note: This migration requires categories table to exist first
--- Categories table is created in 007_create_categories_table.sql
--- This file should be renamed to 008_create_materials_table.sql after consolidation
+-- Requires: 007_create_categories_table.sql
 
 CREATE TABLE IF NOT EXISTS materials (
   id INT PRIMARY KEY AUTO_INCREMENT,

@@ -5,7 +5,3 @@ INSERT INTO categories (name, description) VALUES
 ('Plumbing', 'Plumbing materials including pipes, fixtures, and fittings'),
 ('HVAC', 'Heating, ventilation, and air conditioning materials'),
 ('General', 'General construction materials and supplies');
-
-UPDATE materials m
-JOIN categories c ON m.category = c.name
-SET m.category_id = c.id;

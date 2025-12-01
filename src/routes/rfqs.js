@@ -15,6 +15,11 @@ router.get("/projects/:id/rfqs", requireAuth, async (req, res) => {
     const companyId = req.session.companyId;
     const { search, status, sortBy } = req.query;
 
+    // Pagination settings
+    const itemsPerPage = 10;
+    const page = Math.max(1, parseInt(req.query.page) || 1);
+    const offset = (page - 1) * itemsPerPage;
+
     const projects = await query(
       "SELECT * FROM projects WHERE id = ? AND company_id = ?",
       [projectId, companyId]
@@ -54,9 +59,59 @@ router.get("/projects/:id/rfqs", requireAuth, async (req, res) => {
     };
 
     const sortColumn = validSortOptions[sortBy] || "created_at DESC";
-    sql += ` ORDER BY ${sortColumn}`;
+
+    // Count total items for pagination (using same WHERE conditions)
+    let countSql = "SELECT COUNT(*) as total FROM rfqs WHERE project_id = ?";
+    const countParams = [projectId];
+
+    if (search && search.trim()) {
+      countSql += " AND name LIKE ?";
+      countParams.push(`%${search.trim()}%`);
+    }
+
+    if (status && status !== "all") {
+      countSql += " AND status = ?";
+      countParams.push(status);
+    }
+
+    const countResult = await query(countSql, countParams);
+    const totalItems = countResult[0].total;
+    const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+    // Add sorting and pagination to main query
+    sql += ` ORDER BY ${sortColumn} LIMIT ${itemsPerPage} OFFSET ${offset}`;
 
     const rfqs = await query(sql, params);
+
+    // Build pagination data
+    const startPage = Math.max(1, page - 2);
+    const endPage = Math.min(totalPages, page + 2);
+
+    const pagination = {
+      currentPage: page,
+      totalPages,
+      totalItems,
+      itemsPerPage,
+      hasNextPage: page < totalPages,
+      hasPrevPage: page > 1,
+      nextPage: page + 1,
+      prevPage: page - 1,
+      startItem: totalItems > 0 ? (page - 1) * itemsPerPage + 1 : 0,
+      endItem: Math.min(page * itemsPerPage, totalItems),
+      showFirstPage: startPage > 1,
+      showFirstEllipsis: startPage > 2,
+      showLastPage: endPage < totalPages,
+      showLastEllipsis: endPage < totalPages - 1,
+      pages: [],
+    };
+
+    // Generate page numbers array (show max 5 pages around current)
+    for (let i = startPage; i <= endPage; i++) {
+      pagination.pages.push({
+        number: i,
+        isActive: i === page,
+      });
+    }
 
     // Get status counts for filter badges
     const statusCounts = await query(
@@ -81,6 +136,7 @@ router.get("/projects/:id/rfqs", requireAuth, async (req, res) => {
       sortBy: sortBy || "newest",
       statusCounts: statusCountsMap,
       resultCount: rfqs.length,
+      pagination,
     });
   } catch (error) {
     logger.error("RFQs manage error", {
@@ -117,7 +173,11 @@ router.get("/projects/:id/rfqs/create", requireAuth, async (req, res) => {
 
     // Get available materials
     const materials = await query(
-      "SELECT * FROM materials WHERE company_id = ? ORDER BY category, name",
+      `SELECT m.*, c.name as category 
+       FROM materials m 
+       LEFT JOIN categories c ON m.category_id = c.id 
+       WHERE m.company_id = ? 
+       ORDER BY c.name, m.name`,
       [companyId]
     );
 
@@ -248,11 +308,12 @@ router.get("/rfqs/:id", requireAuth, async (req, res) => {
 
     // Get selected materials with quantities
     const selectedMaterials = await query(
-      `SELECT rm.material_id, rm.quantity, m.name, m.category, m.unit 
+      `SELECT rm.material_id, rm.quantity, m.name, c.name as category, m.unit 
        FROM rfq_materials rm 
        JOIN materials m ON rm.material_id = m.id 
+       LEFT JOIN categories c ON m.category_id = c.id 
        WHERE rm.rfq_id = ?
-       ORDER BY m.category, m.name`,
+       ORDER BY c.name, m.name`,
       [rfqId]
     );
 
@@ -335,15 +396,20 @@ router.get("/rfqs/:id/edit", requireAuth, async (req, res) => {
 
     // Get available materials
     const materials = await query(
-      "SELECT * FROM materials WHERE company_id = ? ORDER BY category, name",
+      `SELECT m.*, c.name as category 
+       FROM materials m 
+       LEFT JOIN categories c ON m.category_id = c.id 
+       WHERE m.company_id = ? 
+       ORDER BY c.name, m.name`,
       [companyId]
     );
 
     // Get selected materials
     const selectedMaterials = await query(
-      `SELECT rm.*, m.name, m.unit 
+      `SELECT rm.*, m.name, m.unit, c.name as category 
        FROM rfq_materials rm 
        JOIN materials m ON rm.material_id = m.id 
+       LEFT JOIN categories c ON m.category_id = c.id 
        WHERE rm.rfq_id = ?`,
       [rfqId]
     );

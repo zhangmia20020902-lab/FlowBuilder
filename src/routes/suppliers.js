@@ -13,31 +13,51 @@ router.get("/suppliers", requireAuth, async (req, res) => {
     const companyId = req.session.companyId;
     const { search, trade_specialty } = req.query;
 
-    let sql = `
+    // Pagination settings
+    const itemsPerPage = 10;
+    const page = Math.max(1, parseInt(req.query.page) || 1);
+    const offset = (page - 1) * itemsPerPage;
+
+    // Build WHERE conditions
+    let whereClause = "WHERE s.company_id = ?";
+    const params = [companyId, companyId]; // First for LEFT JOIN, second for WHERE
+
+    if (search && search.trim()) {
+      whereClause +=
+        " AND (s.name LIKE ? OR s.email LIKE ? OR s.trade_specialty LIKE ?)";
+      const searchTerm = `%${search.trim()}%`;
+      params.push(searchTerm, searchTerm, searchTerm);
+    }
+
+    if (trade_specialty && trade_specialty !== "all") {
+      whereClause += " AND s.trade_specialty = ?";
+      params.push(trade_specialty);
+    }
+
+    // Count total items for pagination
+    const countSql = `
+      SELECT COUNT(*) as total 
+      FROM suppliers s
+      LEFT JOIN company_suppliers cs ON s.id = cs.supplier_id AND cs.company_id = ?
+      ${whereClause}
+    `;
+    const countResult = await query(countSql, params);
+    const totalItems = countResult[0].total;
+    const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+    // Get paginated suppliers
+    const sql = `
       SELECT s.*, 
         CASE WHEN cs.company_id IS NOT NULL THEN 'partnered' ELSE 'not_partnered' END as partnership_status,
         cs.status as partnership_status_detail,
         cs.notes as partnership_notes
       FROM suppliers s
       LEFT JOIN company_suppliers cs ON s.id = cs.supplier_id AND cs.company_id = ?
-      WHERE s.company_id = ?
+      ${whereClause}
+      ORDER BY s.name ASC
+      LIMIT ${itemsPerPage} OFFSET ${offset}
     `;
-    const params = [companyId, companyId];
-
-    if (search && search.trim()) {
-      sql += " AND (s.name LIKE ? OR s.email LIKE ? OR s.trade_specialty LIKE ?)";
-      const searchTerm = `%${search.trim()}%`;
-      params.push(searchTerm, searchTerm, searchTerm);
-    }
-
-    if (trade_specialty && trade_specialty !== "all") {
-      sql += " AND s.trade_specialty = ?";
-      params.push(trade_specialty);
-    }
-
-    sql += " ORDER BY s.name ASC";
-
-    const suppliers = await query(sql, params);
+    const suppliers = await query(sql, [companyId, ...params.slice(1)]);
 
     // Get unique trade specialties for filter
     const specialties = await query(
@@ -45,12 +65,43 @@ router.get("/suppliers", requireAuth, async (req, res) => {
       [companyId]
     );
 
+    // Build pagination data
+    const startPage = Math.max(1, page - 2);
+    const endPage = Math.min(totalPages, page + 2);
+
+    const pagination = {
+      currentPage: page,
+      totalPages,
+      totalItems,
+      itemsPerPage,
+      hasNextPage: page < totalPages,
+      hasPrevPage: page > 1,
+      nextPage: page + 1,
+      prevPage: page - 1,
+      startItem: totalItems > 0 ? (page - 1) * itemsPerPage + 1 : 0,
+      endItem: Math.min(page * itemsPerPage, totalItems),
+      showFirstPage: startPage > 1,
+      showFirstEllipsis: startPage > 2,
+      showLastPage: endPage < totalPages,
+      showLastEllipsis: endPage < totalPages - 1,
+      pages: [],
+    };
+
+    // Generate page numbers array (show max 5 pages around current)
+    for (let i = startPage; i <= endPage; i++) {
+      pagination.pages.push({
+        number: i,
+        isActive: i === page,
+      });
+    }
+
     res.render("suppliers/suppliers", {
       title: "Suppliers Directory - FlowBuilder",
       suppliers,
       specialties,
       search: search || "",
       selectedSpecialty: trade_specialty || "all",
+      pagination,
     });
   } catch (error) {
     console.error("Suppliers list error:", error);
@@ -398,35 +449,38 @@ router.post("/suppliers/:id/unpartner", requireAuth, async (req, res) => {
 });
 
 // Update partnership
-router.post("/suppliers/:id/partnership/update", requireAuth, async (req, res) => {
-  try {
-    const supplierId = req.params.id;
-    const companyId = req.session.companyId;
-    const { notes, status } = req.body;
+router.post(
+  "/suppliers/:id/partnership/update",
+  requireAuth,
+  async (req, res) => {
+    try {
+      const supplierId = req.params.id;
+      const companyId = req.session.companyId;
+      const { notes, status } = req.body;
 
-    await query(
-      "UPDATE company_suppliers SET notes = ?, status = ? WHERE company_id = ? AND supplier_id = ?",
-      [notes || null, status, companyId, supplierId]
-    );
+      await query(
+        "UPDATE company_suppliers SET notes = ?, status = ? WHERE company_id = ? AND supplier_id = ?",
+        [notes || null, status, companyId, supplierId]
+      );
 
-    req.session.flash = {
-      success: "Partnership updated successfully",
-    };
-    req.session.save((err) => {
-      if (err) console.error("Session save error:", err);
-      res.redirect(`/suppliers/${supplierId}`);
-    });
-  } catch (error) {
-    console.error("Partnership update error:", error);
-    req.session.flash = {
-      error: "Error updating partnership",
-    };
-    req.session.save((err) => {
-      if (err) console.error("Session save error:", err);
-      res.redirect(`/suppliers/${supplierId}`);
-    });
+      req.session.flash = {
+        success: "Partnership updated successfully",
+      };
+      req.session.save((err) => {
+        if (err) console.error("Session save error:", err);
+        res.redirect(`/suppliers/${supplierId}`);
+      });
+    } catch (error) {
+      console.error("Partnership update error:", error);
+      req.session.flash = {
+        error: "Error updating partnership",
+      };
+      req.session.save((err) => {
+        if (err) console.error("Session save error:", err);
+        res.redirect(`/suppliers/${supplierId}`);
+      });
+    }
   }
-});
+);
 
 module.exports = router;
-

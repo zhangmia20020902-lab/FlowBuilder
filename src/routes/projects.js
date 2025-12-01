@@ -205,9 +205,9 @@ router.get("/projects/:id", requireAuth, async (req, res) => {
 
     const project = projects[0];
 
-    // Get RFQs for this project with status counts
+    // Get recent RFQs for this project (limited to 5 most recent)
     const rfqs = await query(
-      "SELECT * FROM rfqs WHERE project_id = ? ORDER BY created_at DESC",
+      "SELECT * FROM rfqs WHERE project_id = ? ORDER BY created_at DESC LIMIT 5",
       [projectId]
     );
 
@@ -239,7 +239,7 @@ router.get("/projects/:id", requireAuth, async (req, res) => {
        JOIN suppliers s ON q.supplier_id = s.id
        JOIN rfqs r ON q.rfq_id = r.id
        WHERE r.project_id = ? 
-       ORDER BY po.created_at DESC`,
+       ORDER BY po.created_at DESC LIMIT 5`,
       [projectId]
     );
 
@@ -315,6 +315,12 @@ router.get("/projects/:id/po-tracker", requireAuth, async (req, res) => {
   try {
     const projectId = req.params.id;
     const companyId = req.session.companyId;
+    const { page: pageParam } = req.query;
+
+    // Pagination settings
+    const itemsPerPage = 10;
+    const page = Math.max(1, parseInt(pageParam) || 1);
+    const offset = (page - 1) * itemsPerPage;
 
     const projects = await query(
       "SELECT * FROM projects WHERE id = ? AND company_id = ?",
@@ -330,7 +336,19 @@ router.get("/projects/:id/po-tracker", requireAuth, async (req, res) => {
 
     const project = projects[0];
 
-    // Get all POs for this project
+    // Count total items for pagination
+    const countResult = await query(
+      `SELECT COUNT(*) as total
+       FROM pos po 
+       JOIN quotes q ON po.quote_id = q.id 
+       JOIN rfqs r ON q.rfq_id = r.id
+       WHERE r.project_id = ?`,
+      [projectId]
+    );
+    const totalItems = countResult[0].total;
+    const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+    // Get POs for this project with pagination
     const pos = await query(
       `SELECT po.*, q.supplier_id, s.name as supplier_name, r.name as rfq_name
        FROM pos po 
@@ -338,14 +356,46 @@ router.get("/projects/:id/po-tracker", requireAuth, async (req, res) => {
        JOIN suppliers s ON q.supplier_id = s.id
        JOIN rfqs r ON q.rfq_id = r.id
        WHERE r.project_id = ? 
-       ORDER BY po.created_at DESC`,
+       ORDER BY po.created_at DESC
+       LIMIT ${itemsPerPage} OFFSET ${offset}`,
       [projectId]
     );
+
+    // Build pagination data
+    const startPage = Math.max(1, page - 2);
+    const endPage = Math.min(totalPages, page + 2);
+
+    const pagination = {
+      currentPage: page,
+      totalPages,
+      totalItems,
+      itemsPerPage,
+      hasNextPage: page < totalPages,
+      hasPrevPage: page > 1,
+      nextPage: page + 1,
+      prevPage: page - 1,
+      startItem: totalItems > 0 ? (page - 1) * itemsPerPage + 1 : 0,
+      endItem: Math.min(page * itemsPerPage, totalItems),
+      showFirstPage: startPage > 1,
+      showFirstEllipsis: startPage > 2,
+      showLastPage: endPage < totalPages,
+      showLastEllipsis: endPage < totalPages - 1,
+      pages: [],
+    };
+
+    // Generate page numbers array (show max 5 pages around current)
+    for (let i = startPage; i <= endPage; i++) {
+      pagination.pages.push({
+        number: i,
+        isActive: i === page,
+      });
+    }
 
     res.render("pos/po-tracker", {
       title: `PO Tracker - ${project.name} - FlowBuilder`,
       project,
       pos,
+      pagination,
     });
   } catch (error) {
     console.error("PO Tracker error:", error);

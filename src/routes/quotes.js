@@ -13,7 +13,12 @@ router.get("/projects/:id/quotes", requireAuth, async (req, res) => {
   try {
     const projectId = req.params.id;
     const companyId = req.session.companyId;
-    const { status, rfq_id } = req.query;
+    const { status, rfq_id, page: pageParam } = req.query;
+
+    // Pagination settings
+    const itemsPerPage = 10;
+    const page = Math.max(1, parseInt(pageParam) || 1);
+    const offset = (page - 1) * itemsPerPage;
 
     const projects = await query(
       "SELECT * FROM projects WHERE id = ? AND company_id = ?",
@@ -49,7 +54,29 @@ router.get("/projects/:id/quotes", requireAuth, async (req, res) => {
       params.push(rfq_id);
     }
 
-    sql += " ORDER BY q.created_at DESC";
+    // Count total items for pagination (using same WHERE conditions)
+    let countSql = `SELECT COUNT(*) as total 
+                    FROM quotes q 
+                    JOIN rfqs r ON q.rfq_id = r.id 
+                    WHERE r.project_id = ?`;
+    const countParams = [projectId];
+
+    if (status && status !== "all") {
+      countSql += " AND q.status = ?";
+      countParams.push(status);
+    }
+
+    if (rfq_id && rfq_id !== "all") {
+      countSql += " AND q.rfq_id = ?";
+      countParams.push(rfq_id);
+    }
+
+    const countResult = await query(countSql, countParams);
+    const totalItems = countResult[0].total;
+    const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+    // Add sorting and pagination to main query
+    sql += ` ORDER BY q.created_at DESC LIMIT ${itemsPerPage} OFFSET ${offset}`;
 
     const quotes = await query(sql, params);
 
@@ -74,6 +101,36 @@ router.get("/projects/:id/quotes", requireAuth, async (req, res) => {
       statusCountsMap[sc.status] = sc.count;
     });
 
+    // Build pagination data
+    const startPage = Math.max(1, page - 2);
+    const endPage = Math.min(totalPages, page + 2);
+
+    const pagination = {
+      currentPage: page,
+      totalPages,
+      totalItems,
+      itemsPerPage,
+      hasNextPage: page < totalPages,
+      hasPrevPage: page > 1,
+      nextPage: page + 1,
+      prevPage: page - 1,
+      startItem: totalItems > 0 ? (page - 1) * itemsPerPage + 1 : 0,
+      endItem: Math.min(page * itemsPerPage, totalItems),
+      showFirstPage: startPage > 1,
+      showFirstEllipsis: startPage > 2,
+      showLastPage: endPage < totalPages,
+      showLastEllipsis: endPage < totalPages - 1,
+      pages: [],
+    };
+
+    // Generate page numbers array (show max 5 pages around current)
+    for (let i = startPage; i <= endPage; i++) {
+      pagination.pages.push({
+        number: i,
+        isActive: i === page,
+      });
+    }
+
     res.render("quotes/quotes-manage", {
       title: `Manage Quotes - ${project.name} - FlowBuilder`,
       project,
@@ -83,6 +140,7 @@ router.get("/projects/:id/quotes", requireAuth, async (req, res) => {
       selectedRfqId: rfq_id || "all",
       statusCounts: statusCountsMap,
       resultCount: quotes.length,
+      pagination,
     });
   } catch (error) {
     logger.error("Quotes manage error", {

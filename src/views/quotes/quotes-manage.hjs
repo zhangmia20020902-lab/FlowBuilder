@@ -110,6 +110,68 @@
         {{/quotes}}
       </tbody>
     </table>
+
+    {{#if pagination.totalPages}}
+    {{#if (gt pagination.totalPages 1)}}
+    <div class="d-flex justify-content-between align-items-center mt-3">
+      <div class="text-muted">
+        Showing {{pagination.startItem}} - {{pagination.endItem}} of {{pagination.totalItems}} quotes
+      </div>
+      <nav aria-label="Quotes pagination">
+        <ul class="pagination mb-0">
+          {{#if pagination.hasPrevPage}}
+          <li class="page-item">
+            <a class="page-link" href="/projects/{{ project.id }}/quotes?page={{pagination.prevPage}}{{#ifNotEquals selectedStatus 'all'}}&status={{selectedStatus}}{{/ifNotEquals}}{{#ifNotEquals selectedRfqId 'all'}}&rfq_id={{selectedRfqId}}{{/ifNotEquals}}">
+              <i class="bi bi-chevron-left"></i> Previous
+            </a>
+          </li>
+          {{else}}
+          <li class="page-item disabled">
+            <span class="page-link"><i class="bi bi-chevron-left"></i> Previous</span>
+          </li>
+          {{/if}}
+
+          {{#if pagination.showFirstPage}}
+          <li class="page-item">
+            <a class="page-link" href="/projects/{{ project.id }}/quotes?page=1{{#ifNotEquals selectedStatus 'all'}}&status={{selectedStatus}}{{/ifNotEquals}}{{#ifNotEquals selectedRfqId 'all'}}&rfq_id={{selectedRfqId}}{{/ifNotEquals}}">1</a>
+          </li>
+          {{#if pagination.showFirstEllipsis}}
+          <li class="page-item disabled"><span class="page-link">...</span></li>
+          {{/if}}
+          {{/if}}
+
+          {{#pagination.pages}}
+          <li class="page-item {{#if isActive}}active{{/if}}">
+            <a class="page-link" href="/projects/{{ ../project.id }}/quotes?page={{number}}{{#ifNotEquals ../selectedStatus 'all'}}&status={{../selectedStatus}}{{/ifNotEquals}}{{#ifNotEquals ../selectedRfqId 'all'}}&rfq_id={{../selectedRfqId}}{{/ifNotEquals}}">{{number}}</a>
+          </li>
+          {{/pagination.pages}}
+
+          {{#if pagination.showLastPage}}
+          {{#if pagination.showLastEllipsis}}
+          <li class="page-item disabled"><span class="page-link">...</span></li>
+          {{/if}}
+          <li class="page-item">
+            <a class="page-link" href="/projects/{{ project.id }}/quotes?page={{pagination.totalPages}}{{#ifNotEquals selectedStatus 'all'}}&status={{selectedStatus}}{{/ifNotEquals}}{{#ifNotEquals selectedRfqId 'all'}}&rfq_id={{selectedRfqId}}{{/ifNotEquals}}">{{pagination.totalPages}}</a>
+          </li>
+          {{/if}}
+
+          {{#if pagination.hasNextPage}}
+          <li class="page-item">
+            <a class="page-link" href="/projects/{{ project.id }}/quotes?page={{pagination.nextPage}}{{#ifNotEquals selectedStatus 'all'}}&status={{selectedStatus}}{{/ifNotEquals}}{{#ifNotEquals selectedRfqId 'all'}}&rfq_id={{selectedRfqId}}{{/ifNotEquals}}">
+              Next <i class="bi bi-chevron-right"></i>
+            </a>
+          </li>
+          {{else}}
+          <li class="page-item disabled">
+            <span class="page-link">Next <i class="bi bi-chevron-right"></i></span>
+          </li>
+          {{/if}}
+        </ul>
+      </nav>
+    </div>
+    {{/if}}
+    {{/if}}
+
   </div>
 </div>
 

@@ -52,6 +52,68 @@
         {{/pos}}
       </tbody>
     </table>
+
+    {{#if pagination.totalPages}}
+    {{#if (gt pagination.totalPages 1)}}
+    <div class="d-flex justify-content-between align-items-center mt-3">
+      <div class="text-muted">
+        Showing {{pagination.startItem}} - {{pagination.endItem}} of {{pagination.totalItems}} purchase orders
+      </div>
+      <nav aria-label="PO Tracker pagination">
+        <ul class="pagination mb-0">
+          {{#if pagination.hasPrevPage}}
+          <li class="page-item">
+            <a class="page-link" href="/projects/{{ project.id }}/po-tracker?page={{pagination.prevPage}}">
+              <i class="bi bi-chevron-left"></i> Previous
+            </a>
+          </li>
+          {{else}}
+          <li class="page-item disabled">
+            <span class="page-link"><i class="bi bi-chevron-left"></i> Previous</span>
+          </li>
+          {{/if}}
+
+          {{#if pagination.showFirstPage}}
+          <li class="page-item">
+            <a class="page-link" href="/projects/{{ project.id }}/po-tracker?page=1">1</a>
+          </li>
+          {{#if pagination.showFirstEllipsis}}
+          <li class="page-item disabled"><span class="page-link">...</span></li>
+          {{/if}}
+          {{/if}}
+
+          {{#pagination.pages}}
+          <li class="page-item {{#if isActive}}active{{/if}}">
+            <a class="page-link" href="/projects/{{ ../project.id }}/po-tracker?page={{number}}">{{number}}</a>
+          </li>
+          {{/pagination.pages}}
+
+          {{#if pagination.showLastPage}}
+          {{#if pagination.showLastEllipsis}}
+          <li class="page-item disabled"><span class="page-link">...</span></li>
+          {{/if}}
+          <li class="page-item">
+            <a class="page-link" href="/projects/{{ project.id }}/po-tracker?page={{pagination.totalPages}}">{{pagination.totalPages}}</a>
+          </li>
+          {{/if}}
+
+          {{#if pagination.hasNextPage}}
+          <li class="page-item">
+            <a class="page-link" href="/projects/{{ project.id }}/po-tracker?page={{pagination.nextPage}}">
+              Next <i class="bi bi-chevron-right"></i>
+            </a>
+          </li>
+          {{else}}
+          <li class="page-item disabled">
+            <span class="page-link">Next <i class="bi bi-chevron-right"></i></span>
+          </li>
+          {{/if}}
+        </ul>
+      </nav>
+    </div>
+    {{/if}}
+    {{/if}}
+
   </div>
 </div>
 

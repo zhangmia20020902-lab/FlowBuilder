@@ -21,8 +21,9 @@ async function runMigrations() {
       const sql = await fs.readFile(filePath, "utf8");
 
       logger.debug(`Executing migration: ${file}`);
+      // Split on semicolons followed by newline or end of content to avoid splitting on semicolons inside strings
       const statements = sql
-        .split(";")
+        .split(/;(?=[\r\n]|$)/)
         .map((s) => s.trim())
         .filter((s) => s.length > 0);
 
@@ -69,8 +70,9 @@ async function runSeeds() {
 
       logger.debug(`Executing seed: ${file}`);
 
+      // Split on semicolons followed by newline or end of content to avoid splitting on semicolons inside strings
       const statements = sql
-        .split(";")
+        .split(/;(?=[\r\n]|$)/)
         .map((s) => s.trim())
         .filter((s) => s.length > 0);
 

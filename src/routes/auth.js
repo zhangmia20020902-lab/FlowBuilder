@@ -13,16 +13,13 @@ router.get("/", guestOnly, (req, res) => {
 
 // Show login page
 router.get("/auth/signin", guestOnly, (req, res) => {
-  const flash = req.session.flash || {};
-
-  if (req.session.flash) {
-    delete req.session.flash;
-  }
-
+  // Use res.locals.flash which is populated by the global middleware in app.js
+  // The middleware already handles reading from session and cleanup
   res.render("auth/signin", {
+    layout: "auth-layout",
     title: "Sign In - FlowBuilder",
-    error: flash.error || req.query.error,
-    success: flash.success,
+    error: res.locals.flash.error || req.query.error,
+    success: res.locals.flash.success,
   });
 });
 

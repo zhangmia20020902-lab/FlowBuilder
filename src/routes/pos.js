@@ -38,7 +38,12 @@ async function notifyPOStatusChange(poId, newStatus, companyId) {
 router.get("/pos", requireAuth, async (req, res) => {
   try {
     const companyId = req.session.companyId;
-    const { status, project_id } = req.query;
+    const { status, project_id, page: pageParam } = req.query;
+
+    // Pagination settings
+    const itemsPerPage = 10;
+    const page = Math.max(1, parseInt(pageParam) || 1);
+    const offset = (page - 1) * itemsPerPage;
 
     let sql = `
       SELECT po.*, 
@@ -68,7 +73,33 @@ router.get("/pos", requireAuth, async (req, res) => {
       params.push(project_id);
     }
 
-    sql += " ORDER BY po.created_at DESC";
+    // Count total items for pagination (using same WHERE conditions)
+    let countSql = `
+      SELECT COUNT(*) as total
+      FROM pos po 
+      JOIN quotes q ON po.quote_id = q.id 
+      JOIN rfqs r ON q.rfq_id = r.id
+      JOIN projects p ON r.project_id = p.id
+      WHERE p.company_id = ?
+    `;
+    const countParams = [companyId];
+
+    if (status && status !== "all") {
+      countSql += " AND po.status = ?";
+      countParams.push(status);
+    }
+
+    if (project_id && project_id !== "all") {
+      countSql += " AND p.id = ?";
+      countParams.push(project_id);
+    }
+
+    const countResult = await query(countSql, countParams);
+    const totalItems = countResult[0].total;
+    const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+    // Add sorting and pagination to main query
+    sql += ` ORDER BY po.created_at DESC LIMIT ${itemsPerPage} OFFSET ${offset}`;
 
     const pos = await query(sql, params);
 
@@ -78,12 +109,43 @@ router.get("/pos", requireAuth, async (req, res) => {
       [companyId]
     );
 
+    // Build pagination data
+    const startPage = Math.max(1, page - 2);
+    const endPage = Math.min(totalPages, page + 2);
+
+    const pagination = {
+      currentPage: page,
+      totalPages,
+      totalItems,
+      itemsPerPage,
+      hasNextPage: page < totalPages,
+      hasPrevPage: page > 1,
+      nextPage: page + 1,
+      prevPage: page - 1,
+      startItem: totalItems > 0 ? (page - 1) * itemsPerPage + 1 : 0,
+      endItem: Math.min(page * itemsPerPage, totalItems),
+      showFirstPage: startPage > 1,
+      showFirstEllipsis: startPage > 2,
+      showLastPage: endPage < totalPages,
+      showLastEllipsis: endPage < totalPages - 1,
+      pages: [],
+    };
+
+    // Generate page numbers array (show max 5 pages around current)
+    for (let i = startPage; i <= endPage; i++) {
+      pagination.pages.push({
+        number: i,
+        isActive: i === page,
+      });
+    }
+
     res.render("pos/pos-list", {
       title: "Purchase Orders - FlowBuilder",
       pos,
       projects,
       selectedStatus: status || "all",
       selectedProject: project_id || "all",
+      pagination,
     });
   } catch (error) {
     console.error("POs list error:", error);
@@ -226,10 +288,7 @@ router.post("/pos/:id/update", requireAuth, async (req, res) => {
       });
     }
 
-    await query("UPDATE pos SET notes = ? WHERE id = ?", [
-      notes || null,
-      poId,
-    ]);
+    await query("UPDATE pos SET notes = ? WHERE id = ?", [notes || null, poId]);
 
     req.session.flash = {
       success: "PO updated successfully",
@@ -469,4 +528,3 @@ router.post("/notifications/read-all", requireAuth, async (req, res) => {
 });
 
 module.exports = router;
-

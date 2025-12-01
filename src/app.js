@@ -104,6 +104,26 @@ app.engine(
           minute: "2-digit",
         });
       },
+      // Helper for math operations (used in pagination)
+      math: function (lvalue, operator, rvalue) {
+        lvalue = parseFloat(lvalue);
+        rvalue = parseFloat(rvalue);
+        return {
+          "+": lvalue + rvalue,
+          "-": lvalue - rvalue,
+          "*": lvalue * rvalue,
+          "/": lvalue / rvalue,
+          "%": lvalue % rvalue,
+        }[operator];
+      },
+      // Helper for greater than comparison
+      gt: function (a, b) {
+        return a > b;
+      },
+      // Helper for less than comparison
+      lt: function (a, b) {
+        return a < b;
+      },
     },
   })
 );

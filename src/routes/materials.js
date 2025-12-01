@@ -14,27 +14,46 @@ router.get("/materials", requireAuth, async (req, res) => {
     const companyId = req.session.companyId;
     const { search, category } = req.query;
 
-    let sql = `
-      SELECT m.*, c.name as category_name 
-      FROM materials m 
-      LEFT JOIN categories c ON m.category_id = c.id 
-      WHERE m.company_id = ?
-    `;
+    // Pagination settings
+    const itemsPerPage = 10;
+    const page = Math.max(1, parseInt(req.query.page) || 1);
+    const offset = (page - 1) * itemsPerPage;
+
+    // Build WHERE conditions
+    let whereClause = "WHERE m.company_id = ?";
     const params = [companyId];
 
     if (search && search.trim()) {
-      sql += " AND (m.name LIKE ? OR m.sku LIKE ?)";
+      whereClause += " AND (m.name LIKE ? OR m.sku LIKE ?)";
       const searchTerm = `%${search.trim()}%`;
       params.push(searchTerm, searchTerm);
     }
 
     if (category && category !== "all") {
-      sql += " AND m.category_id = ?";
+      whereClause += " AND m.category_id = ?";
       params.push(category);
     }
 
-    sql += " ORDER BY m.name ASC";
+    // Count total items for pagination
+    const countSql = `
+      SELECT COUNT(*) as total 
+      FROM materials m 
+      LEFT JOIN categories c ON m.category_id = c.id 
+      ${whereClause}
+    `;
+    const countResult = await query(countSql, params);
+    const totalItems = countResult[0].total;
+    const totalPages = Math.ceil(totalItems / itemsPerPage);
 
+    // Get paginated materials
+    const sql = `
+      SELECT m.*, c.name as category_name 
+      FROM materials m 
+      LEFT JOIN categories c ON m.category_id = c.id 
+      ${whereClause}
+      ORDER BY m.name ASC
+      LIMIT ${itemsPerPage} OFFSET ${offset}
+    `;
     const materials = await query(sql, params);
 
     // Get all categories for filter dropdown
@@ -42,12 +61,43 @@ router.get("/materials", requireAuth, async (req, res) => {
       "SELECT * FROM categories ORDER BY name ASC"
     );
 
+    // Build pagination data
+    const startPage = Math.max(1, page - 2);
+    const endPage = Math.min(totalPages, page + 2);
+
+    const pagination = {
+      currentPage: page,
+      totalPages,
+      totalItems,
+      itemsPerPage,
+      hasNextPage: page < totalPages,
+      hasPrevPage: page > 1,
+      nextPage: page + 1,
+      prevPage: page - 1,
+      startItem: totalItems > 0 ? (page - 1) * itemsPerPage + 1 : 0,
+      endItem: Math.min(page * itemsPerPage, totalItems),
+      showFirstPage: startPage > 1,
+      showFirstEllipsis: startPage > 2,
+      showLastPage: endPage < totalPages,
+      showLastEllipsis: endPage < totalPages - 1,
+      pages: [],
+    };
+
+    // Generate page numbers array (show max 5 pages around current)
+    for (let i = startPage; i <= endPage; i++) {
+      pagination.pages.push({
+        number: i,
+        isActive: i === page,
+      });
+    }
+
     res.render("materials/materials", {
       title: "Materials Catalog - FlowBuilder",
       materials,
       categories,
       search: search || "",
       selectedCategory: category || "all",
+      pagination,
     });
   } catch (error) {
     console.error("Materials list error:", error);

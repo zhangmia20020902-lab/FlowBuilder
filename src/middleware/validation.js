@@ -24,6 +24,65 @@ function validateLogin(req, res, next) {
   next();
 }
 
+async function validateSignup(req, res, next) {
+  const { company_name, name, email, password } = req.body;
+  const { query } = require("../config/database");
+
+  if (!company_name || !company_name.trim()) {
+    req.session.flash = { error: "Company name is required" };
+    return res.redirect("/auth/signup");
+  }
+
+  if (company_name.length > 255) {
+    req.session.flash = { error: "Company name must not exceed 255 characters" };
+    return res.redirect("/auth/signup");
+  }
+
+  if (!name || !name.trim()) {
+    req.session.flash = { error: "User name is required" };
+    return res.redirect("/auth/signup");
+  }
+
+  if (!email || !email.trim()) {
+    req.session.flash = { error: "Email is required" };
+    return res.redirect("/auth/signup");
+  }
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    req.session.flash = { error: "Invalid email format" };
+    return res.redirect("/auth/signup");
+  }
+
+  if (!password || password.length < 6) {
+    req.session.flash = {
+      error: "Password must be at least 6 characters",
+    };
+    return res.redirect("/auth/signup");
+  }
+
+  // Check email uniqueness globally
+  try {
+    const existingUsers = await query("SELECT id FROM users WHERE email = ?", [
+      email,
+    ]);
+    if (existingUsers && existingUsers.length > 0) {
+      req.session.flash = {
+        error: "Email already exists. Please sign in.",
+      };
+      return res.redirect("/auth/signin");
+    }
+  } catch (error) {
+    logger.error("Email uniqueness check error during signup", { error: error.message, stack: error.stack, email });
+    req.session.flash = {
+      error: "Error validating user data",
+    };
+    return res.redirect("/auth/signup");
+  }
+
+  next();
+}
+
 function validateRFQCreation(req, res, next) {
   const { name, deadline, materials, suppliers } = req.body;
 
@@ -605,6 +664,7 @@ function sanitizeInput(str) {
 
 module.exports = {
   validateLogin,
+  validateSignup,//Export the new validation function
   validateRFQCreation,
   validateRFQUpdate,
   validateRFQClose,

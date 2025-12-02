@@ -1,9 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcryptjs");
-const { query } = require("../config/database");
-const { guestOnly } = require("../middleware/auth");
-const { validateLogin } = require("../middleware/validation");
+const { query, getConnection } = require("../config/database");
+const { guestOnly,requireAuth  } = require("../middleware/auth");
+const { validateLogin, validateSignup } = require("../middleware/validation");
 const logger = require("../config/logger");
 
 // Redirect root to signin page
@@ -168,6 +168,95 @@ router.get("/auth/check", (req, res) => {
         }
       : null,
   });
+});
+
+// GET /signup - Show registration form (Newly added route)
+router.get("/auth/signup", guestOnly, (req, res) => {
+  res.render("auth/signup", {
+    title: "Sign Up - FlowBuilder",
+    layout: "auth-layout",
+    // Flash messages are automatically available in res.locals due to app.js middleware
+  });
+});
+
+// POST /signup - Handle registration logic (Newly added route)
+router.post("/auth/signup", validateSignup, async (req, res) => {
+  const { company_name, name, email, password } = req.body;
+  let connection;
+
+  try {
+    const hashedPassword = await bcrypt.hash(password, 10);
+    
+    // 1. Get the default 'Admin' role ID for new companies
+    const adminRole = await query(
+      "SELECT id FROM roles WHERE name = 'Admin' LIMIT 1"
+    );
+
+    if (!adminRole || adminRole.length === 0) {
+      logger.error("Admin role not found. Database setup error.", { email, companyName: company_name });
+      throw new Error("Admin role not found. Database setup error.");
+    }
+    const adminRoleId = adminRole[0].id;
+
+    // --- Start Transaction ---
+    connection = await getConnection();
+    await connection.beginTransaction();
+
+    // 2. Insert new Company (type 'client' by default for new registrations)
+    const [companyResult] = await connection.execute(
+      "INSERT INTO companies (name, type) VALUES (?, 'client')",
+      [company_name]
+    );
+    const companyId = companyResult.insertId;
+
+    // 3. Insert initial Admin User
+    const [userResult] = await connection.execute(
+      "INSERT INTO users (company_id, role_id, name, email, password) VALUES (?, ?, ?, ?, ?)",
+      [companyId, adminRoleId, name, email, hashedPassword]
+    );
+    const userId = userResult.insertId;
+
+    await connection.commit(); // Commit transaction
+
+    // 4. Create Session and Redirect
+    req.session.userId = userId;
+    req.session.userRole = 'Admin';
+    req.session.companyId = companyId;
+    
+    logger.info("User Registered", { userId, email, companyId, companyName: company_name });
+
+    req.session.flash = {
+      success: "Account created successfully. Welcome to FlowBuilder!",
+    };
+    
+    req.session.save((err) => {
+      if (err) logger.error("Session save error during signup success", { error: err.message, userId });
+      res.redirect("/dashboard");
+    });
+
+  } catch (error) {
+    if (connection) {
+      await connection.rollback(); // Rollback on failure
+    }
+    logger.error("User registration failed (Transaction Rolled Back)", {
+      error: error.message,
+      stack: error.stack,
+      email,
+      companyName: company_name,
+    });
+
+    req.session.flash = {
+      error: "Registration failed. Please try again.",
+    };
+    req.session.save((err) => {
+      if (err) logger.error("Session save error during signup failure", { error: err.message, email });
+      res.redirect("/auth/signup");
+    });
+  } finally {
+    if (connection) {
+      connection.release();
+    }
+  }
 });
 
 module.exports = router;

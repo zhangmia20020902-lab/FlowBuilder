@@ -37,6 +37,8 @@ router.get("/projects", requireAuth, async (req, res) => {
 
     const projects = await query(sql, params);
 
+    
+
     res.render("projects/projects", {
       title: "Projects - FlowBuilder",
       projects,

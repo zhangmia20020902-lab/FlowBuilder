@@ -117,9 +117,12 @@ function guestOnly(req, res, next) {
   next();
 }
 
+
+
+
 module.exports = {
   requireAuth,
   requireRole,
   attachUser,
-  guestOnly,
+  guestOnly,  
 };

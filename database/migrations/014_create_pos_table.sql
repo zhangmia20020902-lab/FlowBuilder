@@ -11,4 +11,3 @@ CREATE TABLE IF NOT EXISTS pos (
   FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE RESTRICT,
   INDEX idx_status (status)
 );
-

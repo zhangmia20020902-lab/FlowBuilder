@@ -41,6 +41,8 @@
               <a href="/company/users/{{id}}/edit" class="btn btn-sm btn-secondary">
                 <i class="bi bi-pencil"></i> Edit
               </a>
+              {{#unless ../isOnlyUser}}
+              {{#ifNotEquals role_name "Admin"}}
               <button type="button" class="btn btn-sm btn-danger" 
                 data-bs-toggle="modal" 
                 data-bs-target="#deleteModal"
@@ -48,6 +50,8 @@
                 data-delete-url="/company/users/{{id}}/delete">
                 <i class="bi bi-trash"></i> Delete
               </button>
+              {{/ifNotEquals}}
+              {{/unless}}
             </td>
           </tr>
           {{/users}}

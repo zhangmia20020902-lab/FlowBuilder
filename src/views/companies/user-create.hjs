@@ -53,7 +53,7 @@
           <select class="form-select" id="role_id" name="role_id" required>
             <option value="">Select role...</option>
             {{#roles}}
-            <option value="{{id}}">{{name}}</option>
+              <option value="{{id}}">{{name}}</option>
             {{/roles}}
           </select>
         </div>
@@ -87,4 +87,3 @@
     </form>
   </div>
 </div>
-

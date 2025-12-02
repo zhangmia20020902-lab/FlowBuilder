@@ -126,11 +126,11 @@ function validateRFQUpdate(req, res, next) {
 }
 
 function validateQuoteSubmission(req, res, next) {
-  const { supplier_id, duration, items } = req.body;
+  const { duration, items } = req.body;
 
-  if (!supplier_id || !duration) {
+  if (!duration) {
     req.session.flash = {
-      error: "Supplier and delivery duration are required",
+      error: "Delivery duration is required",
     };
     return res.redirect(`/rfqs/${req.params.id}/submit-quote`);
   }

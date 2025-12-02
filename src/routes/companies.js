@@ -39,7 +39,7 @@ router.get("/company/profile", requireAuth, async (req, res) => {
     );
 
     const supplierCount = await query(
-      "SELECT COUNT(*) as count FROM suppliers WHERE company_id = ?",
+      "SELECT COUNT(*) as count FROM company_partnerships WHERE source_company_id = ?",
       [companyId]
     );
 

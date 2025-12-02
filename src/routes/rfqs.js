@@ -181,9 +181,13 @@ router.get("/projects/:id/rfqs/create", requireAuth, async (req, res) => {
       [companyId]
     );
 
-    // Get available suppliers
+    // Get available suppliers (companies partnered with this client)
     const suppliers = await query(
-      "SELECT s.* FROM suppliers s WHERE s.company_id = ? ORDER BY name",
+      `SELECT c.* 
+       FROM companies c
+       JOIN company_partnerships cp ON c.id = cp.target_company_id
+       WHERE cp.source_company_id = ? AND c.type = 'supplier'
+       ORDER BY c.name`,
       [companyId]
     );
 
@@ -259,7 +263,7 @@ router.post(
       if (suppliers && Array.isArray(suppliers)) {
         for (const supplierId of suppliers) {
           await query(
-            "INSERT INTO rfq_suppliers (rfq_id, supplier_id) VALUES (?, ?)",
+            "INSERT INTO rfq_suppliers (rfq_id, company_id) VALUES (?, ?)",
             [rfqId, supplierId]
           );
         }
@@ -319,17 +323,17 @@ router.get("/rfqs/:id", requireAuth, async (req, res) => {
 
     // Get selected suppliers with tracking status
     const selectedSuppliers = await query(
-      `SELECT s.id, s.name, s.trade_specialty, s.email,
+      `SELECT c.id, c.name, c.trade_specialty, c.email,
               rs.status as tracking_status,
               rs.notified_at,
               rs.responded_at,
               q.id as quote_id,
               q.created_at as quote_submitted_at
-       FROM suppliers s 
-       JOIN rfq_suppliers rs ON s.id = rs.supplier_id 
-       LEFT JOIN quotes q ON q.rfq_id = rs.rfq_id AND q.supplier_id = s.id
+       FROM companies c 
+       JOIN rfq_suppliers rs ON c.id = rs.company_id 
+       LEFT JOIN quotes q ON q.rfq_id = rs.rfq_id AND q.company_id = c.id
        WHERE rs.rfq_id = ?
-       ORDER BY s.name`,
+       ORDER BY c.name`,
       [rfqId]
     );
 
@@ -414,17 +418,21 @@ router.get("/rfqs/:id/edit", requireAuth, async (req, res) => {
       [rfqId]
     );
 
-    // Get available suppliers
+    // Get available suppliers (companies partnered with this client)
     const suppliers = await query(
-      "SELECT s.* FROM suppliers s WHERE s.company_id = ? ORDER BY name",
+      `SELECT c.* 
+       FROM companies c
+       JOIN company_partnerships cp ON c.id = cp.target_company_id
+       WHERE cp.source_company_id = ? AND c.type = 'supplier'
+       ORDER BY c.name`,
       [companyId]
     );
 
     // Get selected suppliers
     const selectedSuppliers = await query(
-      `SELECT rs.supplier_id, s.name 
+      `SELECT rs.company_id, c.name 
        FROM rfq_suppliers rs 
-       JOIN suppliers s ON rs.supplier_id = s.id 
+       JOIN companies c ON rs.company_id = c.id 
        WHERE rs.rfq_id = ?`,
       [rfqId]
     );
@@ -440,7 +448,7 @@ router.get("/rfqs/:id/edit", requireAuth, async (req, res) => {
 
     // Transform selectedSuppliers to Set for O(1) lookup
     const selectedSuppliersSet = new Set(
-      selectedSuppliers.map((s) => s.supplier_id)
+      selectedSuppliers.map((s) => s.company_id)
     );
 
     res.render("rfqs/rfq-edit", {
@@ -552,7 +560,7 @@ router.post(
       if (suppliers && Array.isArray(suppliers)) {
         for (const supplierId of suppliers) {
           await query(
-            "INSERT INTO rfq_suppliers (rfq_id, supplier_id) VALUES (?, ?)",
+            "INSERT INTO rfq_suppliers (rfq_id, company_id) VALUES (?, ?)",
             [rfqId, supplierId]
           );
         }
@@ -603,7 +611,7 @@ router.get("/rfqs/:id/distribute", requireAuth, async (req, res) => {
 
     // Get suppliers for this RFQ
     const suppliers = await query(
-      "SELECT s.* FROM suppliers s JOIN rfq_suppliers rs ON s.id = rs.supplier_id WHERE rs.rfq_id = ?",
+      "SELECT c.* FROM companies c JOIN rfq_suppliers rs ON c.id = rs.company_id WHERE rs.rfq_id = ?",
       [rfqId]
     );
 
@@ -875,20 +883,20 @@ router.get("/rfqs/:id/suppliers-status", requireAuth, async (req, res) => {
     // Get supplier status with quote information
     const supplierStatus = await query(
       `SELECT 
-        s.id as supplier_id,
-        s.name as supplier_name,
-        s.email,
-        s.trade_specialty,
+        c.id as supplier_id,
+        c.name as supplier_name,
+        c.email,
+        c.trade_specialty,
         rs.status,
         rs.notified_at,
         rs.responded_at,
         q.id as quote_id,
         q.created_at as quote_submitted_at
        FROM rfq_suppliers rs
-       JOIN suppliers s ON rs.supplier_id = s.id
-       LEFT JOIN quotes q ON q.rfq_id = rs.rfq_id AND q.supplier_id = s.id
+       JOIN companies c ON rs.company_id = c.id
+       LEFT JOIN quotes q ON q.rfq_id = rs.rfq_id AND q.company_id = c.id
        WHERE rs.rfq_id = ?
-       ORDER BY s.name`,
+       ORDER BY c.name`,
       [rfqId]
     );
 

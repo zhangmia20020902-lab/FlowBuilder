@@ -7,7 +7,7 @@ const {
   validateSupplierUpdate,
 } = require("../middleware/validation");
 
-// List all suppliers with search
+// List all supplier companies with search
 router.get("/suppliers", requireAuth, async (req, res) => {
   try {
     const companyId = req.session.companyId;
@@ -18,51 +18,50 @@ router.get("/suppliers", requireAuth, async (req, res) => {
     const page = Math.max(1, parseInt(req.query.page) || 1);
     const offset = (page - 1) * itemsPerPage;
 
-    // Build WHERE conditions
-    let whereClause = "WHERE s.company_id = ?";
-    const params = [companyId, companyId]; // First for LEFT JOIN, second for WHERE
+    // Build WHERE conditions - query companies with type='supplier'
+    let whereClause = "WHERE c.type = 'supplier'";
+    const params = [companyId]; // For partnership LEFT JOIN
 
     if (search && search.trim()) {
       whereClause +=
-        " AND (s.name LIKE ? OR s.email LIKE ? OR s.trade_specialty LIKE ?)";
+        " AND (c.name LIKE ? OR c.email LIKE ? OR c.trade_specialty LIKE ?)";
       const searchTerm = `%${search.trim()}%`;
       params.push(searchTerm, searchTerm, searchTerm);
     }
 
     if (trade_specialty && trade_specialty !== "all") {
-      whereClause += " AND s.trade_specialty = ?";
+      whereClause += " AND c.trade_specialty = ?";
       params.push(trade_specialty);
     }
 
     // Count total items for pagination
     const countSql = `
       SELECT COUNT(*) as total 
-      FROM suppliers s
-      LEFT JOIN company_suppliers cs ON s.id = cs.supplier_id AND cs.company_id = ?
+      FROM companies c
+      LEFT JOIN company_partnerships cp ON c.id = cp.target_company_id AND cp.source_company_id = ?
       ${whereClause}
     `;
     const countResult = await query(countSql, params);
     const totalItems = countResult[0].total;
     const totalPages = Math.ceil(totalItems / itemsPerPage);
 
-    // Get paginated suppliers
+    // Get paginated supplier companies
     const sql = `
-      SELECT s.*, 
-        CASE WHEN cs.company_id IS NOT NULL THEN 'partnered' ELSE 'not_partnered' END as partnership_status,
-        cs.status as partnership_status_detail,
-        cs.notes as partnership_notes
-      FROM suppliers s
-      LEFT JOIN company_suppliers cs ON s.id = cs.supplier_id AND cs.company_id = ?
+      SELECT c.*, 
+        CASE WHEN cp.source_company_id IS NOT NULL THEN 'partnered' ELSE 'not_partnered' END as partnership_status,
+        cp.status as partnership_status_detail,
+        cp.notes as partnership_notes
+      FROM companies c
+      LEFT JOIN company_partnerships cp ON c.id = cp.target_company_id AND cp.source_company_id = ?
       ${whereClause}
-      ORDER BY s.name ASC
+      ORDER BY c.name ASC
       LIMIT ${itemsPerPage} OFFSET ${offset}
     `;
     const suppliers = await query(sql, [companyId, ...params.slice(1)]);
 
     // Get unique trade specialties for filter
     const specialties = await query(
-      "SELECT DISTINCT trade_specialty FROM suppliers WHERE company_id = ? AND trade_specialty IS NOT NULL ORDER BY trade_specialty ASC",
-      [companyId]
+      "SELECT DISTINCT trade_specialty FROM companies WHERE type = 'supplier' AND trade_specialty IS NOT NULL ORDER BY trade_specialty ASC"
     );
 
     // Build pagination data
@@ -127,19 +126,18 @@ router.get("/suppliers/create", requireAuth, async (req, res) => {
   }
 });
 
-// Create supplier API
+// Create supplier API - creates a new company with type='supplier'
 router.post(
   "/suppliers",
   requireAuth,
   validateSupplierCreation,
   async (req, res) => {
     try {
-      const companyId = req.session.companyId;
       const { name, email, trade_specialty } = req.body;
 
       await query(
-        "INSERT INTO suppliers (company_id, name, email, trade_specialty) VALUES (?, ?, ?, ?)",
-        [companyId, name, email || null, trade_specialty || null]
+        "INSERT INTO companies (name, type, email, trade_specialty) VALUES (?, 'supplier', ?, ?)",
+        [name, email || null, trade_specialty || null]
       );
 
       req.session.flash = {
@@ -169,8 +167,8 @@ router.get("/suppliers/:id", requireAuth, async (req, res) => {
     const companyId = req.session.companyId;
 
     const suppliers = await query(
-      "SELECT * FROM suppliers WHERE id = ? AND company_id = ?",
-      [supplierId, companyId]
+      "SELECT * FROM companies WHERE id = ? AND type = 'supplier'",
+      [supplierId]
     );
 
     if (!suppliers || suppliers.length === 0) {
@@ -184,7 +182,7 @@ router.get("/suppliers/:id", requireAuth, async (req, res) => {
 
     // Get partnership status
     const partnerships = await query(
-      "SELECT * FROM company_suppliers WHERE supplier_id = ? AND company_id = ?",
+      "SELECT * FROM company_partnerships WHERE target_company_id = ? AND source_company_id = ?",
       [supplierId, companyId]
     );
     const partnership = partnerships.length > 0 ? partnerships[0] : null;
@@ -195,7 +193,7 @@ router.get("/suppliers/:id", requireAuth, async (req, res) => {
        FROM rfq_suppliers rs
        JOIN rfqs r ON rs.rfq_id = r.id
        JOIN projects p ON r.project_id = p.id
-       WHERE rs.supplier_id = ? AND p.company_id = ?
+       WHERE rs.company_id = ? AND p.company_id = ?
        ORDER BY r.created_at DESC
        LIMIT 10`,
       [supplierId, companyId]
@@ -207,7 +205,7 @@ router.get("/suppliers/:id", requireAuth, async (req, res) => {
        FROM quotes q
        JOIN rfqs r ON q.rfq_id = r.id
        JOIN projects p ON r.project_id = p.id
-       WHERE q.supplier_id = ? AND p.company_id = ?
+       WHERE q.company_id = ? AND p.company_id = ?
        ORDER BY q.created_at DESC
        LIMIT 10`,
       [supplierId, companyId]
@@ -233,11 +231,10 @@ router.get("/suppliers/:id", requireAuth, async (req, res) => {
 router.get("/suppliers/:id/edit", requireAuth, async (req, res) => {
   try {
     const supplierId = req.params.id;
-    const companyId = req.session.companyId;
 
     const suppliers = await query(
-      "SELECT * FROM suppliers WHERE id = ? AND company_id = ?",
-      [supplierId, companyId]
+      "SELECT * FROM companies WHERE id = ? AND type = 'supplier'",
+      [supplierId]
     );
 
     if (!suppliers || suppliers.length === 0) {
@@ -270,13 +267,12 @@ router.post(
   async (req, res) => {
     try {
       const supplierId = req.params.id;
-      const companyId = req.session.companyId;
       const { name, email, trade_specialty } = req.body;
 
-      // Verify supplier belongs to user's company
+      // Verify supplier exists
       const suppliers = await query(
-        "SELECT * FROM suppliers WHERE id = ? AND company_id = ?",
-        [supplierId, companyId]
+        "SELECT * FROM companies WHERE id = ? AND type = 'supplier'",
+        [supplierId]
       );
 
       if (!suppliers || suppliers.length === 0) {
@@ -287,8 +283,8 @@ router.post(
       }
 
       await query(
-        "UPDATE suppliers SET name = ?, email = ?, trade_specialty = ? WHERE id = ? AND company_id = ?",
-        [name, email || null, trade_specialty || null, supplierId, companyId]
+        "UPDATE companies SET name = ?, email = ?, trade_specialty = ? WHERE id = ? AND type = 'supplier'",
+        [name, email || null, trade_specialty || null, supplierId]
       );
 
       req.session.flash = {
@@ -315,12 +311,11 @@ router.post(
 router.post("/suppliers/:id/delete", requireAuth, async (req, res) => {
   try {
     const supplierId = req.params.id;
-    const companyId = req.session.companyId;
 
-    // Verify supplier belongs to user's company
+    // Verify supplier exists
     const suppliers = await query(
-      "SELECT * FROM suppliers WHERE id = ? AND company_id = ?",
-      [supplierId, companyId]
+      "SELECT * FROM companies WHERE id = ? AND type = 'supplier'",
+      [supplierId]
     );
 
     if (!suppliers || suppliers.length === 0) {
@@ -334,7 +329,7 @@ router.post("/suppliers/:id/delete", requireAuth, async (req, res) => {
     const activeQuotes = await query(
       `SELECT COUNT(*) as count FROM quotes q
        JOIN rfqs r ON q.rfq_id = r.id
-       WHERE q.supplier_id = ? AND r.status != 'closed'`,
+       WHERE q.company_id = ? AND r.status != 'closed'`,
       [supplierId]
     );
 
@@ -349,10 +344,9 @@ router.post("/suppliers/:id/delete", requireAuth, async (req, res) => {
       return;
     }
 
-    // Delete supplier (cascade will handle company_suppliers)
-    await query("DELETE FROM suppliers WHERE id = ? AND company_id = ?", [
+    // Delete supplier company (cascade will handle partnerships)
+    await query("DELETE FROM companies WHERE id = ? AND type = 'supplier'", [
       supplierId,
-      companyId,
     ]);
 
     req.session.flash = {
@@ -383,7 +377,7 @@ router.post("/suppliers/:id/partner", requireAuth, async (req, res) => {
 
     // Check if partnership already exists
     const existing = await query(
-      "SELECT * FROM company_suppliers WHERE company_id = ? AND supplier_id = ?",
+      "SELECT * FROM company_partnerships WHERE source_company_id = ? AND target_company_id = ?",
       [companyId, supplierId]
     );
 
@@ -393,7 +387,7 @@ router.post("/suppliers/:id/partner", requireAuth, async (req, res) => {
       };
     } else {
       await query(
-        "INSERT INTO company_suppliers (company_id, supplier_id, notes, status) VALUES (?, ?, ?, 'active')",
+        "INSERT INTO company_partnerships (source_company_id, target_company_id, notes, status) VALUES (?, ?, ?, 'active')",
         [companyId, supplierId, notes || null]
       );
 
@@ -425,7 +419,7 @@ router.post("/suppliers/:id/unpartner", requireAuth, async (req, res) => {
     const companyId = req.session.companyId;
 
     await query(
-      "DELETE FROM company_suppliers WHERE company_id = ? AND supplier_id = ?",
+      "DELETE FROM company_partnerships WHERE source_company_id = ? AND target_company_id = ?",
       [companyId, supplierId]
     );
 
@@ -459,7 +453,7 @@ router.post(
       const { notes, status } = req.body;
 
       await query(
-        "UPDATE company_suppliers SET notes = ?, status = ? WHERE company_id = ? AND supplier_id = ?",
+        "UPDATE company_partnerships SET notes = ?, status = ? WHERE source_company_id = ? AND target_company_id = ?",
         [notes || null, status, companyId, supplierId]
       );
 

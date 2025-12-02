@@ -31,7 +31,7 @@
 
           <dt class="col-sm-3">Supplier</dt>
           <dd class="col-sm-9">
-            <strong><a href="/suppliers/{{po.supplier_id}}">{{po.supplier_name}}</a></strong><br>
+            <strong><a href="/suppliers/{{po.supplier_company_id}}">{{po.supplier_name}}</a></strong><br>
             <small class="text-muted">
               {{#if po.supplier_email}}{{po.supplier_email}}{{/if}}
               {{#if po.trade_specialty}}<br>Specialty: {{po.trade_specialty}}{{/if}}
@@ -105,7 +105,7 @@
   <div class="col-md-4">
     <div class="card mb-3">
       <div class="card-header">
-        <h5 class="mb-0">Status Management</h5>
+        <h5 class="mb-0">Order Status</h5>
       </div>
       <div class="card-body">
         {{#ifEquals po.status 'cancelled'}}
@@ -118,25 +118,10 @@
           <i class="bi bi-check-circle"></i> This PO has been delivered
         </div>
         {{else}}
-        <form method="POST" action="/pos/{{po.id}}/status">
-          <div class="mb-3">
-            <label for="status" class="form-label">Update Status</label>
-            <select class="form-select" id="status" name="status">
-              {{#ifEquals po.status 'ordered'}}
-              <option value="confirmed">Mark as Confirmed</option>
-              {{/ifEquals}}
-              {{#ifEquals po.status 'confirmed'}}
-              <option value="shipped">Mark as Shipped</option>
-              {{/ifEquals}}
-              {{#ifEquals po.status 'shipped'}}
-              <option value="delivered">Mark as Delivered</option>
-              {{/ifEquals}}
-            </select>
-          </div>
-          <button type="submit" class="btn btn-success w-100 mb-2">
-            <i class="bi bi-arrow-right-circle"></i> Update Status
-          </button>
-        </form>
+        <div class="alert alert-info">
+          <i class="bi bi-info-circle"></i> Current Status: <strong>{{po.status}}</strong>
+          <br><small class="text-muted">The supplier will update the status as the order progresses.</small>
+        </div>
         {{/ifEquals}}
         {{/ifEquals}}
 

@@ -32,16 +32,16 @@
         {{#pos}}
         <tr>
           <td><strong>#{{ id }}</strong></td>
-          <td>{{ rfq_name }}</td>
+          <td><a href="/rfqs/{{ rfq_id }}">{{ rfq_name }}</a></td>
           <td>{{ supplier_name }}</td>
           <td>
             <span class="badge status-{{ status }}">{{ status }}</span>
           </td>
           <td>{{ created_at }}</td>
           <td>
-            <button class="btn btn-sm btn-warning" disabled>
-              <i class="bi bi-pencil"></i> Update Status
-            </button>
+            <a href="/pos/{{ id }}" class="btn btn-sm btn-primary">
+              <i class="bi bi-eye"></i> View
+            </a>
           </td>
         </tr>
         {{/pos}}

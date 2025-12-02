@@ -16,33 +16,60 @@
           </a>
         </li>
 
-        <li class="nav-item">
-          <a class="nav-link" href="/projects">
-            <i class="bi bi-folder"></i>
-            <span>Projects</span>
-          </a>
-        </li>
+        {{! Supplier-specific navigation }}
+        {{#ifEquals user.role_name "Supplier"}}
+          <li class="nav-item">
+            <a class="nav-link" href="/supplier/rfqs">
+              <i class="bi bi-file-earmark-text"></i>
+              <span>My RFQ Invitations</span>
+            </a>
+          </li>
 
-        <li class="nav-item">
-          <a class="nav-link" href="/pos">
-            <i class="bi bi-receipt"></i>
-            <span>Purchase Orders</span>
-          </a>
-        </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/supplier/quotes">
+              <i class="bi bi-receipt"></i>
+              <span>My Quotes</span>
+            </a>
+          </li>
 
-        <li class="nav-item">
-          <a class="nav-link" href="/suppliers">
-            <i class="bi bi-truck"></i>
-            <span>Suppliers</span>
-          </a>
-        </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/supplier/pos">
+              <i class="bi bi-truck"></i>
+              <span>My Purchase Orders</span>
+            </a>
+          </li>
+        {{/ifEquals}}
 
-        <li class="nav-item">
-          <a class="nav-link" href="/materials">
-            <i class="bi bi-box-seam"></i>
-            <span>Materials</span>
-          </a>
-        </li>
+        {{! Construction company navigation }}
+        {{#ifNotEquals user.role_name "Supplier"}}
+          <li class="nav-item">
+            <a class="nav-link" href="/projects">
+              <i class="bi bi-folder"></i>
+              <span>Projects</span>
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" href="/pos">
+              <i class="bi bi-receipt"></i>
+              <span>Purchase Orders</span>
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" href="/suppliers">
+              <i class="bi bi-truck"></i>
+              <span>Suppliers</span>
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" href="/materials">
+              <i class="bi bi-box-seam"></i>
+              <span>Materials</span>
+            </a>
+          </li>
+        {{/ifNotEquals}}
 
         <li class="nav-item">
           <hr class="sidebar-divider" />
@@ -72,12 +99,6 @@
                 <a class="nav-link" href="/company/users">
                   <i class="bi bi-people"></i>
                   <span>Users</span>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="/company/roles">
-                  <i class="bi bi-shield-check"></i>
-                  <span>Roles</span>
                 </a>
               </li>
             </ul>

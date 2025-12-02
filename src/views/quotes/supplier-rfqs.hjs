@@ -1,0 +1,138 @@
+<div class="row mb-4">
+  <div class="col">
+    <h2>My RFQ Invitations</h2>
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/dashboard">Dashboard</a></li>
+        <li class="breadcrumb-item active">My RFQs</li>
+      </ol>
+    </nav>
+  </div>
+</div>
+
+<div class="card mb-3">
+  <div class="card-body">
+    <form method="GET" action="/supplier/rfqs" class="row g-3">
+      <div class="col-md-4">
+        <select class="form-select" name="status">
+          <option value="all" {{#ifEquals selectedStatus "all"}}selected{{/ifEquals}}>All Statuses</option>
+          <option value="pending" {{#ifEquals selectedStatus "pending"}}selected{{/ifEquals}}>Pending{{#if statusCounts.pending}} ({{statusCounts.pending}}){{/if}}</option>
+          <option value="submitted" {{#ifEquals selectedStatus "submitted"}}selected{{/ifEquals}}>Submitted{{#if statusCounts.submitted}} ({{statusCounts.submitted}}){{/if}}</option>
+        </select>
+      </div>
+      <div class="col-md-4">
+        <button type="submit" class="btn btn-primary">
+          <i class="bi bi-search"></i> Filter
+        </button>
+        <a href="/supplier/rfqs" class="btn btn-secondary">
+          <i class="bi bi-arrow-clockwise"></i> Reset
+        </a>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <h5 class="mb-0">RFQ Invitations</h5>
+  </div>
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>RFQ Name</th>
+            <th>Client</th>
+            <th>Project</th>
+            <th>Deadline</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#rfqs}}
+          <tr>
+            <td><strong>{{ name }}</strong></td>
+            <td>{{ client_name }}</td>
+            <td>{{ project_name }}</td>
+            <td>
+              {{ formatDate deadline }}
+            </td>
+            <td>
+              {{#ifEquals supplier_status "pending"}}
+              <span class="badge bg-warning text-dark">Pending Quote</span>
+              {{/ifEquals}}
+              {{#ifEquals supplier_status "submitted"}}
+              <span class="badge bg-success">Quote Submitted</span>
+              {{/ifEquals}}
+            </td>
+            <td>
+              {{#ifEquals supplier_status "pending"}}
+              <a href="/rfqs/{{ id }}/submit-quote" class="btn btn-sm btn-primary">
+                <i class="bi bi-send"></i> Submit Quote
+              </a>
+              {{/ifEquals}}
+              {{#ifEquals supplier_status "submitted"}}
+              <span class="text-muted">
+                <i class="bi bi-check-circle"></i> Already submitted
+              </span>
+              {{/ifEquals}}
+            </td>
+          </tr>
+          {{/rfqs}}
+          {{^rfqs}}
+          <tr>
+            <td colspan="6" class="text-center text-muted">
+              <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+              No RFQ invitations yet. You will see RFQs here when clients invite you to submit quotes.
+            </td>
+          </tr>
+          {{/rfqs}}
+        </tbody>
+      </table>
+    </div>
+
+    {{#if pagination.totalPages}}
+    {{#if (gt pagination.totalPages 1)}}
+    <div class="d-flex justify-content-between align-items-center mt-3">
+      <div class="text-muted">
+        Showing {{pagination.startItem}} - {{pagination.endItem}} of {{pagination.totalItems}} RFQs
+      </div>
+      <nav aria-label="RFQs pagination">
+        <ul class="pagination mb-0">
+          {{#if pagination.hasPrevPage}}
+          <li class="page-item">
+            <a class="page-link" href="/supplier/rfqs?page={{pagination.prevPage}}{{#ifNotEquals selectedStatus 'all'}}&status={{selectedStatus}}{{/ifNotEquals}}">
+              <i class="bi bi-chevron-left"></i> Previous
+            </a>
+          </li>
+          {{else}}
+          <li class="page-item disabled">
+            <span class="page-link"><i class="bi bi-chevron-left"></i> Previous</span>
+          </li>
+          {{/if}}
+
+          {{#pagination.pages}}
+          <li class="page-item {{#if isActive}}active{{/if}}">
+            <a class="page-link" href="/supplier/rfqs?page={{number}}{{#ifNotEquals ../selectedStatus 'all'}}&status={{../selectedStatus}}{{/ifNotEquals}}">{{number}}</a>
+          </li>
+          {{/pagination.pages}}
+
+          {{#if pagination.hasNextPage}}
+          <li class="page-item">
+            <a class="page-link" href="/supplier/rfqs?page={{pagination.nextPage}}{{#ifNotEquals selectedStatus 'all'}}&status={{selectedStatus}}{{/ifNotEquals}}">
+              Next <i class="bi bi-chevron-right"></i>
+            </a>
+          </li>
+          {{else}}
+          <li class="page-item disabled">
+            <span class="page-link">Next <i class="bi bi-chevron-right"></i></span>
+          </li>
+          {{/if}}
+        </ul>
+      </nav>
+    </div>
+    {{/if}}
+    {{/if}}
+  </div>
+</div>

@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { requireAuth } = require("../middleware/auth");
+const { requireAuth, requireRole } = require("../middleware/auth");
 const { query } = require("../config/database");
 const { validatePOStatusUpdate } = require("../middleware/validation");
 
@@ -47,15 +47,15 @@ router.get("/pos", requireAuth, async (req, res) => {
 
     let sql = `
       SELECT po.*, 
-        q.supplier_id, 
-        s.name as supplier_name, 
+        q.company_id as supplier_company_id, 
+        c.name as supplier_name, 
         r.name as rfq_name, 
         p.name as project_name,
         p.id as project_id,
         u.name as created_by_name
       FROM pos po 
       JOIN quotes q ON po.quote_id = q.id 
-      JOIN suppliers s ON q.supplier_id = s.id
+      JOIN companies c ON q.company_id = c.id
       JOIN rfqs r ON q.rfq_id = r.id
       JOIN projects p ON r.project_id = p.id
       JOIN users u ON po.created_by = u.id
@@ -166,11 +166,11 @@ router.get("/pos/:id", requireAuth, async (req, res) => {
     const pos = await query(
       `SELECT po.*, 
         q.id as quote_id,
-        q.supplier_id, 
+        q.company_id as supplier_company_id, 
         q.duration,
-        s.name as supplier_name,
-        s.email as supplier_email,
-        s.trade_specialty,
+        c.name as supplier_name,
+        c.email as supplier_email,
+        c.trade_specialty,
         r.id as rfq_id,
         r.name as rfq_name, 
         p.id as project_id,
@@ -178,7 +178,7 @@ router.get("/pos/:id", requireAuth, async (req, res) => {
         u.name as created_by_name
       FROM pos po 
       JOIN quotes q ON po.quote_id = q.id 
-      JOIN suppliers s ON q.supplier_id = s.id
+      JOIN companies c ON q.company_id = c.id
       JOIN rfqs r ON q.rfq_id = r.id
       JOIN projects p ON r.project_id = p.id
       JOIN users u ON po.created_by = u.id
@@ -309,77 +309,21 @@ router.post("/pos/:id/update", requireAuth, async (req, res) => {
   }
 });
 
-// Update PO status API
+// Update PO status API - DEPRECATED for clients, use /supplier/pos/:id/status
+// Clients cannot update PO status, only suppliers can
 router.post(
   "/pos/:id/status",
   requireAuth,
   validatePOStatusUpdate,
   async (req, res) => {
-    try {
-      const poId = req.params.id;
-      const companyId = req.session.companyId;
-      const { status } = req.body;
-
-      // Verify PO belongs to user's company
-      const pos = await query(
-        `SELECT po.* FROM pos po 
-         JOIN quotes q ON po.quote_id = q.id 
-         JOIN rfqs r ON q.rfq_id = r.id
-         JOIN projects p ON r.project_id = p.id
-         WHERE po.id = ? AND p.company_id = ?`,
-        [poId, companyId]
-      );
-
-      if (!pos || pos.length === 0) {
-        return res.status(404).render("shared/error", {
-          message: "Purchase order not found",
-          error: { status: 404, stack: "" },
-        });
-      }
-
-      const currentStatus = pos[0].status;
-      const validTransitions = {
-        ordered: ["confirmed"],
-        confirmed: ["shipped"],
-        shipped: ["delivered"],
-        delivered: [],
-      };
-
-      // Validate status transition
-      if (!validTransitions[currentStatus].includes(status)) {
-        req.session.flash = {
-          error: `Cannot transition from ${currentStatus} to ${status}`,
-        };
-        req.session.save((err) => {
-          if (err) console.error("Session save error:", err);
-          res.redirect(`/pos/${poId}`);
-        });
-        return;
-      }
-
-      // Update status
-      await query("UPDATE pos SET status = ? WHERE id = ?", [status, poId]);
-
-      // Create notifications
-      await notifyPOStatusChange(poId, status, companyId);
-
-      req.session.flash = {
-        success: `PO status updated to ${status}`,
-      };
-      req.session.save((err) => {
-        if (err) console.error("Session save error:", err);
-        res.redirect(`/pos/${poId}`);
-      });
-    } catch (error) {
-      console.error("PO status update error:", error);
-      req.session.flash = {
-        error: "Error updating PO status",
-      };
-      req.session.save((err) => {
-        if (err) console.error("Session save error:", err);
-        res.redirect(`/pos/${req.params.id}`);
-      });
-    }
+    // Clients cannot update PO status - redirect with error message
+    req.session.flash = {
+      error: "Only suppliers can update PO status",
+    };
+    req.session.save((err) => {
+      if (err) console.error("Session save error:", err);
+      res.redirect(`/pos/${req.params.id}`);
+    });
   }
 );
 
@@ -526,5 +470,267 @@ router.post("/notifications/read-all", requireAuth, async (req, res) => {
     });
   }
 });
+
+// List all POs for supplier
+router.get(
+  "/supplier/pos",
+  requireAuth,
+  requireRole("Supplier"),
+  async (req, res) => {
+    try {
+      const companyId = req.session.companyId;
+      const { status, page: pageParam } = req.query;
+
+      // Pagination settings
+      const itemsPerPage = 10;
+      const page = Math.max(1, parseInt(pageParam) || 1);
+      const offset = (page - 1) * itemsPerPage;
+
+      let sql = `
+        SELECT po.*, 
+          q.company_id as supplier_company_id, 
+          c.name as client_name, 
+          r.name as rfq_name, 
+          p.name as project_name,
+          p.id as project_id,
+          u.name as created_by_name
+        FROM pos po 
+        JOIN quotes q ON po.quote_id = q.id 
+        JOIN rfqs r ON q.rfq_id = r.id
+        JOIN projects p ON r.project_id = p.id
+        JOIN companies c ON p.company_id = c.id
+        JOIN users u ON po.created_by = u.id
+        WHERE q.company_id = ?
+      `;
+      const params = [companyId];
+
+      if (status && status !== "all") {
+        sql += " AND po.status = ?";
+        params.push(status);
+      }
+
+      // Count total items for pagination
+      let countSql = `
+        SELECT COUNT(*) as total
+        FROM pos po 
+        JOIN quotes q ON po.quote_id = q.id 
+        WHERE q.company_id = ?
+      `;
+      const countParams = [companyId];
+
+      if (status && status !== "all") {
+        countSql += " AND po.status = ?";
+        countParams.push(status);
+      }
+
+      const countResult = await query(countSql, countParams);
+      const totalItems = countResult[0].total;
+      const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+      // Add sorting and pagination to main query
+      sql += ` ORDER BY po.created_at DESC LIMIT ${itemsPerPage} OFFSET ${offset}`;
+
+      const pos = await query(sql, params);
+
+      // Build pagination data
+      const startPage = Math.max(1, page - 2);
+      const endPage = Math.min(totalPages, page + 2);
+
+      const pagination = {
+        currentPage: page,
+        totalPages,
+        totalItems,
+        itemsPerPage,
+        hasNextPage: page < totalPages,
+        hasPrevPage: page > 1,
+        nextPage: page + 1,
+        prevPage: page - 1,
+        startItem: totalItems > 0 ? (page - 1) * itemsPerPage + 1 : 0,
+        endItem: Math.min(page * itemsPerPage, totalItems),
+        showFirstPage: startPage > 1,
+        showFirstEllipsis: startPage > 2,
+        showLastPage: endPage < totalPages,
+        showLastEllipsis: endPage < totalPages - 1,
+        pages: [],
+      };
+
+      // Generate page numbers array
+      for (let i = startPage; i <= endPage; i++) {
+        pagination.pages.push({
+          number: i,
+          isActive: i === page,
+        });
+      }
+
+      res.render("pos/supplier-pos-list", {
+        title: "My Purchase Orders - FlowBuilder",
+        pos,
+        selectedStatus: status || "all",
+        pagination,
+      });
+    } catch (error) {
+      console.error("Supplier POs list error:", error);
+      res.status(500).render("shared/error", {
+        message: "Error loading purchase orders",
+        error: { status: 500, stack: error.stack },
+      });
+    }
+  }
+);
+
+// Supplier PO detail view
+router.get(
+  "/supplier/pos/:id",
+  requireAuth,
+  requireRole("Supplier"),
+  async (req, res) => {
+    try {
+      const poId = req.params.id;
+      const companyId = req.session.companyId;
+
+      // Get PO with related data - verify supplier owns this PO
+      const pos = await query(
+        `SELECT po.*, 
+          q.id as quote_id,
+          q.company_id as supplier_company_id, 
+          q.duration,
+          c.name as client_name,
+          c.email as client_email,
+          r.id as rfq_id,
+          r.name as rfq_name, 
+          p.id as project_id,
+          p.name as project_name,
+          u.name as created_by_name
+        FROM pos po 
+        JOIN quotes q ON po.quote_id = q.id 
+        JOIN rfqs r ON q.rfq_id = r.id
+        JOIN projects p ON r.project_id = p.id
+        JOIN companies c ON p.company_id = c.id
+        JOIN users u ON po.created_by = u.id
+        WHERE po.id = ? AND q.company_id = ?`,
+        [poId, companyId]
+      );
+
+      if (!pos || pos.length === 0) {
+        return res.status(404).render("shared/error", {
+          message: "Purchase order not found",
+          error: { status: 404, stack: "" },
+        });
+      }
+
+      const po = pos[0];
+
+      // Get quote items
+      const quoteItems = await query(
+        `SELECT qi.*, m.name as material_name, m.unit, m.sku
+         FROM quote_items qi
+         JOIN materials m ON qi.material_id = m.id
+         WHERE qi.quote_id = ?`,
+        [po.quote_id]
+      );
+
+      // Calculate total
+      let total = 0;
+      quoteItems.forEach((item) => {
+        const itemTotal = parseFloat(item.price) * parseInt(item.quantity || 1);
+        total += itemTotal;
+      });
+
+      res.render("pos/supplier-po-detail", {
+        title: `PO #${po.id} - FlowBuilder`,
+        po,
+        quoteItems,
+        total: total.toFixed(2),
+      });
+    } catch (error) {
+      console.error("Supplier PO detail error:", error);
+      res.status(500).render("shared/error", {
+        message: "Error loading purchase order",
+        error: { status: 500, stack: error.stack },
+      });
+    }
+  }
+);
+
+// Supplier update PO status API
+router.post(
+  "/supplier/pos/:id/status",
+  requireAuth,
+  requireRole("Supplier"),
+  validatePOStatusUpdate,
+  async (req, res) => {
+    try {
+      const poId = req.params.id;
+      const companyId = req.session.companyId;
+      const { status } = req.body;
+
+      // Verify PO belongs to this supplier
+      const pos = await query(
+        `SELECT po.*, p.company_id as client_company_id 
+         FROM pos po 
+         JOIN quotes q ON po.quote_id = q.id 
+         JOIN rfqs r ON q.rfq_id = r.id
+         JOIN projects p ON r.project_id = p.id
+         WHERE po.id = ? AND q.company_id = ?`,
+        [poId, companyId]
+      );
+
+      if (!pos || pos.length === 0) {
+        return res.status(404).render("shared/error", {
+          message: "Purchase order not found",
+          error: { status: 404, stack: "" },
+        });
+      }
+
+      const currentStatus = pos[0].status;
+      const clientCompanyId = pos[0].client_company_id;
+
+      const validTransitions = {
+        ordered: ["confirmed"],
+        confirmed: ["shipped"],
+        shipped: ["delivered"],
+        delivered: [],
+      };
+
+      // Validate status transition
+      if (
+        !validTransitions[currentStatus] ||
+        !validTransitions[currentStatus].includes(status)
+      ) {
+        req.session.flash = {
+          error: `Cannot transition from ${currentStatus} to ${status}`,
+        };
+        req.session.save((err) => {
+          if (err) console.error("Session save error:", err);
+          res.redirect(`/supplier/pos/${poId}`);
+        });
+        return;
+      }
+
+      // Update status
+      await query("UPDATE pos SET status = ? WHERE id = ?", [status, poId]);
+
+      // Create notifications for client company users
+      await notifyPOStatusChange(poId, status, clientCompanyId);
+
+      req.session.flash = {
+        success: `PO status updated to ${status}`,
+      };
+      req.session.save((err) => {
+        if (err) console.error("Session save error:", err);
+        res.redirect(`/supplier/pos/${poId}`);
+      });
+    } catch (error) {
+      console.error("Supplier PO status update error:", error);
+      req.session.flash = {
+        error: "Error updating PO status",
+      };
+      req.session.save((err) => {
+        if (err) console.error("Session save error:", err);
+        res.redirect(`/supplier/pos/${req.params.id}`);
+      });
+    }
+  }
+);
 
 module.exports = router;

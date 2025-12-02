@@ -111,26 +111,22 @@ erDiagram
     Company {
         INTEGER id PK
         VARCHAR name
+        VARCHAR type "client or supplier"
         TEXT address
+        VARCHAR phone
+        VARCHAR email
+        VARCHAR trade_specialty "supplier only"
+        TEXT description
+        TEXT notes
         TIMESTAMP created_at
         TIMESTAMP updated_at
     }
 
-    CompanySupplier {
-        INTEGER company_id FK
-        INTEGER supplier_id FK
+    CompanyPartnership {
+        INTEGER source_company_id FK "client company"
+        INTEGER target_company_id FK "supplier company"
         TEXT notes
         VARCHAR status
-        TIMESTAMP created_at
-        TIMESTAMP updated_at
-    }
-
-    Supplier {
-        INTEGER id PK
-        INTEGER company_id FK
-        VARCHAR name
-        VARCHAR email
-        VARCHAR password
         TIMESTAMP created_at
         TIMESTAMP updated_at
     }
@@ -139,7 +135,15 @@ erDiagram
         INTEGER id PK
         INTEGER company_id FK
         VARCHAR name
-        VARCHAR description
+        TEXT description
+        TIMESTAMP created_at
+        TIMESTAMP updated_at
+    }
+
+    Category {
+        INTEGER id PK
+        VARCHAR name
+        TEXT description
         TIMESTAMP created_at
         TIMESTAMP updated_at
     }
@@ -147,27 +151,44 @@ erDiagram
     Material {
         INTEGER id PK
         INTEGER company_id FK
+        INTEGER category_id FK
         VARCHAR name
         VARCHAR sku
         VARCHAR unit
-        TIMESTAMP createdAt
-        TIMESTAMP updatedAt
+        DECIMAL price_avg
+        DECIMAL price_stdev
+        INTEGER sample_count
+        TIMESTAMP created_at
+        TIMESTAMP updated_at
+    }
+
+    CompanyMaterial {
+        INTEGER company_id FK "supplier company"
+        INTEGER material_id FK
+        DECIMAL last_price
+        DATE last_transaction_date
+        INTEGER transaction_count
+        TIMESTAMP created_at
+        TIMESTAMP updated_at
     }
 
     RFQ {
         INTEGER id PK
         INTEGER project_id FK
+        INTEGER created_by FK "user"
         VARCHAR name
-        TIMESTAMP deadline
-        VARCHAR status
-        INTEGER created_by
+        DATETIME deadline
+        VARCHAR status "draft, open, closed"
         TIMESTAMP created_at
         TIMESTAMP updated_at
     }
 
     RFQSupplier {
         INTEGER rfq_id FK
-        INTEGER supplier_id FK
+        INTEGER company_id FK "supplier company"
+        VARCHAR status
+        DATETIME notified_at
+        DATETIME responded_at
     }
 
     RFQMaterial {
@@ -179,8 +200,8 @@ erDiagram
     Quote {
         INTEGER id PK
         INTEGER rfq_id FK
-        INTEGER supplier_id FK
-        TIMESTAMP duration
+        INTEGER company_id FK "supplier company"
+        INTEGER duration
         VARCHAR status
         TIMESTAMP created_at
         TIMESTAMP updated_at
@@ -190,7 +211,12 @@ erDiagram
         INTEGER id PK
         INTEGER quote_id FK
         INTEGER material_id FK
-        INTEGER price
+        DECIMAL price
+        INTEGER quantity
+        DECIMAL discount_rate
+        DECIMAL original_unit_price
+        DECIMAL total_price
+        VARCHAR external_ref
         VARCHAR status
         TIMESTAMP created_at
         TIMESTAMP updated_at
@@ -199,10 +225,28 @@ erDiagram
     PO {
         INTEGER id PK
         INTEGER quote_id FK
-        VARCHAR status
-        INTEGER created_by
+        INTEGER created_by FK "user"
+        VARCHAR status "ordered, confirmed, shipped, delivered"
+        TEXT notes
+        DATETIME cancelled_at
         TIMESTAMP created_at
         TIMESTAMP updated_at
+    }
+
+    Session {
+        VARCHAR session_id PK
+        INTEGER expires
+        MEDIUMTEXT data
+    }
+
+    Notification {
+        INTEGER id PK
+        INTEGER user_id FK
+        VARCHAR type
+        INTEGER reference_id
+        TEXT message
+        BOOLEAN is_read
+        TIMESTAMP created_at
     }
 
     %% Relationships
@@ -210,24 +254,31 @@ erDiagram
     Company ||--o{ User : "employs"
     Company ||--o{ Project : "owns"
     Company ||--o{ Material : "stocks"
-    Company ||--o{ Supplier : "manages_record"
+    Company ||--o{ CompanyMaterial : "supplies"
+    Company ||--o{ CompanyPartnership : "initiates"
+    Company ||--o{ CompanyPartnership : "receives"
 
-    Company ||--o{ CompanySupplier : "partners_with"
-    Supplier ||--o{ CompanySupplier : "partnered_by"
+    Category ||--o{ Material : "categorizes"
+
+    Material ||--o{ CompanyMaterial : "listed_in"
+    Material ||--o{ RFQMaterial : "listed_in"
+    Material ||--o{ QuoteItem : "priced_as"
 
     Project ||--o{ RFQ : "initiates"
 
     RFQ ||--o{ RFQSupplier : "sent_to"
-    Supplier ||--o{ RFQSupplier : "receives"
+    Company ||--o{ RFQSupplier : "receives"
 
     RFQ ||--o{ RFQMaterial : "requests"
-    Material ||--o{ RFQMaterial : "listed_in"
 
     RFQ ||--o{ Quote : "generates"
-    Supplier ||--o{ Quote : "submits"
+    Company ||--o{ Quote : "submits"
 
     Quote ||--o{ QuoteItem : "contains"
-    Material ||--o{ QuoteItem : "priced_as"
-
     Quote ||--o{ PO : "converts_to"
+
+    User ||--o{ Notification : "receives"
+    User ||--o{ RFQ : "creates"
+    User ||--o{ PO : "creates"
+    User ||--o{ Session : "owns"
 ```

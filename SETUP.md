@@ -6,6 +6,8 @@
 - Node.js 18+ (for local development)
 - Git
 
+---
+
 ## Quick Start with Docker
 
 ### 1. Start the Application
@@ -19,7 +21,7 @@ This will:
 - Build the Node.js application container
 - Start MySQL 8.0 database container
 - Run all database migrations automatically
-- Populate seed data
+- Populate seed data (including ETL data)
 - Start the application on port 3000
 
 ### 2. Access the Application
@@ -28,54 +30,94 @@ Open your browser and navigate to: **http://localhost:3000**
 
 ### 3. Login Credentials
 
-Use these demo credentials to login:
+Use these demo credentials to login (password for all: `password123`):
 
-**Construction Admin:**
+| Role               | Email                                | Company                    |
+| ------------------ | ------------------------------------ | -------------------------- |
+| Admin              | `admin@flowbuilder.com`              | FlowBuilder Construction   |
+| Construction Admin | `admin.construction@flowbuilder.com` | FlowBuilder Construction   |
+| Supplier           | `supplier@materials.com`             | Taiwan Building Materials  |
+| Supplier           | `admin@premiumconcrete.com`          | Premium Concrete Suppliers |
+| Supplier           | `admin@steelmasters.com`             | Steel Masters Ltd.         |
 
-- Email: `admin.construction@buildright.com`
-- Password: `password123`
-
-**Admin User:**
-
-- Email: `admin@buildright.com`
-- Password: `password123`
-
-**Supplier User:**
-
-- Email: `supplier@materials.com`
-- Password: `password123`
+---
 
 ## Docker Commands
 
-### View Application Logs
+| Command                        | Description                        |
+| ------------------------------ | ---------------------------------- |
+| `docker-compose logs app`      | View application logs              |
+| `docker-compose logs db`       | View database logs                 |
+| `docker-compose down`          | Stop the application               |
+| `docker-compose down -v`       | Stop and remove volumes (clean DB) |
+| `docker-compose up --build -d` | Rebuild and restart containers     |
+| `docker-compose restart`       | Restart containers                 |
+
+---
+
+## ETL Data Processing
+
+The ETL (Extract-Transform-Load) process transforms raw procurement data into database seed files. This populates the system with historical supplier companies, materials, and transaction records.
+
+### ETL Source Files
+
+Located in `database/etl/`:
+
+| File               | Description                                  |
+| ------------------ | -------------------------------------------- |
+| `companies.sql`    | Raw supplier company data                    |
+| `materials.sql`    | Raw material catalog with pricing statistics |
+| `transactions.sql` | Historical procurement transactions          |
+
+### Running ETL Transformation
 
 ```bash
-docker-compose logs app
+# Step 1: Transform ETL data to seed SQL files
+node database/etl/transform-etl-to-seeds.js
+
+# Step 2: Generate user accounts for ETL suppliers
+node database/etl/generate-supplier-users.js
 ```
 
-### View Database Logs
+### Generated Seed Files
 
-```bash
-docker-compose logs db
-```
+The ETL process generates these seed files (IDs start from 1000 to avoid collisions):
 
-### Stop the Application
+| File                                 | Content                             |
+| ------------------------------------ | ----------------------------------- |
+| `011_seed_etl_companies.sql`         | 500 supplier companies              |
+| `012_seed_etl_materials.sql`         | 458 materials with pricing stats    |
+| `013_seed_etl_rfqs.sql`              | Historical RFQs grouped by supplier |
+| `014_seed_etl_rfq_materials.sql`     | RFQ-Material associations           |
+| `015_seed_etl_rfq_suppliers.sql`     | RFQ-Supplier associations           |
+| `016_seed_etl_quotes.sql`            | Historical quotes                   |
+| `017_seed_etl_quote_items.sql`       | Quote line items                    |
+| `018_seed_etl_pos.sql`               | Historical purchase orders          |
+| `019_seed_etl_company_materials.sql` | Supplier-Material relationships     |
+| `020_seed_etl_supplier_users.sql`    | User accounts for ETL suppliers     |
 
-```bash
-docker-compose down
-```
+### ID Mapping Files
 
-### Stop and Remove Volumes (Clean Database)
+Generated for reference and debugging:
 
-```bash
-docker-compose down -v
-```
+- `company_id_map.json` - ETL company_id → new supplier_id
+- `material_id_map.json` - ETL material_id → new material_id
 
-### Rebuild Containers
+---
 
-```bash
-docker-compose up --build -d
-```
+## Database Connection
+
+Use any MySQL client to connect:
+
+| Property | Value              |
+| -------- | ------------------ |
+| Host     | `localhost`        |
+| Port     | `3307`             |
+| Database | `flowbuilder`      |
+| Username | `flowbuilder_user` |
+| Password | `flowbuilder_pass` |
+
+---
 
 ## Application Structure
 
@@ -85,20 +127,14 @@ FlowBuilder/
 │   ├── config/          # Database configuration
 │   ├── middleware/      # Authentication middleware
 │   ├── routes/          # Express routes
-│   │   ├── auth.js      # Authentication routes
-│   │   ├── dashboard.js # Dashboard routes
-│   │   ├── projects.js  # Project management routes
-│   │   ├── rfqs.js      # RFQ management routes
-│   │   └── quotes.js    # Quote management routes
 │   ├── views/           # Hogan.js templates
-│   │   ├── partials/    # Reusable components
-│   │   └── *.hjs        # Page templates
 │   ├── utils/           # Utility functions
 │   ├── app.js           # Express app configuration
 │   └── server.js        # Server entry point
 ├── database/
+│   ├── etl/             # ETL transformation scripts
 │   ├── migrations/      # Database schema migrations
-│   └── seeds/           # Sample data
+│   └── seeds/           # Sample data (including ETL output)
 ├── public/
 │   ├── css/             # Custom CSS
 │   └── js/              # Client-side JavaScript
@@ -107,45 +143,38 @@ FlowBuilder/
 └── package.json         # Node.js dependencies
 ```
 
+---
+
 ## Technology Stack
 
-- **Frontend**: HTMX + Bootstrap 5 + Hogan.js (HJS)
-- **Backend**: Express.js (Node.js)
-- **Database**: MySQL 8.0
-- **Session Store**: MySQL-based sessions
-- **Authentication**: Session-based with bcrypt
-- **Containerization**: Docker + Docker Compose
+| Layer            | Technology                    |
+| ---------------- | ----------------------------- |
+| Frontend         | HTMX + Bootstrap 5 + Hogan.js |
+| Backend          | Express.js (Node.js)          |
+| Database         | MySQL 8.0                     |
+| Session Store    | MySQL-based sessions          |
+| Authentication   | Session-based with bcrypt     |
+| Containerization | Docker + Docker Compose       |
+
+---
 
 ## Troubleshooting
 
 ### Port Already in Use
 
-If you see an error about port 3306 or 3000 being in use:
-
-1. Check what's using the port:
-
 ```bash
-# Windows
+# Windows - Check what's using the port
 netstat -ano | findstr :3000
 netstat -ano | findstr :3307
 ```
 
-2. Stop the conflicting service or change the port in `docker-compose.yml`
+Stop the conflicting service or change the port in `docker-compose.yml`.
 
 ### Database Connection Issues
 
-If the app can't connect to the database:
-
-1. Check database health:
-
 ```bash
-docker-compose ps
-```
-
-2. Restart containers:
-
-```bash
-docker-compose restart
+docker-compose ps       # Check container health
+docker-compose restart  # Restart containers
 ```
 
 ### Clear All Data and Start Fresh
@@ -155,39 +184,28 @@ docker-compose down -v
 docker-compose up --build -d
 ```
 
-## Development
+---
 
-### Local Development (without Docker)
+## Local Development (without Docker)
 
 1. Install dependencies:
 
-```bash
-npm install
-```
+   ```bash
+   npm install
+   ```
 
-2. Set up MySQL database locally and update connection details in `src/config/database.js`
+2. Set up MySQL database locally and configure `src/config/database.js`
 
 3. Run migrations and seeds manually
 
 4. Start development server:
+   ```bash
+   npm run dev
+   ```
 
-```bash
-npm run dev
-```
-
-### View Database
-
-Use any MySQL client to connect:
-
-- Host: `localhost`
-- Port: `3307`
-- Database: `flowbuilder`
-- Username: `flowbuilder_user`
-- Password: `flowbuilder_pass`
+---
 
 ## Support
-
-For issues or questions, refer to:
 
 - Project README: `README.md`
 - Project Proposal: [FlowBuilder Proposal](https://docs.google.com/document/d/1dcIq8v57Mj9Xqpqe_KVXfqcjYuPzLEL-bFu9XqtypC4/edit?usp=sharing)

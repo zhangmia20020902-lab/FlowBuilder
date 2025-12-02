@@ -138,6 +138,7 @@ router.post(
 router.get("/company/users", requireAuth, async (req, res) => {
   try {
     const companyId = req.session.companyId;
+    const userRole = req.session.userRole;
 
     const users = await query(
       `SELECT u.*, r.name as role_name 
@@ -148,9 +149,15 @@ router.get("/company/users", requireAuth, async (req, res) => {
       [companyId]
     );
 
+    // Check if there's only one user (for supplier delete restriction)
+    const isOnlyUser = users.length === 1;
+    const isSupplier = userRole === "Supplier";
+
     res.render("companies/users-list", {
       title: "Manage Users - FlowBuilder",
       users,
+      isOnlyUser,
+      isSupplier,
     });
   } catch (error) {
     console.error("Users list error:", error);
@@ -164,12 +171,23 @@ router.get("/company/users", requireAuth, async (req, res) => {
 // Create user form
 router.get("/company/users/create", requireAuth, async (req, res) => {
   try {
-    // Get all roles for dropdown
-    const roles = await query("SELECT * FROM roles ORDER BY name ASC");
+    const userRole = req.session.userRole;
+    const isSupplier = userRole === "Supplier";
+
+    // Get roles for dropdown - filter to only Supplier role for supplier companies
+    let roles;
+    if (isSupplier) {
+      roles = await query(
+        "SELECT * FROM roles WHERE name = 'Supplier' ORDER BY name ASC"
+      );
+    } else {
+      roles = await query("SELECT * FROM roles ORDER BY name ASC");
+    }
 
     res.render("companies/user-create", {
       title: "Create User - FlowBuilder",
       roles,
+      isSupplier,
     });
   } catch (error) {
     console.error("User create form error:", error);
@@ -223,6 +241,8 @@ router.get("/company/users/:id/edit", requireAuth, async (req, res) => {
   try {
     const userId = req.params.id;
     const companyId = req.session.companyId;
+    const userRole = req.session.userRole;
+    const isSupplier = userRole === "Supplier";
 
     const users = await query(
       "SELECT * FROM users WHERE id = ? AND company_id = ?",
@@ -238,13 +258,21 @@ router.get("/company/users/:id/edit", requireAuth, async (req, res) => {
 
     const user = users[0];
 
-    // Get all roles for dropdown
-    const roles = await query("SELECT * FROM roles ORDER BY name ASC");
+    // Get roles for dropdown - filter to only Supplier role for supplier companies
+    let roles;
+    if (isSupplier) {
+      roles = await query(
+        "SELECT * FROM roles WHERE name = 'Supplier' ORDER BY name ASC"
+      );
+    } else {
+      roles = await query("SELECT * FROM roles ORDER BY name ASC");
+    }
 
     res.render("companies/user-edit", {
       title: `Edit ${user.name} - FlowBuilder`,
       user,
       roles,
+      isSupplier,
     });
   } catch (error) {
     console.error("User edit form error:", error);
@@ -325,6 +353,24 @@ router.post("/company/users/:id/delete", requireAuth, async (req, res) => {
     if (parseInt(userId) === parseInt(currentUserId)) {
       req.session.flash = {
         error: "Cannot delete your own account",
+      };
+      req.session.save((err) => {
+        if (err) console.error("Session save error:", err);
+        res.redirect("/company/users");
+      });
+      return;
+    }
+
+    // Check if this is the only user in the company (for supplier restriction)
+    const userCount = await query(
+      "SELECT COUNT(*) as count FROM users WHERE company_id = ?",
+      [companyId]
+    );
+
+    if (userCount[0].count <= 1) {
+      req.session.flash = {
+        error:
+          "Cannot delete the only user account. At least one user must remain.",
       };
       req.session.save((err) => {
         if (err) console.error("Session save error:", err);

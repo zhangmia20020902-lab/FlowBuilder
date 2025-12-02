@@ -13,10 +13,13 @@
 <div class="row">
   <div class="col-md-8">
     <div class="card mb-3">
-      <div class="card-header d-flex justify-content-between align-items-center">
+      <div
+        class="card-header d-flex justify-content-between align-items-center"
+      >
         <h5 class="mb-0">Company Information</h5>
         <a href="/company/edit" class="btn btn-sm btn-secondary">
-          <i class="bi bi-pencil"></i> Edit
+          <i class="bi bi-pencil"></i>
+          Edit
         </a>
       </div>
       <div class="card-body">
@@ -78,16 +81,14 @@
       </div>
       <div class="card-body d-grid gap-2">
         <a href="/company/edit" class="btn btn-secondary">
-          <i class="bi bi-pencil"></i> Edit Company Profile
+          <i class="bi bi-pencil"></i>
+          Edit Company Profile
         </a>
         <a href="/company/users" class="btn btn-primary">
-          <i class="bi bi-people"></i> Manage Users
-        </a>
-        <a href="/company/roles" class="btn btn-outline-primary">
-          <i class="bi bi-shield-check"></i> View Roles
+          <i class="bi bi-people"></i>
+          Manage Users
         </a>
       </div>
     </div>
   </div>
 </div>
-

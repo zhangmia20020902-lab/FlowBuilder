@@ -1,12 +1,12 @@
 CREATE TABLE IF NOT EXISTS quotes (
   id INT PRIMARY KEY AUTO_INCREMENT,
   rfq_id INT NOT NULL,
-  supplier_id INT NOT NULL,
+  company_id INT NOT NULL COMMENT 'The supplier company submitting the quote',
   duration INT,
   status VARCHAR(50) DEFAULT 'pending',
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   FOREIGN KEY (rfq_id) REFERENCES rfqs(id) ON DELETE CASCADE,
-  FOREIGN KEY (supplier_id) REFERENCES suppliers(id) ON DELETE CASCADE
+  FOREIGN KEY (company_id) REFERENCES companies(id) ON DELETE CASCADE
 );
 

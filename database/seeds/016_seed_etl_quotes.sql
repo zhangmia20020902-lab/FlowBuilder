@@ -1,6 +1,6 @@
 -- Seed: Historical Quotes from ETL transactions
 
-INSERT INTO quotes (id, rfq_id, supplier_id, duration, status, created_at) VALUES
+INSERT INTO quotes (id, rfq_id, company_id, duration, status, created_at) VALUES
 (1000, 1000, 1428, 30, 'accepted', '1959-06-29 12:00:00'),
 (1001, 1001, 1235, 30, 'accepted', '2019-05-15 12:00:00'),
 (1002, 1002, 1069, 30, 'accepted', '2024-06-22 12:00:00'),
@@ -1002,7 +1002,7 @@ INSERT INTO quotes (id, rfq_id, supplier_id, duration, status, created_at) VALUE
 (1998, 1998, 1456, 30, 'accepted', '2019-08-13 12:00:00'),
 (1999, 1999, 1473, 30, 'accepted', '1980-06-18 12:00:00');
 
-INSERT INTO quotes (id, rfq_id, supplier_id, duration, status, created_at) VALUES
+INSERT INTO quotes (id, rfq_id, company_id, duration, status, created_at) VALUES
 (2000, 2000, 1016, 30, 'accepted', '2020-05-02 12:00:00'),
 (2001, 2001, 1189, 30, 'accepted', '2021-07-28 12:00:00'),
 (2002, 2002, 1149, 30, 'accepted', '2022-11-24 12:00:00'),
@@ -2004,7 +2004,7 @@ INSERT INTO quotes (id, rfq_id, supplier_id, duration, status, created_at) VALUE
 (2998, 2998, 1251, 30, 'accepted', '2024-12-02 12:00:00'),
 (2999, 2999, 1266, 30, 'accepted', '2025-04-27 12:00:00');
 
-INSERT INTO quotes (id, rfq_id, supplier_id, duration, status, created_at) VALUES
+INSERT INTO quotes (id, rfq_id, company_id, duration, status, created_at) VALUES
 (3000, 3000, 1146, 30, 'accepted', '2023-08-29 12:00:00'),
 (3001, 3001, 1123, 30, 'accepted', '2020-02-24 12:00:00'),
 (3002, 3002, 1200, 30, 'accepted', '2022-12-21 12:00:00'),
@@ -3006,7 +3006,7 @@ INSERT INTO quotes (id, rfq_id, supplier_id, duration, status, created_at) VALUE
 (3998, 3998, 1183, 30, 'accepted', '2020-09-22 12:00:00'),
 (3999, 3999, 1467, 30, 'accepted', '2022-05-05 12:00:00');
 
-INSERT INTO quotes (id, rfq_id, supplier_id, duration, status, created_at) VALUES
+INSERT INTO quotes (id, rfq_id, company_id, duration, status, created_at) VALUES
 (4000, 4000, 1197, 30, 'accepted', '2022-08-20 12:00:00'),
 (4001, 4001, 1355, 30, 'accepted', '2020-09-28 12:00:00'),
 (4002, 4002, 1416, 30, 'accepted', '2025-03-26 12:00:00'),
@@ -4008,7 +4008,7 @@ INSERT INTO quotes (id, rfq_id, supplier_id, duration, status, created_at) VALUE
 (4998, 4998, 1197, 30, 'accepted', '2025-03-26 12:00:00'),
 (4999, 4999, 1326, 30, 'accepted', '2018-08-29 12:00:00');
 
-INSERT INTO quotes (id, rfq_id, supplier_id, duration, status, created_at) VALUES
+INSERT INTO quotes (id, rfq_id, company_id, duration, status, created_at) VALUES
 (5000, 5000, 1081, 30, 'accepted', '2023-05-14 12:00:00'),
 (5001, 5001, 1079, 30, 'accepted', '2024-09-25 12:00:00'),
 (5002, 5002, 1269, 30, 'accepted', '2021-09-28 12:00:00'),
@@ -5010,7 +5010,7 @@ INSERT INTO quotes (id, rfq_id, supplier_id, duration, status, created_at) VALUE
 (5998, 5998, 1345, 30, 'accepted', '2022-06-14 12:00:00'),
 (5999, 5999, 1035, 30, 'accepted', '2022-10-03 12:00:00');
 
-INSERT INTO quotes (id, rfq_id, supplier_id, duration, status, created_at) VALUES
+INSERT INTO quotes (id, rfq_id, company_id, duration, status, created_at) VALUES
 (6000, 6000, 1088, 30, 'accepted', '1956-08-30 12:00:00'),
 (6001, 6001, 1370, 30, 'accepted', '2018-04-17 12:00:00'),
 (6002, 6002, 1409, 30, 'accepted', '2022-04-06 12:00:00'),
@@ -6012,7 +6012,7 @@ INSERT INTO quotes (id, rfq_id, supplier_id, duration, status, created_at) VALUE
 (6998, 6998, 1480, 30, 'accepted', '2021-10-14 12:00:00'),
 (6999, 6999, 1335, 30, 'accepted', '2021-11-30 12:00:00');
 
-INSERT INTO quotes (id, rfq_id, supplier_id, duration, status, created_at) VALUES
+INSERT INTO quotes (id, rfq_id, company_id, duration, status, created_at) VALUES
 (7000, 7000, 1116, 30, 'accepted', '2025-05-01 12:00:00'),
 (7001, 7001, 1236, 30, 'accepted', '2024-04-16 12:00:00'),
 (7002, 7002, 1383, 30, 'accepted', '2021-03-25 12:00:00'),
@@ -7014,7 +7014,7 @@ INSERT INTO quotes (id, rfq_id, supplier_id, duration, status, created_at) VALUE
 (7998, 7998, 1463, 30, 'accepted', '2018-10-27 12:00:00'),
 (7999, 7999, 1499, 30, 'accepted', '2024-05-21 12:00:00');
 
-INSERT INTO quotes (id, rfq_id, supplier_id, duration, status, created_at) VALUES
+INSERT INTO quotes (id, rfq_id, company_id, duration, status, created_at) VALUES
 (8000, 8000, 1141, 30, 'accepted', '2020-02-16 12:00:00'),
 (8001, 8001, 1013, 30, 'accepted', '1980-08-05 12:00:00'),
 (8002, 8002, 1346, 30, 'accepted', '1961-03-01 12:00:00'),
@@ -8016,7 +8016,7 @@ INSERT INTO quotes (id, rfq_id, supplier_id, duration, status, created_at) VALUE
 (8998, 8998, 1147, 30, 'accepted', '2021-12-26 12:00:00'),
 (8999, 8999, 1274, 30, 'accepted', '1961-07-10 12:00:00');
 
-INSERT INTO quotes (id, rfq_id, supplier_id, duration, status, created_at) VALUES
+INSERT INTO quotes (id, rfq_id, company_id, duration, status, created_at) VALUES
 (9000, 9000, 1357, 30, 'accepted', '2020-02-26 12:00:00'),
 (9001, 9001, 1103, 30, 'accepted', '2019-06-23 12:00:00'),
 (9002, 9002, 1016, 30, 'accepted', '1963-04-26 12:00:00'),
@@ -9018,7 +9018,7 @@ INSERT INTO quotes (id, rfq_id, supplier_id, duration, status, created_at) VALUE
 (9998, 9998, 1406, 30, 'accepted', '2018-03-07 12:00:00'),
 (9999, 9999, 1238, 30, 'accepted', '2020-05-13 12:00:00');
 
-INSERT INTO quotes (id, rfq_id, supplier_id, duration, status, created_at) VALUES
+INSERT INTO quotes (id, rfq_id, company_id, duration, status, created_at) VALUES
 (10000, 10000, 1194, 30, 'accepted', '2020-07-24 12:00:00'),
 (10001, 10001, 1394, 30, 'accepted', '2021-09-20 12:00:00'),
 (10002, 10002, 1454, 30, 'accepted', '2023-05-14 12:00:00'),
@@ -10020,7 +10020,7 @@ INSERT INTO quotes (id, rfq_id, supplier_id, duration, status, created_at) VALUE
 (10998, 10998, 1398, 30, 'accepted', '2021-05-15 12:00:00'),
 (10999, 10999, 1109, 30, 'accepted', '2024-05-25 12:00:00');
 
-INSERT INTO quotes (id, rfq_id, supplier_id, duration, status, created_at) VALUES
+INSERT INTO quotes (id, rfq_id, company_id, duration, status, created_at) VALUES
 (11000, 11000, 1047, 30, 'accepted', '2023-03-23 12:00:00'),
 (11001, 11001, 1097, 30, 'accepted', '2018-10-29 12:00:00'),
 (11002, 11002, 1262, 30, 'accepted', '2022-08-03 12:00:00'),
@@ -11022,7 +11022,7 @@ INSERT INTO quotes (id, rfq_id, supplier_id, duration, status, created_at) VALUE
 (11998, 11998, 1478, 30, 'accepted', '2021-02-10 12:00:00'),
 (11999, 11999, 1038, 30, 'accepted', '2023-01-10 12:00:00');
 
-INSERT INTO quotes (id, rfq_id, supplier_id, duration, status, created_at) VALUES
+INSERT INTO quotes (id, rfq_id, company_id, duration, status, created_at) VALUES
 (12000, 12000, 1381, 30, 'accepted', '2019-04-20 12:00:00'),
 (12001, 12001, 1384, 30, 'accepted', '2025-01-23 12:00:00'),
 (12002, 12002, 1146, 30, 'accepted', '2023-10-02 12:00:00'),
@@ -12024,7 +12024,7 @@ INSERT INTO quotes (id, rfq_id, supplier_id, duration, status, created_at) VALUE
 (12998, 12998, 1170, 30, 'accepted', '2022-08-18 12:00:00'),
 (12999, 12999, 1414, 30, 'accepted', '2025-05-15 12:00:00');
 
-INSERT INTO quotes (id, rfq_id, supplier_id, duration, status, created_at) VALUES
+INSERT INTO quotes (id, rfq_id, company_id, duration, status, created_at) VALUES
 (13000, 13000, 1157, 30, 'accepted', '2021-03-25 12:00:00'),
 (13001, 13001, 1031, 30, 'accepted', '2023-12-30 12:00:00'),
 (13002, 13002, 1442, 30, 'accepted', '2021-10-23 12:00:00'),
@@ -13026,7 +13026,7 @@ INSERT INTO quotes (id, rfq_id, supplier_id, duration, status, created_at) VALUE
 (13998, 13998, 1276, 30, 'accepted', '1967-08-26 12:00:00'),
 (13999, 13999, 1242, 30, 'accepted', '2021-12-12 12:00:00');
 
-INSERT INTO quotes (id, rfq_id, supplier_id, duration, status, created_at) VALUES
+INSERT INTO quotes (id, rfq_id, company_id, duration, status, created_at) VALUES
 (14000, 14000, 1119, 30, 'accepted', '2024-01-24 12:00:00'),
 (14001, 14001, 1170, 30, 'accepted', '2021-08-05 12:00:00'),
 (14002, 14002, 1408, 30, 'accepted', '2024-04-13 12:00:00'),
@@ -14028,7 +14028,7 @@ INSERT INTO quotes (id, rfq_id, supplier_id, duration, status, created_at) VALUE
 (14998, 14998, 1450, 30, 'accepted', '2018-09-27 12:00:00'),
 (14999, 14999, 1258, 30, 'accepted', '2021-11-03 12:00:00');
 
-INSERT INTO quotes (id, rfq_id, supplier_id, duration, status, created_at) VALUES
+INSERT INTO quotes (id, rfq_id, company_id, duration, status, created_at) VALUES
 (15000, 15000, 1056, 30, 'accepted', '2025-03-12 12:00:00'),
 (15001, 15001, 1272, 30, 'accepted', '2020-09-27 12:00:00'),
 (15002, 15002, 1164, 30, 'accepted', '2021-08-18 12:00:00'),
@@ -15030,7 +15030,7 @@ INSERT INTO quotes (id, rfq_id, supplier_id, duration, status, created_at) VALUE
 (15998, 15998, 1040, 30, 'accepted', '1971-01-10 12:00:00'),
 (15999, 15999, 1085, 30, 'accepted', '2024-02-20 12:00:00');
 
-INSERT INTO quotes (id, rfq_id, supplier_id, duration, status, created_at) VALUES
+INSERT INTO quotes (id, rfq_id, company_id, duration, status, created_at) VALUES
 (16000, 16000, 1266, 30, 'accepted', '2019-11-19 12:00:00'),
 (16001, 16001, 1489, 30, 'accepted', '2019-07-27 12:00:00'),
 (16002, 16002, 1091, 30, 'accepted', '2022-03-15 12:00:00'),
@@ -16032,7 +16032,7 @@ INSERT INTO quotes (id, rfq_id, supplier_id, duration, status, created_at) VALUE
 (16998, 16998, 1050, 30, 'accepted', '1974-07-11 12:00:00'),
 (16999, 16999, 1240, 30, 'accepted', '2023-10-29 12:00:00');
 
-INSERT INTO quotes (id, rfq_id, supplier_id, duration, status, created_at) VALUES
+INSERT INTO quotes (id, rfq_id, company_id, duration, status, created_at) VALUES
 (17000, 17000, 1014, 30, 'accepted', '2022-08-07 12:00:00'),
 (17001, 17001, 1048, 30, 'accepted', '2021-01-13 12:00:00'),
 (17002, 17002, 1253, 30, 'accepted', '2021-05-30 12:00:00'),
@@ -17034,7 +17034,7 @@ INSERT INTO quotes (id, rfq_id, supplier_id, duration, status, created_at) VALUE
 (17998, 17998, 1342, 30, 'accepted', '2025-07-02 12:00:00'),
 (17999, 17999, 1335, 30, 'accepted', '2020-08-15 12:00:00');
 
-INSERT INTO quotes (id, rfq_id, supplier_id, duration, status, created_at) VALUES
+INSERT INTO quotes (id, rfq_id, company_id, duration, status, created_at) VALUES
 (18000, 18000, 1003, 30, 'accepted', '2021-02-21 12:00:00'),
 (18001, 18001, 1361, 30, 'accepted', '2022-07-28 12:00:00'),
 (18002, 18002, 1122, 30, 'accepted', '2024-11-19 12:00:00'),
@@ -18036,7 +18036,7 @@ INSERT INTO quotes (id, rfq_id, supplier_id, duration, status, created_at) VALUE
 (18998, 18998, 1373, 30, 'accepted', '2018-07-03 12:00:00'),
 (18999, 18999, 1080, 30, 'accepted', '2019-01-28 12:00:00');
 
-INSERT INTO quotes (id, rfq_id, supplier_id, duration, status, created_at) VALUES
+INSERT INTO quotes (id, rfq_id, company_id, duration, status, created_at) VALUES
 (19000, 19000, 1346, 30, 'accepted', '1965-11-01 12:00:00'),
 (19001, 19001, 1375, 30, 'accepted', '2022-05-31 12:00:00'),
 (19002, 19002, 1061, 30, 'accepted', '2023-11-18 12:00:00'),
@@ -19038,7 +19038,7 @@ INSERT INTO quotes (id, rfq_id, supplier_id, duration, status, created_at) VALUE
 (19998, 19998, 1324, 30, 'accepted', '2018-01-31 12:00:00'),
 (19999, 19999, 1035, 30, 'accepted', '2023-10-06 12:00:00');
 
-INSERT INTO quotes (id, rfq_id, supplier_id, duration, status, created_at) VALUES
+INSERT INTO quotes (id, rfq_id, company_id, duration, status, created_at) VALUES
 (20000, 20000, 1326, 30, 'accepted', '2021-05-24 12:00:00'),
 (20001, 20001, 1435, 30, 'accepted', '2024-04-23 12:00:00'),
 (20002, 20002, 1357, 30, 'accepted', '2023-09-23 12:00:00'),
@@ -20040,7 +20040,7 @@ INSERT INTO quotes (id, rfq_id, supplier_id, duration, status, created_at) VALUE
 (20998, 20998, 1154, 30, 'accepted', '2023-08-31 12:00:00'),
 (20999, 20999, 1199, 30, 'accepted', '2020-04-28 12:00:00');
 
-INSERT INTO quotes (id, rfq_id, supplier_id, duration, status, created_at) VALUES
+INSERT INTO quotes (id, rfq_id, company_id, duration, status, created_at) VALUES
 (21000, 21000, 1207, 30, 'accepted', '2022-03-25 12:00:00'),
 (21001, 21001, 1151, 30, 'accepted', '1966-06-17 12:00:00'),
 (21002, 21002, 1245, 30, 'accepted', '2023-10-04 12:00:00'),
@@ -21042,7 +21042,7 @@ INSERT INTO quotes (id, rfq_id, supplier_id, duration, status, created_at) VALUE
 (21998, 21998, 1332, 30, 'accepted', '1973-04-03 12:00:00'),
 (21999, 21999, 1212, 30, 'accepted', '2020-09-23 12:00:00');
 
-INSERT INTO quotes (id, rfq_id, supplier_id, duration, status, created_at) VALUES
+INSERT INTO quotes (id, rfq_id, company_id, duration, status, created_at) VALUES
 (22000, 22000, 1020, 30, 'accepted', '1953-11-10 12:00:00'),
 (22001, 22001, 1460, 30, 'accepted', '2022-02-17 12:00:00'),
 (22002, 22002, 1069, 30, 'accepted', '2020-04-28 12:00:00'),
@@ -22044,7 +22044,7 @@ INSERT INTO quotes (id, rfq_id, supplier_id, duration, status, created_at) VALUE
 (22998, 22998, 1157, 30, 'accepted', '2021-02-15 12:00:00'),
 (22999, 22999, 1068, 30, 'accepted', '2021-05-12 12:00:00');
 
-INSERT INTO quotes (id, rfq_id, supplier_id, duration, status, created_at) VALUES
+INSERT INTO quotes (id, rfq_id, company_id, duration, status, created_at) VALUES
 (23000, 23000, 1396, 30, 'accepted', '2019-08-09 12:00:00'),
 (23001, 23001, 1362, 30, 'accepted', '1972-02-27 12:00:00'),
 (23002, 23002, 1356, 30, 'accepted', '2020-06-09 12:00:00'),
@@ -23046,7 +23046,7 @@ INSERT INTO quotes (id, rfq_id, supplier_id, duration, status, created_at) VALUE
 (23998, 23998, 1157, 30, 'accepted', '2022-01-25 12:00:00'),
 (23999, 23999, 1295, 30, 'accepted', '2019-12-12 12:00:00');
 
-INSERT INTO quotes (id, rfq_id, supplier_id, duration, status, created_at) VALUES
+INSERT INTO quotes (id, rfq_id, company_id, duration, status, created_at) VALUES
 (24000, 24000, 1357, 30, 'accepted', '2020-01-25 12:00:00'),
 (24001, 24001, 1198, 30, 'accepted', '1952-01-09 12:00:00'),
 (24002, 24002, 1299, 30, 'accepted', '2019-12-30 12:00:00'),
@@ -24048,7 +24048,7 @@ INSERT INTO quotes (id, rfq_id, supplier_id, duration, status, created_at) VALUE
 (24998, 24998, 1378, 30, 'accepted', '2018-08-17 12:00:00'),
 (24999, 24999, 1404, 30, 'accepted', '2019-07-08 12:00:00');
 
-INSERT INTO quotes (id, rfq_id, supplier_id, duration, status, created_at) VALUES
+INSERT INTO quotes (id, rfq_id, company_id, duration, status, created_at) VALUES
 (25000, 25000, 1076, 30, 'accepted', '2020-08-30 12:00:00'),
 (25001, 25001, 1210, 30, 'accepted', '2023-11-09 12:00:00'),
 (25002, 25002, 1336, 30, 'accepted', '2023-01-27 12:00:00'),
@@ -25050,7 +25050,7 @@ INSERT INTO quotes (id, rfq_id, supplier_id, duration, status, created_at) VALUE
 (25998, 25998, 1005, 30, 'accepted', '2023-06-02 12:00:00'),
 (25999, 25999, 1375, 30, 'accepted', '2019-04-27 12:00:00');
 
-INSERT INTO quotes (id, rfq_id, supplier_id, duration, status, created_at) VALUES
+INSERT INTO quotes (id, rfq_id, company_id, duration, status, created_at) VALUES
 (26000, 26000, 1362, 30, 'accepted', '2022-09-10 12:00:00'),
 (26001, 26001, 1497, 30, 'accepted', '2022-08-05 12:00:00'),
 (26002, 26002, 1128, 30, 'accepted', '2019-01-31 12:00:00'),
@@ -26052,7 +26052,7 @@ INSERT INTO quotes (id, rfq_id, supplier_id, duration, status, created_at) VALUE
 (26998, 26998, 1218, 30, 'accepted', '2024-05-14 12:00:00'),
 (26999, 26999, 1161, 30, 'accepted', '2018-09-15 12:00:00');
 
-INSERT INTO quotes (id, rfq_id, supplier_id, duration, status, created_at) VALUES
+INSERT INTO quotes (id, rfq_id, company_id, duration, status, created_at) VALUES
 (27000, 27000, 1215, 30, 'accepted', '1974-12-06 12:00:00'),
 (27001, 27001, 1217, 30, 'accepted', '1966-05-04 12:00:00'),
 (27002, 27002, 1467, 30, 'accepted', '2023-02-23 12:00:00'),
@@ -27054,7 +27054,7 @@ INSERT INTO quotes (id, rfq_id, supplier_id, duration, status, created_at) VALUE
 (27998, 27998, 1055, 30, 'accepted', '2022-01-09 12:00:00'),
 (27999, 27999, 1386, 30, 'accepted', '2018-02-03 12:00:00');
 
-INSERT INTO quotes (id, rfq_id, supplier_id, duration, status, created_at) VALUES
+INSERT INTO quotes (id, rfq_id, company_id, duration, status, created_at) VALUES
 (28000, 28000, 1329, 30, 'accepted', '2019-11-05 12:00:00'),
 (28001, 28001, 1261, 30, 'accepted', '2022-04-04 12:00:00'),
 (28002, 28002, 1055, 30, 'accepted', '2023-03-18 12:00:00'),
@@ -28056,7 +28056,7 @@ INSERT INTO quotes (id, rfq_id, supplier_id, duration, status, created_at) VALUE
 (28998, 28998, 1205, 30, 'accepted', '2023-06-24 12:00:00'),
 (28999, 28999, 1364, 30, 'accepted', '2025-01-24 12:00:00');
 
-INSERT INTO quotes (id, rfq_id, supplier_id, duration, status, created_at) VALUES
+INSERT INTO quotes (id, rfq_id, company_id, duration, status, created_at) VALUES
 (29000, 29000, 1335, 30, 'accepted', '2025-01-24 12:00:00'),
 (29001, 29001, 1445, 30, 'accepted', '1959-02-13 12:00:00'),
 (29002, 29002, 1418, 30, 'accepted', '2020-02-02 12:00:00'),
@@ -29058,7 +29058,7 @@ INSERT INTO quotes (id, rfq_id, supplier_id, duration, status, created_at) VALUE
 (29998, 29998, 1327, 30, 'accepted', '2023-08-29 12:00:00'),
 (29999, 29999, 1216, 30, 'accepted', '2024-10-11 12:00:00');
 
-INSERT INTO quotes (id, rfq_id, supplier_id, duration, status, created_at) VALUES
+INSERT INTO quotes (id, rfq_id, company_id, duration, status, created_at) VALUES
 (30000, 30000, 1256, 30, 'accepted', '2021-09-23 12:00:00'),
 (30001, 30001, 1002, 30, 'accepted', '2024-11-23 12:00:00'),
 (30002, 30002, 1105, 30, 'accepted', '1965-01-11 12:00:00'),
@@ -30060,7 +30060,7 @@ INSERT INTO quotes (id, rfq_id, supplier_id, duration, status, created_at) VALUE
 (30998, 30998, 1357, 30, 'accepted', '1967-02-09 12:00:00'),
 (30999, 30999, 1322, 30, 'accepted', '1955-01-15 12:00:00');
 
-INSERT INTO quotes (id, rfq_id, supplier_id, duration, status, created_at) VALUES
+INSERT INTO quotes (id, rfq_id, company_id, duration, status, created_at) VALUES
 (31000, 31000, 1120, 30, 'accepted', '2024-04-19 12:00:00'),
 (31001, 31001, 1362, 30, 'accepted', '2025-01-21 12:00:00'),
 (31002, 31002, 1159, 30, 'accepted', '2018-06-01 12:00:00'),
@@ -31062,7 +31062,7 @@ INSERT INTO quotes (id, rfq_id, supplier_id, duration, status, created_at) VALUE
 (31998, 31998, 1253, 30, 'accepted', '2019-07-18 12:00:00'),
 (31999, 31999, 1361, 30, 'accepted', '2018-05-08 12:00:00');
 
-INSERT INTO quotes (id, rfq_id, supplier_id, duration, status, created_at) VALUES
+INSERT INTO quotes (id, rfq_id, company_id, duration, status, created_at) VALUES
 (32000, 32000, 1134, 30, 'accepted', '1952-12-16 12:00:00'),
 (32001, 32001, 1412, 30, 'accepted', '2024-05-27 12:00:00'),
 (32002, 32002, 1315, 30, 'accepted', '1976-02-13 12:00:00'),

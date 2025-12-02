@@ -1,6 +1,6 @@
--- Seed: Historical RFQ-Supplier associations
+-- Seed: Historical RFQ-Supplier company associations
 
-INSERT INTO rfq_suppliers (rfq_id, supplier_id, status, notified_at, responded_at) VALUES
+INSERT INTO rfq_suppliers (rfq_id, company_id, status, notified_at, responded_at) VALUES
 (1000, 1428, 'responded', '1959-06-29 00:00:00', '1959-06-29 12:00:00'),
 (1001, 1235, 'responded', '2019-05-15 00:00:00', '2019-05-15 12:00:00'),
 (1002, 1069, 'responded', '2024-06-22 00:00:00', '2024-06-22 12:00:00'),
@@ -1002,7 +1002,7 @@ INSERT INTO rfq_suppliers (rfq_id, supplier_id, status, notified_at, responded_a
 (1998, 1456, 'responded', '2019-08-13 00:00:00', '2019-08-13 12:00:00'),
 (1999, 1473, 'responded', '1980-06-18 00:00:00', '1980-06-18 12:00:00');
 
-INSERT INTO rfq_suppliers (rfq_id, supplier_id, status, notified_at, responded_at) VALUES
+INSERT INTO rfq_suppliers (rfq_id, company_id, status, notified_at, responded_at) VALUES
 (2000, 1016, 'responded', '2020-05-02 00:00:00', '2020-05-02 12:00:00'),
 (2001, 1189, 'responded', '2021-07-28 00:00:00', '2021-07-28 12:00:00'),
 (2002, 1149, 'responded', '2022-11-24 00:00:00', '2022-11-24 12:00:00'),
@@ -2004,7 +2004,7 @@ INSERT INTO rfq_suppliers (rfq_id, supplier_id, status, notified_at, responded_a
 (2998, 1251, 'responded', '2024-12-02 00:00:00', '2024-12-02 12:00:00'),
 (2999, 1266, 'responded', '2025-04-27 00:00:00', '2025-04-27 12:00:00');
 
-INSERT INTO rfq_suppliers (rfq_id, supplier_id, status, notified_at, responded_at) VALUES
+INSERT INTO rfq_suppliers (rfq_id, company_id, status, notified_at, responded_at) VALUES
 (3000, 1146, 'responded', '2023-08-29 00:00:00', '2023-08-29 12:00:00'),
 (3001, 1123, 'responded', '2020-02-24 00:00:00', '2020-02-24 12:00:00'),
 (3002, 1200, 'responded', '2022-12-21 00:00:00', '2022-12-21 12:00:00'),
@@ -3006,7 +3006,7 @@ INSERT INTO rfq_suppliers (rfq_id, supplier_id, status, notified_at, responded_a
 (3998, 1183, 'responded', '2020-09-22 00:00:00', '2020-09-22 12:00:00'),
 (3999, 1467, 'responded', '2022-05-05 00:00:00', '2022-05-05 12:00:00');
 
-INSERT INTO rfq_suppliers (rfq_id, supplier_id, status, notified_at, responded_at) VALUES
+INSERT INTO rfq_suppliers (rfq_id, company_id, status, notified_at, responded_at) VALUES
 (4000, 1197, 'responded', '2022-08-20 00:00:00', '2022-08-20 12:00:00'),
 (4001, 1355, 'responded', '2020-09-28 00:00:00', '2020-09-28 12:00:00'),
 (4002, 1416, 'responded', '2025-03-26 00:00:00', '2025-03-26 12:00:00'),
@@ -4008,7 +4008,7 @@ INSERT INTO rfq_suppliers (rfq_id, supplier_id, status, notified_at, responded_a
 (4998, 1197, 'responded', '2025-03-26 00:00:00', '2025-03-26 12:00:00'),
 (4999, 1326, 'responded', '2018-08-29 00:00:00', '2018-08-29 12:00:00');
 
-INSERT INTO rfq_suppliers (rfq_id, supplier_id, status, notified_at, responded_at) VALUES
+INSERT INTO rfq_suppliers (rfq_id, company_id, status, notified_at, responded_at) VALUES
 (5000, 1081, 'responded', '2023-05-14 00:00:00', '2023-05-14 12:00:00'),
 (5001, 1079, 'responded', '2024-09-25 00:00:00', '2024-09-25 12:00:00'),
 (5002, 1269, 'responded', '2021-09-28 00:00:00', '2021-09-28 12:00:00'),
@@ -5010,7 +5010,7 @@ INSERT INTO rfq_suppliers (rfq_id, supplier_id, status, notified_at, responded_a
 (5998, 1345, 'responded', '2022-06-14 00:00:00', '2022-06-14 12:00:00'),
 (5999, 1035, 'responded', '2022-10-03 00:00:00', '2022-10-03 12:00:00');
 
-INSERT INTO rfq_suppliers (rfq_id, supplier_id, status, notified_at, responded_at) VALUES
+INSERT INTO rfq_suppliers (rfq_id, company_id, status, notified_at, responded_at) VALUES
 (6000, 1088, 'responded', '1956-08-30 00:00:00', '1956-08-30 12:00:00'),
 (6001, 1370, 'responded', '2018-04-17 00:00:00', '2018-04-17 12:00:00'),
 (6002, 1409, 'responded', '2022-04-06 00:00:00', '2022-04-06 12:00:00'),
@@ -6012,7 +6012,7 @@ INSERT INTO rfq_suppliers (rfq_id, supplier_id, status, notified_at, responded_a
 (6998, 1480, 'responded', '2021-10-14 00:00:00', '2021-10-14 12:00:00'),
 (6999, 1335, 'responded', '2021-11-30 00:00:00', '2021-11-30 12:00:00');
 
-INSERT INTO rfq_suppliers (rfq_id, supplier_id, status, notified_at, responded_at) VALUES
+INSERT INTO rfq_suppliers (rfq_id, company_id, status, notified_at, responded_at) VALUES
 (7000, 1116, 'responded', '2025-05-01 00:00:00', '2025-05-01 12:00:00'),
 (7001, 1236, 'responded', '2024-04-16 00:00:00', '2024-04-16 12:00:00'),
 (7002, 1383, 'responded', '2021-03-25 00:00:00', '2021-03-25 12:00:00'),
@@ -7014,7 +7014,7 @@ INSERT INTO rfq_suppliers (rfq_id, supplier_id, status, notified_at, responded_a
 (7998, 1463, 'responded', '2018-10-27 00:00:00', '2018-10-27 12:00:00'),
 (7999, 1499, 'responded', '2024-05-21 00:00:00', '2024-05-21 12:00:00');
 
-INSERT INTO rfq_suppliers (rfq_id, supplier_id, status, notified_at, responded_at) VALUES
+INSERT INTO rfq_suppliers (rfq_id, company_id, status, notified_at, responded_at) VALUES
 (8000, 1141, 'responded', '2020-02-16 00:00:00', '2020-02-16 12:00:00'),
 (8001, 1013, 'responded', '1980-08-05 00:00:00', '1980-08-05 12:00:00'),
 (8002, 1346, 'responded', '1961-03-01 00:00:00', '1961-03-01 12:00:00'),
@@ -8016,7 +8016,7 @@ INSERT INTO rfq_suppliers (rfq_id, supplier_id, status, notified_at, responded_a
 (8998, 1147, 'responded', '2021-12-26 00:00:00', '2021-12-26 12:00:00'),
 (8999, 1274, 'responded', '1961-07-10 00:00:00', '1961-07-10 12:00:00');
 
-INSERT INTO rfq_suppliers (rfq_id, supplier_id, status, notified_at, responded_at) VALUES
+INSERT INTO rfq_suppliers (rfq_id, company_id, status, notified_at, responded_at) VALUES
 (9000, 1357, 'responded', '2020-02-26 00:00:00', '2020-02-26 12:00:00'),
 (9001, 1103, 'responded', '2019-06-23 00:00:00', '2019-06-23 12:00:00'),
 (9002, 1016, 'responded', '1963-04-26 00:00:00', '1963-04-26 12:00:00'),
@@ -9018,7 +9018,7 @@ INSERT INTO rfq_suppliers (rfq_id, supplier_id, status, notified_at, responded_a
 (9998, 1406, 'responded', '2018-03-07 00:00:00', '2018-03-07 12:00:00'),
 (9999, 1238, 'responded', '2020-05-13 00:00:00', '2020-05-13 12:00:00');
 
-INSERT INTO rfq_suppliers (rfq_id, supplier_id, status, notified_at, responded_at) VALUES
+INSERT INTO rfq_suppliers (rfq_id, company_id, status, notified_at, responded_at) VALUES
 (10000, 1194, 'responded', '2020-07-24 00:00:00', '2020-07-24 12:00:00'),
 (10001, 1394, 'responded', '2021-09-20 00:00:00', '2021-09-20 12:00:00'),
 (10002, 1454, 'responded', '2023-05-14 00:00:00', '2023-05-14 12:00:00'),
@@ -10020,7 +10020,7 @@ INSERT INTO rfq_suppliers (rfq_id, supplier_id, status, notified_at, responded_a
 (10998, 1398, 'responded', '2021-05-15 00:00:00', '2021-05-15 12:00:00'),
 (10999, 1109, 'responded', '2024-05-25 00:00:00', '2024-05-25 12:00:00');
 
-INSERT INTO rfq_suppliers (rfq_id, supplier_id, status, notified_at, responded_at) VALUES
+INSERT INTO rfq_suppliers (rfq_id, company_id, status, notified_at, responded_at) VALUES
 (11000, 1047, 'responded', '2023-03-23 00:00:00', '2023-03-23 12:00:00'),
 (11001, 1097, 'responded', '2018-10-29 00:00:00', '2018-10-29 12:00:00'),
 (11002, 1262, 'responded', '2022-08-03 00:00:00', '2022-08-03 12:00:00'),
@@ -11022,7 +11022,7 @@ INSERT INTO rfq_suppliers (rfq_id, supplier_id, status, notified_at, responded_a
 (11998, 1478, 'responded', '2021-02-10 00:00:00', '2021-02-10 12:00:00'),
 (11999, 1038, 'responded', '2023-01-10 00:00:00', '2023-01-10 12:00:00');
 
-INSERT INTO rfq_suppliers (rfq_id, supplier_id, status, notified_at, responded_at) VALUES
+INSERT INTO rfq_suppliers (rfq_id, company_id, status, notified_at, responded_at) VALUES
 (12000, 1381, 'responded', '2019-04-20 00:00:00', '2019-04-20 12:00:00'),
 (12001, 1384, 'responded', '2025-01-23 00:00:00', '2025-01-23 12:00:00'),
 (12002, 1146, 'responded', '2023-10-02 00:00:00', '2023-10-02 12:00:00'),
@@ -12024,7 +12024,7 @@ INSERT INTO rfq_suppliers (rfq_id, supplier_id, status, notified_at, responded_a
 (12998, 1170, 'responded', '2022-08-18 00:00:00', '2022-08-18 12:00:00'),
 (12999, 1414, 'responded', '2025-05-15 00:00:00', '2025-05-15 12:00:00');
 
-INSERT INTO rfq_suppliers (rfq_id, supplier_id, status, notified_at, responded_at) VALUES
+INSERT INTO rfq_suppliers (rfq_id, company_id, status, notified_at, responded_at) VALUES
 (13000, 1157, 'responded', '2021-03-25 00:00:00', '2021-03-25 12:00:00'),
 (13001, 1031, 'responded', '2023-12-30 00:00:00', '2023-12-30 12:00:00'),
 (13002, 1442, 'responded', '2021-10-23 00:00:00', '2021-10-23 12:00:00'),
@@ -13026,7 +13026,7 @@ INSERT INTO rfq_suppliers (rfq_id, supplier_id, status, notified_at, responded_a
 (13998, 1276, 'responded', '1967-08-26 00:00:00', '1967-08-26 12:00:00'),
 (13999, 1242, 'responded', '2021-12-12 00:00:00', '2021-12-12 12:00:00');
 
-INSERT INTO rfq_suppliers (rfq_id, supplier_id, status, notified_at, responded_at) VALUES
+INSERT INTO rfq_suppliers (rfq_id, company_id, status, notified_at, responded_at) VALUES
 (14000, 1119, 'responded', '2024-01-24 00:00:00', '2024-01-24 12:00:00'),
 (14001, 1170, 'responded', '2021-08-05 00:00:00', '2021-08-05 12:00:00'),
 (14002, 1408, 'responded', '2024-04-13 00:00:00', '2024-04-13 12:00:00'),
@@ -14028,7 +14028,7 @@ INSERT INTO rfq_suppliers (rfq_id, supplier_id, status, notified_at, responded_a
 (14998, 1450, 'responded', '2018-09-27 00:00:00', '2018-09-27 12:00:00'),
 (14999, 1258, 'responded', '2021-11-03 00:00:00', '2021-11-03 12:00:00');
 
-INSERT INTO rfq_suppliers (rfq_id, supplier_id, status, notified_at, responded_at) VALUES
+INSERT INTO rfq_suppliers (rfq_id, company_id, status, notified_at, responded_at) VALUES
 (15000, 1056, 'responded', '2025-03-12 00:00:00', '2025-03-12 12:00:00'),
 (15001, 1272, 'responded', '2020-09-27 00:00:00', '2020-09-27 12:00:00'),
 (15002, 1164, 'responded', '2021-08-18 00:00:00', '2021-08-18 12:00:00'),
@@ -15030,7 +15030,7 @@ INSERT INTO rfq_suppliers (rfq_id, supplier_id, status, notified_at, responded_a
 (15998, 1040, 'responded', '1971-01-10 00:00:00', '1971-01-10 12:00:00'),
 (15999, 1085, 'responded', '2024-02-20 00:00:00', '2024-02-20 12:00:00');
 
-INSERT INTO rfq_suppliers (rfq_id, supplier_id, status, notified_at, responded_at) VALUES
+INSERT INTO rfq_suppliers (rfq_id, company_id, status, notified_at, responded_at) VALUES
 (16000, 1266, 'responded', '2019-11-19 00:00:00', '2019-11-19 12:00:00'),
 (16001, 1489, 'responded', '2019-07-27 00:00:00', '2019-07-27 12:00:00'),
 (16002, 1091, 'responded', '2022-03-15 00:00:00', '2022-03-15 12:00:00'),
@@ -16032,7 +16032,7 @@ INSERT INTO rfq_suppliers (rfq_id, supplier_id, status, notified_at, responded_a
 (16998, 1050, 'responded', '1974-07-11 00:00:00', '1974-07-11 12:00:00'),
 (16999, 1240, 'responded', '2023-10-29 00:00:00', '2023-10-29 12:00:00');
 
-INSERT INTO rfq_suppliers (rfq_id, supplier_id, status, notified_at, responded_at) VALUES
+INSERT INTO rfq_suppliers (rfq_id, company_id, status, notified_at, responded_at) VALUES
 (17000, 1014, 'responded', '2022-08-07 00:00:00', '2022-08-07 12:00:00'),
 (17001, 1048, 'responded', '2021-01-13 00:00:00', '2021-01-13 12:00:00'),
 (17002, 1253, 'responded', '2021-05-30 00:00:00', '2021-05-30 12:00:00'),
@@ -17034,7 +17034,7 @@ INSERT INTO rfq_suppliers (rfq_id, supplier_id, status, notified_at, responded_a
 (17998, 1342, 'responded', '2025-07-02 00:00:00', '2025-07-02 12:00:00'),
 (17999, 1335, 'responded', '2020-08-15 00:00:00', '2020-08-15 12:00:00');
 
-INSERT INTO rfq_suppliers (rfq_id, supplier_id, status, notified_at, responded_at) VALUES
+INSERT INTO rfq_suppliers (rfq_id, company_id, status, notified_at, responded_at) VALUES
 (18000, 1003, 'responded', '2021-02-21 00:00:00', '2021-02-21 12:00:00'),
 (18001, 1361, 'responded', '2022-07-28 00:00:00', '2022-07-28 12:00:00'),
 (18002, 1122, 'responded', '2024-11-19 00:00:00', '2024-11-19 12:00:00'),
@@ -18036,7 +18036,7 @@ INSERT INTO rfq_suppliers (rfq_id, supplier_id, status, notified_at, responded_a
 (18998, 1373, 'responded', '2018-07-03 00:00:00', '2018-07-03 12:00:00'),
 (18999, 1080, 'responded', '2019-01-28 00:00:00', '2019-01-28 12:00:00');
 
-INSERT INTO rfq_suppliers (rfq_id, supplier_id, status, notified_at, responded_at) VALUES
+INSERT INTO rfq_suppliers (rfq_id, company_id, status, notified_at, responded_at) VALUES
 (19000, 1346, 'responded', '1965-11-01 00:00:00', '1965-11-01 12:00:00'),
 (19001, 1375, 'responded', '2022-05-31 00:00:00', '2022-05-31 12:00:00'),
 (19002, 1061, 'responded', '2023-11-18 00:00:00', '2023-11-18 12:00:00'),
@@ -19038,7 +19038,7 @@ INSERT INTO rfq_suppliers (rfq_id, supplier_id, status, notified_at, responded_a
 (19998, 1324, 'responded', '2018-01-31 00:00:00', '2018-01-31 12:00:00'),
 (19999, 1035, 'responded', '2023-10-06 00:00:00', '2023-10-06 12:00:00');
 
-INSERT INTO rfq_suppliers (rfq_id, supplier_id, status, notified_at, responded_at) VALUES
+INSERT INTO rfq_suppliers (rfq_id, company_id, status, notified_at, responded_at) VALUES
 (20000, 1326, 'responded', '2021-05-24 00:00:00', '2021-05-24 12:00:00'),
 (20001, 1435, 'responded', '2024-04-23 00:00:00', '2024-04-23 12:00:00'),
 (20002, 1357, 'responded', '2023-09-23 00:00:00', '2023-09-23 12:00:00'),
@@ -20040,7 +20040,7 @@ INSERT INTO rfq_suppliers (rfq_id, supplier_id, status, notified_at, responded_a
 (20998, 1154, 'responded', '2023-08-31 00:00:00', '2023-08-31 12:00:00'),
 (20999, 1199, 'responded', '2020-04-28 00:00:00', '2020-04-28 12:00:00');
 
-INSERT INTO rfq_suppliers (rfq_id, supplier_id, status, notified_at, responded_at) VALUES
+INSERT INTO rfq_suppliers (rfq_id, company_id, status, notified_at, responded_at) VALUES
 (21000, 1207, 'responded', '2022-03-25 00:00:00', '2022-03-25 12:00:00'),
 (21001, 1151, 'responded', '1966-06-17 00:00:00', '1966-06-17 12:00:00'),
 (21002, 1245, 'responded', '2023-10-04 00:00:00', '2023-10-04 12:00:00'),
@@ -21042,7 +21042,7 @@ INSERT INTO rfq_suppliers (rfq_id, supplier_id, status, notified_at, responded_a
 (21998, 1332, 'responded', '1973-04-03 00:00:00', '1973-04-03 12:00:00'),
 (21999, 1212, 'responded', '2020-09-23 00:00:00', '2020-09-23 12:00:00');
 
-INSERT INTO rfq_suppliers (rfq_id, supplier_id, status, notified_at, responded_at) VALUES
+INSERT INTO rfq_suppliers (rfq_id, company_id, status, notified_at, responded_at) VALUES
 (22000, 1020, 'responded', '1953-11-10 00:00:00', '1953-11-10 12:00:00'),
 (22001, 1460, 'responded', '2022-02-17 00:00:00', '2022-02-17 12:00:00'),
 (22002, 1069, 'responded', '2020-04-28 00:00:00', '2020-04-28 12:00:00'),
@@ -22044,7 +22044,7 @@ INSERT INTO rfq_suppliers (rfq_id, supplier_id, status, notified_at, responded_a
 (22998, 1157, 'responded', '2021-02-15 00:00:00', '2021-02-15 12:00:00'),
 (22999, 1068, 'responded', '2021-05-12 00:00:00', '2021-05-12 12:00:00');
 
-INSERT INTO rfq_suppliers (rfq_id, supplier_id, status, notified_at, responded_at) VALUES
+INSERT INTO rfq_suppliers (rfq_id, company_id, status, notified_at, responded_at) VALUES
 (23000, 1396, 'responded', '2019-08-09 00:00:00', '2019-08-09 12:00:00'),
 (23001, 1362, 'responded', '1972-02-27 00:00:00', '1972-02-27 12:00:00'),
 (23002, 1356, 'responded', '2020-06-09 00:00:00', '2020-06-09 12:00:00'),
@@ -23046,7 +23046,7 @@ INSERT INTO rfq_suppliers (rfq_id, supplier_id, status, notified_at, responded_a
 (23998, 1157, 'responded', '2022-01-25 00:00:00', '2022-01-25 12:00:00'),
 (23999, 1295, 'responded', '2019-12-12 00:00:00', '2019-12-12 12:00:00');
 
-INSERT INTO rfq_suppliers (rfq_id, supplier_id, status, notified_at, responded_at) VALUES
+INSERT INTO rfq_suppliers (rfq_id, company_id, status, notified_at, responded_at) VALUES
 (24000, 1357, 'responded', '2020-01-25 00:00:00', '2020-01-25 12:00:00'),
 (24001, 1198, 'responded', '1952-01-09 00:00:00', '1952-01-09 12:00:00'),
 (24002, 1299, 'responded', '2019-12-30 00:00:00', '2019-12-30 12:00:00'),
@@ -24048,7 +24048,7 @@ INSERT INTO rfq_suppliers (rfq_id, supplier_id, status, notified_at, responded_a
 (24998, 1378, 'responded', '2018-08-17 00:00:00', '2018-08-17 12:00:00'),
 (24999, 1404, 'responded', '2019-07-08 00:00:00', '2019-07-08 12:00:00');
 
-INSERT INTO rfq_suppliers (rfq_id, supplier_id, status, notified_at, responded_at) VALUES
+INSERT INTO rfq_suppliers (rfq_id, company_id, status, notified_at, responded_at) VALUES
 (25000, 1076, 'responded', '2020-08-30 00:00:00', '2020-08-30 12:00:00'),
 (25001, 1210, 'responded', '2023-11-09 00:00:00', '2023-11-09 12:00:00'),
 (25002, 1336, 'responded', '2023-01-27 00:00:00', '2023-01-27 12:00:00'),
@@ -25050,7 +25050,7 @@ INSERT INTO rfq_suppliers (rfq_id, supplier_id, status, notified_at, responded_a
 (25998, 1005, 'responded', '2023-06-02 00:00:00', '2023-06-02 12:00:00'),
 (25999, 1375, 'responded', '2019-04-27 00:00:00', '2019-04-27 12:00:00');
 
-INSERT INTO rfq_suppliers (rfq_id, supplier_id, status, notified_at, responded_at) VALUES
+INSERT INTO rfq_suppliers (rfq_id, company_id, status, notified_at, responded_at) VALUES
 (26000, 1362, 'responded', '2022-09-10 00:00:00', '2022-09-10 12:00:00'),
 (26001, 1497, 'responded', '2022-08-05 00:00:00', '2022-08-05 12:00:00'),
 (26002, 1128, 'responded', '2019-01-31 00:00:00', '2019-01-31 12:00:00'),
@@ -26052,7 +26052,7 @@ INSERT INTO rfq_suppliers (rfq_id, supplier_id, status, notified_at, responded_a
 (26998, 1218, 'responded', '2024-05-14 00:00:00', '2024-05-14 12:00:00'),
 (26999, 1161, 'responded', '2018-09-15 00:00:00', '2018-09-15 12:00:00');
 
-INSERT INTO rfq_suppliers (rfq_id, supplier_id, status, notified_at, responded_at) VALUES
+INSERT INTO rfq_suppliers (rfq_id, company_id, status, notified_at, responded_at) VALUES
 (27000, 1215, 'responded', '1974-12-06 00:00:00', '1974-12-06 12:00:00'),
 (27001, 1217, 'responded', '1966-05-04 00:00:00', '1966-05-04 12:00:00'),
 (27002, 1467, 'responded', '2023-02-23 00:00:00', '2023-02-23 12:00:00'),
@@ -27054,7 +27054,7 @@ INSERT INTO rfq_suppliers (rfq_id, supplier_id, status, notified_at, responded_a
 (27998, 1055, 'responded', '2022-01-09 00:00:00', '2022-01-09 12:00:00'),
 (27999, 1386, 'responded', '2018-02-03 00:00:00', '2018-02-03 12:00:00');
 
-INSERT INTO rfq_suppliers (rfq_id, supplier_id, status, notified_at, responded_at) VALUES
+INSERT INTO rfq_suppliers (rfq_id, company_id, status, notified_at, responded_at) VALUES
 (28000, 1329, 'responded', '2019-11-05 00:00:00', '2019-11-05 12:00:00'),
 (28001, 1261, 'responded', '2022-04-04 00:00:00', '2022-04-04 12:00:00'),
 (28002, 1055, 'responded', '2023-03-18 00:00:00', '2023-03-18 12:00:00'),
@@ -28056,7 +28056,7 @@ INSERT INTO rfq_suppliers (rfq_id, supplier_id, status, notified_at, responded_a
 (28998, 1205, 'responded', '2023-06-24 00:00:00', '2023-06-24 12:00:00'),
 (28999, 1364, 'responded', '2025-01-24 00:00:00', '2025-01-24 12:00:00');
 
-INSERT INTO rfq_suppliers (rfq_id, supplier_id, status, notified_at, responded_at) VALUES
+INSERT INTO rfq_suppliers (rfq_id, company_id, status, notified_at, responded_at) VALUES
 (29000, 1335, 'responded', '2025-01-24 00:00:00', '2025-01-24 12:00:00'),
 (29001, 1445, 'responded', '1959-02-13 00:00:00', '1959-02-13 12:00:00'),
 (29002, 1418, 'responded', '2020-02-02 00:00:00', '2020-02-02 12:00:00'),
@@ -29058,7 +29058,7 @@ INSERT INTO rfq_suppliers (rfq_id, supplier_id, status, notified_at, responded_a
 (29998, 1327, 'responded', '2023-08-29 00:00:00', '2023-08-29 12:00:00'),
 (29999, 1216, 'responded', '2024-10-11 00:00:00', '2024-10-11 12:00:00');
 
-INSERT INTO rfq_suppliers (rfq_id, supplier_id, status, notified_at, responded_at) VALUES
+INSERT INTO rfq_suppliers (rfq_id, company_id, status, notified_at, responded_at) VALUES
 (30000, 1256, 'responded', '2021-09-23 00:00:00', '2021-09-23 12:00:00'),
 (30001, 1002, 'responded', '2024-11-23 00:00:00', '2024-11-23 12:00:00'),
 (30002, 1105, 'responded', '1965-01-11 00:00:00', '1965-01-11 12:00:00'),
@@ -30060,7 +30060,7 @@ INSERT INTO rfq_suppliers (rfq_id, supplier_id, status, notified_at, responded_a
 (30998, 1357, 'responded', '1967-02-09 00:00:00', '1967-02-09 12:00:00'),
 (30999, 1322, 'responded', '1955-01-15 00:00:00', '1955-01-15 12:00:00');
 
-INSERT INTO rfq_suppliers (rfq_id, supplier_id, status, notified_at, responded_at) VALUES
+INSERT INTO rfq_suppliers (rfq_id, company_id, status, notified_at, responded_at) VALUES
 (31000, 1120, 'responded', '2024-04-19 00:00:00', '2024-04-19 12:00:00'),
 (31001, 1362, 'responded', '2025-01-21 00:00:00', '2025-01-21 12:00:00'),
 (31002, 1159, 'responded', '2018-06-01 00:00:00', '2018-06-01 12:00:00'),
@@ -31062,7 +31062,7 @@ INSERT INTO rfq_suppliers (rfq_id, supplier_id, status, notified_at, responded_a
 (31998, 1253, 'responded', '2019-07-18 00:00:00', '2019-07-18 12:00:00'),
 (31999, 1361, 'responded', '2018-05-08 00:00:00', '2018-05-08 12:00:00');
 
-INSERT INTO rfq_suppliers (rfq_id, supplier_id, status, notified_at, responded_at) VALUES
+INSERT INTO rfq_suppliers (rfq_id, company_id, status, notified_at, responded_at) VALUES
 (32000, 1134, 'responded', '1952-12-16 00:00:00', '1952-12-16 12:00:00'),
 (32001, 1412, 'responded', '2024-05-27 00:00:00', '2024-05-27 12:00:00'),
 (32002, 1315, 'responded', '1976-02-13 00:00:00', '1976-02-13 12:00:00'),

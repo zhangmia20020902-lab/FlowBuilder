@@ -1,7 +1,7 @@
--- Seed: Supplier-Material relationships from ETL transactions
--- Tracks which suppliers provide which materials
+-- Seed: Company-Material relationships from ETL transactions
+-- Tracks which supplier companies provide which materials
 
-INSERT INTO supplier_materials (supplier_id, material_id, last_price, last_transaction_date, transaction_count) VALUES
+INSERT INTO company_materials (company_id, material_id, last_price, last_transaction_date, transaction_count) VALUES
 (1428, 1088, 800.00, '1959-06-29', 1),
 (1235, 1015, 200.00, '2019-05-15', 1),
 (1069, 1188, 200.00, '2024-06-22', 3),
@@ -1003,7 +1003,7 @@ INSERT INTO supplier_materials (supplier_id, material_id, last_price, last_trans
 (1373, 1401, 100.00, '2023-07-03', 2),
 (1246, 1428, 1200.00, '2023-12-17', 1);
 
-INSERT INTO supplier_materials (supplier_id, material_id, last_price, last_transaction_date, transaction_count) VALUES
+INSERT INTO company_materials (company_id, material_id, last_price, last_transaction_date, transaction_count) VALUES
 (1407, 1153, 200.00, '1964-12-22', 1),
 (1176, 1375, 100.00, '2025-02-13', 2),
 (1245, 1383, 100.00, '2020-09-13', 2),
@@ -2005,7 +2005,7 @@ INSERT INTO supplier_materials (supplier_id, material_id, last_price, last_trans
 (1224, 1167, 200.00, '2023-05-15', 1),
 (1013, 1146, 900.00, '2024-08-16', 1);
 
-INSERT INTO supplier_materials (supplier_id, material_id, last_price, last_transaction_date, transaction_count) VALUES
+INSERT INTO company_materials (company_id, material_id, last_price, last_transaction_date, transaction_count) VALUES
 (1194, 1261, 800.00, '2019-12-28', 2),
 (1231, 1079, 600.00, '2018-01-08', 1),
 (1339, 1018, 400.00, '2021-12-01', 1),
@@ -3007,7 +3007,7 @@ INSERT INTO supplier_materials (supplier_id, material_id, last_price, last_trans
 (1420, 1096, 2800.00, '2023-11-07', 1),
 (1039, 1309, 3700.00, '2021-04-14', 1);
 
-INSERT INTO supplier_materials (supplier_id, material_id, last_price, last_transaction_date, transaction_count) VALUES
+INSERT INTO company_materials (company_id, material_id, last_price, last_transaction_date, transaction_count) VALUES
 (1217, 1392, 100.00, '2024-04-13', 1),
 (1057, 1168, 800.00, '2025-04-23', 2),
 (1163, 1097, 2900.00, '2024-11-21', 1),
@@ -4009,7 +4009,7 @@ INSERT INTO supplier_materials (supplier_id, material_id, last_price, last_trans
 (1014, 1156, 700.00, '2023-07-18', 1),
 (1464, 1127, 600.00, '2022-01-01', 1);
 
-INSERT INTO supplier_materials (supplier_id, material_id, last_price, last_transaction_date, transaction_count) VALUES
+INSERT INTO company_materials (company_id, material_id, last_price, last_transaction_date, transaction_count) VALUES
 (1260, 1133, 3200.00, '2021-05-11', 1),
 (1462, 1291, 3000.00, '2022-12-30', 1),
 (1186, 1202, 200.00, '2024-02-21', 1),
@@ -5011,7 +5011,7 @@ INSERT INTO supplier_materials (supplier_id, material_id, last_price, last_trans
 (1394, 1417, 1300.00, '2020-09-23', 1),
 (1018, 1399, 100.00, '2019-06-01', 1);
 
-INSERT INTO supplier_materials (supplier_id, material_id, last_price, last_transaction_date, transaction_count) VALUES
+INSERT INTO company_materials (company_id, material_id, last_price, last_transaction_date, transaction_count) VALUES
 (1318, 1422, 100.00, '2024-08-07', 1),
 (1239, 1046, 1100.00, '2024-07-23', 1),
 (1148, 1121, 3700.00, '2022-02-23', 1),
@@ -6013,7 +6013,7 @@ INSERT INTO supplier_materials (supplier_id, material_id, last_price, last_trans
 (1423, 1228, 500.00, '2024-01-05', 1),
 (1191, 1063, 400.00, '2019-10-20', 1);
 
-INSERT INTO supplier_materials (supplier_id, material_id, last_price, last_transaction_date, transaction_count) VALUES
+INSERT INTO company_materials (company_id, material_id, last_price, last_transaction_date, transaction_count) VALUES
 (1414, 1325, 4400.00, '2024-09-12', 2),
 (1430, 1139, 2300.00, '2021-05-30', 1),
 (1107, 1396, 200.00, '2024-01-21', 1),
@@ -7015,7 +7015,7 @@ INSERT INTO supplier_materials (supplier_id, material_id, last_price, last_trans
 (1030, 1441, 2200.00, '2020-12-08', 1),
 (1097, 1427, 4500.00, '2023-11-07', 1);
 
-INSERT INTO supplier_materials (supplier_id, material_id, last_price, last_transaction_date, transaction_count) VALUES
+INSERT INTO company_materials (company_id, material_id, last_price, last_transaction_date, transaction_count) VALUES
 (1347, 1144, 100.00, '2024-02-23', 1),
 (1374, 1036, 2700.00, '2018-01-29', 1),
 (1455, 1013, 100.00, '2024-09-24', 1),
@@ -8017,7 +8017,7 @@ INSERT INTO supplier_materials (supplier_id, material_id, last_price, last_trans
 (1059, 1437, 200.00, '2024-01-23', 1),
 (1222, 1151, 22500.00, '2025-05-12', 1);
 
-INSERT INTO supplier_materials (supplier_id, material_id, last_price, last_transaction_date, transaction_count) VALUES
+INSERT INTO company_materials (company_id, material_id, last_price, last_transaction_date, transaction_count) VALUES
 (1441, 1340, 300.00, '2020-05-03', 1),
 (1484, 1020, 600.00, '2020-07-16', 1),
 (1420, 1294, 300.00, '2020-06-20', 1),
@@ -9019,7 +9019,7 @@ INSERT INTO supplier_materials (supplier_id, material_id, last_price, last_trans
 (1065, 1400, 100.00, '2021-09-18', 1),
 (1154, 1180, 1900.00, '2018-12-23', 1);
 
-INSERT INTO supplier_materials (supplier_id, material_id, last_price, last_transaction_date, transaction_count) VALUES
+INSERT INTO company_materials (company_id, material_id, last_price, last_transaction_date, transaction_count) VALUES
 (1080, 1204, 13000.00, '2024-10-14', 1),
 (1283, 1415, 100.00, '2018-07-28', 1),
 (1060, 1387, 100.00, '2021-05-03', 2),
@@ -10021,7 +10021,7 @@ INSERT INTO supplier_materials (supplier_id, material_id, last_price, last_trans
 (1053, 1112, 100.00, '2023-07-24', 1),
 (1337, 1243, 1200.00, '2019-05-02', 2);
 
-INSERT INTO supplier_materials (supplier_id, material_id, last_price, last_transaction_date, transaction_count) VALUES
+INSERT INTO company_materials (company_id, material_id, last_price, last_transaction_date, transaction_count) VALUES
 (1238, 1184, 100.00, '2022-07-22', 3),
 (1154, 1152, 6700.00, '2019-01-05', 1),
 (1465, 1206, 2800.00, '2023-01-08', 1),
@@ -11023,7 +11023,7 @@ INSERT INTO supplier_materials (supplier_id, material_id, last_price, last_trans
 (1415, 1223, 1000.00, '2019-07-16', 1),
 (1154, 1035, 300.00, '2019-09-27', 2);
 
-INSERT INTO supplier_materials (supplier_id, material_id, last_price, last_transaction_date, transaction_count) VALUES
+INSERT INTO company_materials (company_id, material_id, last_price, last_transaction_date, transaction_count) VALUES
 (1322, 1141, 2300.00, '1960-10-30', 1),
 (1374, 1169, 13600.00, '2021-06-10', 1),
 (1253, 1358, 100.00, '2025-03-22', 1),
@@ -12025,7 +12025,7 @@ INSERT INTO supplier_materials (supplier_id, material_id, last_price, last_trans
 (1039, 1342, 1200.00, '2021-01-29', 1),
 (1199, 1271, 100.00, '2019-09-04', 1);
 
-INSERT INTO supplier_materials (supplier_id, material_id, last_price, last_transaction_date, transaction_count) VALUES
+INSERT INTO company_materials (company_id, material_id, last_price, last_transaction_date, transaction_count) VALUES
 (1372, 1362, 200.00, '2018-12-23', 1),
 (1144, 1386, 1300.00, '2022-03-01', 1),
 (1095, 1122, 2200.00, '2022-05-03', 1),
@@ -13027,7 +13027,7 @@ INSERT INTO supplier_materials (supplier_id, material_id, last_price, last_trans
 (1062, 1045, 4700.00, '2025-01-31', 1),
 (1272, 1103, 700.00, '2024-02-18', 1);
 
-INSERT INTO supplier_materials (supplier_id, material_id, last_price, last_transaction_date, transaction_count) VALUES
+INSERT INTO company_materials (company_id, material_id, last_price, last_transaction_date, transaction_count) VALUES
 (1210, 1177, 3200.00, '1971-08-02', 1),
 (1369, 1443, 1800.00, '2018-07-31', 1),
 (1308, 1246, 7500.00, '2024-06-26', 1),
@@ -14029,7 +14029,7 @@ INSERT INTO supplier_materials (supplier_id, material_id, last_price, last_trans
 (1427, 1433, 2800.00, '2022-04-28', 2),
 (1078, 1391, 100.00, '2018-06-25', 1);
 
-INSERT INTO supplier_materials (supplier_id, material_id, last_price, last_transaction_date, transaction_count) VALUES
+INSERT INTO company_materials (company_id, material_id, last_price, last_transaction_date, transaction_count) VALUES
 (1091, 1273, 100.00, '2019-12-11', 1),
 (1051, 1450, 2100.00, '2024-10-10', 1),
 (1134, 1097, 3200.00, '2021-09-25', 1),
@@ -15031,7 +15031,7 @@ INSERT INTO supplier_materials (supplier_id, material_id, last_price, last_trans
 (1178, 1045, 4900.00, '2025-06-28', 1),
 (1034, 1046, 1200.00, '2024-05-14', 1);
 
-INSERT INTO supplier_materials (supplier_id, material_id, last_price, last_transaction_date, transaction_count) VALUES
+INSERT INTO company_materials (company_id, material_id, last_price, last_transaction_date, transaction_count) VALUES
 (1312, 1006, 500.00, '2021-06-21', 1),
 (1399, 1137, 900.00, '2020-01-05', 1),
 (1142, 1055, 1200.00, '2022-12-05', 1),
@@ -16033,7 +16033,7 @@ INSERT INTO supplier_materials (supplier_id, material_id, last_price, last_trans
 (1055, 1353, 2600.00, '2021-11-11', 1),
 (1427, 1417, 1300.00, '2025-04-24', 1);
 
-INSERT INTO supplier_materials (supplier_id, material_id, last_price, last_transaction_date, transaction_count) VALUES
+INSERT INTO company_materials (company_id, material_id, last_price, last_transaction_date, transaction_count) VALUES
 (1404, 1303, 12700.00, '2020-11-06', 1),
 (1465, 1355, 100.00, '1970-01-16', 1),
 (1451, 1181, 2600.00, '2020-12-09', 1),
@@ -17035,7 +17035,7 @@ INSERT INTO supplier_materials (supplier_id, material_id, last_price, last_trans
 (1413, 1249, 3000.00, '1964-11-17', 1),
 (1227, 1290, 1400.00, '2020-09-08', 1);
 
-INSERT INTO supplier_materials (supplier_id, material_id, last_price, last_transaction_date, transaction_count) VALUES
+INSERT INTO company_materials (company_id, material_id, last_price, last_transaction_date, transaction_count) VALUES
 (1306, 1131, 300.00, '2023-12-16', 2),
 (1491, 1222, 500.00, '2018-02-03', 1),
 (1271, 1136, 7600.00, '2022-08-17', 2),
@@ -18037,7 +18037,7 @@ INSERT INTO supplier_materials (supplier_id, material_id, last_price, last_trans
 (1360, 1365, 600.00, '2022-11-26', 1),
 (1060, 1140, 1100.00, '2022-12-30', 2);
 
-INSERT INTO supplier_materials (supplier_id, material_id, last_price, last_transaction_date, transaction_count) VALUES
+INSERT INTO company_materials (company_id, material_id, last_price, last_transaction_date, transaction_count) VALUES
 (1260, 1331, 2900.00, '2021-05-26', 1),
 (1075, 1431, 3800.00, '2025-02-24', 2),
 (1368, 1376, 100.00, '2020-11-20', 1),
@@ -19039,7 +19039,7 @@ INSERT INTO supplier_materials (supplier_id, material_id, last_price, last_trans
 (1015, 1365, 600.00, '2019-09-19', 1),
 (1179, 1376, 100.00, '2023-05-04', 1);
 
-INSERT INTO supplier_materials (supplier_id, material_id, last_price, last_transaction_date, transaction_count) VALUES
+INSERT INTO company_materials (company_id, material_id, last_price, last_transaction_date, transaction_count) VALUES
 (1492, 1285, 500.00, '2018-12-29', 1),
 (1140, 1327, 4300.00, '2025-03-25', 1),
 (1191, 1189, 100.00, '2022-11-28', 1),
@@ -20041,7 +20041,7 @@ INSERT INTO supplier_materials (supplier_id, material_id, last_price, last_trans
 (1124, 1267, 900.00, '2020-09-13', 1),
 (1401, 1066, 6900.00, '2022-09-12', 1);
 
-INSERT INTO supplier_materials (supplier_id, material_id, last_price, last_transaction_date, transaction_count) VALUES
+INSERT INTO company_materials (company_id, material_id, last_price, last_transaction_date, transaction_count) VALUES
 (1483, 1431, 3800.00, '2020-03-20', 1),
 (1113, 1031, 400.00, '1972-03-04', 1),
 (1306, 1163, 200.00, '2020-04-06', 1),
@@ -21043,7 +21043,7 @@ INSERT INTO supplier_materials (supplier_id, material_id, last_price, last_trans
 (1128, 1190, 600.00, '1970-02-28', 1),
 (1499, 1261, 700.00, '2021-08-18', 1);
 
-INSERT INTO supplier_materials (supplier_id, material_id, last_price, last_transaction_date, transaction_count) VALUES
+INSERT INTO company_materials (company_id, material_id, last_price, last_transaction_date, transaction_count) VALUES
 (1287, 1094, 300.00, '2022-03-22', 1),
 (1430, 1036, 2700.00, '2023-06-07', 1),
 (1135, 1229, 100.00, '2019-07-31', 1),
@@ -22045,7 +22045,7 @@ INSERT INTO supplier_materials (supplier_id, material_id, last_price, last_trans
 (1399, 1354, 2500.00, '2019-11-25', 1),
 (1418, 1346, 400.00, '2024-07-13', 1);
 
-INSERT INTO supplier_materials (supplier_id, material_id, last_price, last_transaction_date, transaction_count) VALUES
+INSERT INTO company_materials (company_id, material_id, last_price, last_transaction_date, transaction_count) VALUES
 (1002, 1355, 100.00, '2023-07-31', 1),
 (1110, 1099, 100.00, '2018-06-02', 1),
 (1005, 1212, 100.00, '2023-10-10', 1),
@@ -23047,7 +23047,7 @@ INSERT INTO supplier_materials (supplier_id, material_id, last_price, last_trans
 (1483, 1333, 2100.00, '2024-07-13', 1),
 (1029, 1197, 4000.00, '2022-10-31', 1);
 
-INSERT INTO supplier_materials (supplier_id, material_id, last_price, last_transaction_date, transaction_count) VALUES
+INSERT INTO company_materials (company_id, material_id, last_price, last_transaction_date, transaction_count) VALUES
 (1266, 1147, 1200.00, '2021-01-22', 1),
 (1110, 1058, 400.00, '2019-12-04', 1),
 (1422, 1031, 400.00, '2024-10-27', 1),
@@ -24049,7 +24049,7 @@ INSERT INTO supplier_materials (supplier_id, material_id, last_price, last_trans
 (1230, 1072, 100.00, '2024-01-09', 1),
 (1253, 1011, 400.00, '2024-08-12', 1);
 
-INSERT INTO supplier_materials (supplier_id, material_id, last_price, last_transaction_date, transaction_count) VALUES
+INSERT INTO company_materials (company_id, material_id, last_price, last_transaction_date, transaction_count) VALUES
 (1037, 1202, 300.00, '2020-10-12', 1),
 (1016, 1379, 100.00, '2023-12-24', 1),
 (1293, 1273, 100.00, '2023-10-09', 1),
@@ -25051,7 +25051,7 @@ INSERT INTO supplier_materials (supplier_id, material_id, last_price, last_trans
 (1281, 1066, 7000.00, '2022-05-07', 1),
 (1067, 1405, 100.00, '2023-03-06', 1);
 
-INSERT INTO supplier_materials (supplier_id, material_id, last_price, last_transaction_date, transaction_count) VALUES
+INSERT INTO company_materials (company_id, material_id, last_price, last_transaction_date, transaction_count) VALUES
 (1264, 1123, 100.00, '2021-03-01', 2),
 (1082, 1267, 800.00, '2021-02-27', 1),
 (1075, 1407, 100.00, '2021-01-23', 1),
@@ -26053,7 +26053,7 @@ INSERT INTO supplier_materials (supplier_id, material_id, last_price, last_trans
 (1265, 1087, 300.00, '2018-01-02', 1),
 (1297, 1149, 1100.00, '2021-03-27', 1);
 
-INSERT INTO supplier_materials (supplier_id, material_id, last_price, last_transaction_date, transaction_count) VALUES
+INSERT INTO company_materials (company_id, material_id, last_price, last_transaction_date, transaction_count) VALUES
 (1343, 1271, 100.00, '2023-04-02', 2),
 (1001, 1278, 600.00, '2021-03-29', 1),
 (1157, 1410, 200.00, '2020-06-11', 1),
@@ -27055,7 +27055,7 @@ INSERT INTO supplier_materials (supplier_id, material_id, last_price, last_trans
 (1180, 1019, 200.00, '1975-12-29', 1),
 (1461, 1381, 1600.00, '2024-05-31', 1);
 
-INSERT INTO supplier_materials (supplier_id, material_id, last_price, last_transaction_date, transaction_count) VALUES
+INSERT INTO company_materials (company_id, material_id, last_price, last_transaction_date, transaction_count) VALUES
 (1006, 1171, 1000.00, '2022-04-22', 1),
 (1212, 1378, 100.00, '2020-10-09', 1),
 (1409, 1142, 7500.00, '2020-09-10', 1),
@@ -28057,7 +28057,7 @@ INSERT INTO supplier_materials (supplier_id, material_id, last_price, last_trans
 (1159, 1269, 100.00, '2020-08-31', 1),
 (1237, 1257, 800.00, '2022-06-17', 1);
 
-INSERT INTO supplier_materials (supplier_id, material_id, last_price, last_transaction_date, transaction_count) VALUES
+INSERT INTO company_materials (company_id, material_id, last_price, last_transaction_date, transaction_count) VALUES
 (1111, 1365, 600.00, '2025-04-13', 2),
 (1191, 1295, 100.00, '2020-04-23', 1),
 (1474, 1321, 2400.00, '2024-03-27', 2),
@@ -29059,7 +29059,7 @@ INSERT INTO supplier_materials (supplier_id, material_id, last_price, last_trans
 (1387, 1293, 5900.00, '2024-04-06', 1),
 (1099, 1410, 200.00, '2024-03-07', 1);
 
-INSERT INTO supplier_materials (supplier_id, material_id, last_price, last_transaction_date, transaction_count) VALUES
+INSERT INTO company_materials (company_id, material_id, last_price, last_transaction_date, transaction_count) VALUES
 (1088, 1212, 100.00, '2024-12-05', 1),
 (1183, 1325, 4400.00, '2023-01-19', 1),
 (1115, 1112, 100.00, '2021-09-13', 1),
@@ -30061,7 +30061,7 @@ INSERT INTO supplier_materials (supplier_id, material_id, last_price, last_trans
 (1115, 1232, 21400.00, '2023-03-05', 1),
 (1452, 1017, 500.00, '2019-01-05', 1);
 
-INSERT INTO supplier_materials (supplier_id, material_id, last_price, last_transaction_date, transaction_count) VALUES
+INSERT INTO company_materials (company_id, material_id, last_price, last_transaction_date, transaction_count) VALUES
 (1221, 1284, 600.00, '2018-09-30', 1),
 (1304, 1412, 2000.00, '2022-08-11', 1),
 (1356, 1448, 800.00, '2020-08-19', 1),
@@ -31063,7 +31063,7 @@ INSERT INTO supplier_materials (supplier_id, material_id, last_price, last_trans
 (1447, 1326, 1800.00, '2023-06-03', 1),
 (1401, 1018, 400.00, '2025-01-30', 1);
 
-INSERT INTO supplier_materials (supplier_id, material_id, last_price, last_transaction_date, transaction_count) VALUES
+INSERT INTO company_materials (company_id, material_id, last_price, last_transaction_date, transaction_count) VALUES
 (1310, 1109, 300.00, '2019-08-26', 1),
 (1456, 1142, 7500.00, '2025-05-20', 1),
 (1172, 1410, 200.00, '2024-05-13', 1),
@@ -32065,7 +32065,7 @@ INSERT INTO supplier_materials (supplier_id, material_id, last_price, last_trans
 (1181, 1254, 2300.00, '1953-11-17', 1),
 (1310, 1136, 7400.00, '2019-11-22', 1);
 
-INSERT INTO supplier_materials (supplier_id, material_id, last_price, last_transaction_date, transaction_count) VALUES
+INSERT INTO company_materials (company_id, material_id, last_price, last_transaction_date, transaction_count) VALUES
 (1197, 1181, 2600.00, '2021-09-18', 1),
 (1371, 1274, 400.00, '2023-12-17', 2),
 (1431, 1001, 200.00, '2019-01-12', 1),
@@ -33067,7 +33067,7 @@ INSERT INTO supplier_materials (supplier_id, material_id, last_price, last_trans
 (1357, 1040, 2600.00, '1978-04-16', 1),
 (1431, 1434, 4000.00, '2020-02-22', 1);
 
-INSERT INTO supplier_materials (supplier_id, material_id, last_price, last_transaction_date, transaction_count) VALUES
+INSERT INTO company_materials (company_id, material_id, last_price, last_transaction_date, transaction_count) VALUES
 (1033, 1075, 800.00, '2025-06-10', 1),
 (1119, 1199, 4500.00, '1952-03-13', 1),
 (1086, 1140, 1100.00, '2023-04-12', 1),
@@ -34069,7 +34069,7 @@ INSERT INTO supplier_materials (supplier_id, material_id, last_price, last_trans
 (1225, 1367, 100.00, '2020-05-14', 1),
 (1185, 1224, 100.00, '2021-06-10', 1);
 
-INSERT INTO supplier_materials (supplier_id, material_id, last_price, last_transaction_date, transaction_count) VALUES
+INSERT INTO company_materials (company_id, material_id, last_price, last_transaction_date, transaction_count) VALUES
 (1276, 1068, 1300.00, '2023-09-21', 1),
 (1314, 1065, 300.00, '2021-11-20', 1),
 (1235, 1379, 100.00, '1980-01-05', 1),
@@ -35071,7 +35071,7 @@ INSERT INTO supplier_materials (supplier_id, material_id, last_price, last_trans
 (1342, 1363, 2900.00, '2019-03-31', 1),
 (1291, 1174, 3100.00, '2023-07-18', 1);
 
-INSERT INTO supplier_materials (supplier_id, material_id, last_price, last_transaction_date, transaction_count) VALUES
+INSERT INTO company_materials (company_id, material_id, last_price, last_transaction_date, transaction_count) VALUES
 (1406, 1220, 300.00, '2021-03-28', 1),
 (1349, 1357, 100.00, '1956-07-20', 2),
 (1250, 1318, 600.00, '2023-10-23', 1),
@@ -36073,7 +36073,7 @@ INSERT INTO supplier_materials (supplier_id, material_id, last_price, last_trans
 (1356, 1299, 20500.00, '2020-03-06', 1),
 (1394, 1270, 2100.00, '2018-09-09', 2);
 
-INSERT INTO supplier_materials (supplier_id, material_id, last_price, last_transaction_date, transaction_count) VALUES
+INSERT INTO company_materials (company_id, material_id, last_price, last_transaction_date, transaction_count) VALUES
 (1179, 1427, 4500.00, '2020-11-09', 1),
 (1489, 1052, 100.00, '2018-08-25', 1),
 (1141, 1445, 3000.00, '2023-12-07', 1),
@@ -37075,7 +37075,7 @@ INSERT INTO supplier_materials (supplier_id, material_id, last_price, last_trans
 (1094, 1270, 2100.00, '2024-07-06', 1),
 (1269, 1218, 100.00, '1970-12-21', 1);
 
-INSERT INTO supplier_materials (supplier_id, material_id, last_price, last_transaction_date, transaction_count) VALUES
+INSERT INTO company_materials (company_id, material_id, last_price, last_transaction_date, transaction_count) VALUES
 (1420, 1440, 1400.00, '1956-09-05', 1),
 (1372, 1195, 700.00, '2022-01-03', 1),
 (1126, 1256, 900.00, '2021-10-06', 1),
@@ -38077,7 +38077,7 @@ INSERT INTO supplier_materials (supplier_id, material_id, last_price, last_trans
 (1178, 1279, 100.00, '2021-01-13', 1),
 (1281, 1024, 100.00, '2021-09-23', 1);
 
-INSERT INTO supplier_materials (supplier_id, material_id, last_price, last_transaction_date, transaction_count) VALUES
+INSERT INTO company_materials (company_id, material_id, last_price, last_transaction_date, transaction_count) VALUES
 (1456, 1188, 100.00, '2018-11-09', 1),
 (1454, 1430, 500.00, '2020-07-01', 1),
 (1345, 1128, 5000.00, '2023-05-21', 1),
@@ -39079,7 +39079,7 @@ INSERT INTO supplier_materials (supplier_id, material_id, last_price, last_trans
 (1355, 1288, 300.00, '2025-06-14', 1),
 (1401, 1042, 100.00, '1966-01-12', 1);
 
-INSERT INTO supplier_materials (supplier_id, material_id, last_price, last_transaction_date, transaction_count) VALUES
+INSERT INTO company_materials (company_id, material_id, last_price, last_transaction_date, transaction_count) VALUES
 (1471, 1026, 300.00, '2025-02-09', 1),
 (1419, 1133, 3100.00, '2021-12-21', 1),
 (1324, 1448, 800.00, '2024-10-24', 1),
@@ -40081,7 +40081,7 @@ INSERT INTO supplier_materials (supplier_id, material_id, last_price, last_trans
 (1277, 1057, 1100.00, '2025-06-03', 1),
 (1474, 1330, 2600.00, '2019-04-09', 1);
 
-INSERT INTO supplier_materials (supplier_id, material_id, last_price, last_transaction_date, transaction_count) VALUES
+INSERT INTO company_materials (company_id, material_id, last_price, last_transaction_date, transaction_count) VALUES
 (1177, 1283, 1000.00, '2025-02-27', 1),
 (1423, 1284, 600.00, '2022-01-30', 1),
 (1193, 1309, 3700.00, '2020-03-12', 1),
@@ -41083,7 +41083,7 @@ INSERT INTO supplier_materials (supplier_id, material_id, last_price, last_trans
 (1213, 1358, 100.00, '2021-01-26', 1),
 (1333, 1033, 100.00, '2025-02-02', 1);
 
-INSERT INTO supplier_materials (supplier_id, material_id, last_price, last_transaction_date, transaction_count) VALUES
+INSERT INTO company_materials (company_id, material_id, last_price, last_transaction_date, transaction_count) VALUES
 (1406, 1242, 600.00, '2024-01-05', 1),
 (1110, 1277, 100.00, '2022-07-13', 1),
 (1056, 1171, 1300.00, '2024-08-05', 2),
@@ -42085,7 +42085,7 @@ INSERT INTO supplier_materials (supplier_id, material_id, last_price, last_trans
 (1235, 1058, 400.00, '2023-09-08', 1),
 (1142, 1217, 100.00, '2022-07-11', 1);
 
-INSERT INTO supplier_materials (supplier_id, material_id, last_price, last_transaction_date, transaction_count) VALUES
+INSERT INTO company_materials (company_id, material_id, last_price, last_transaction_date, transaction_count) VALUES
 (1465, 1024, 100.00, '2023-09-27', 1),
 (1082, 1259, 3400.00, '2019-10-21', 1),
 (1481, 1129, 200.00, '2020-06-03', 1),

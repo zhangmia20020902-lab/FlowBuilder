@@ -168,9 +168,9 @@ function parseEtlInserts(sqlContent, tableName) {
   return rows;
 }
 
-// Transform ETL companies to suppliers
+// Transform ETL companies to supplier companies (unified model)
 function transformCompanies() {
-  console.log("Transforming ETL companies to suppliers...");
+  console.log("Transforming ETL companies to supplier companies...");
 
   const etlContent = fs.readFileSync(
     path.join(ETL_DIR, "companies.sql"),
@@ -178,14 +178,14 @@ function transformCompanies() {
   );
   const companies = parseEtlInserts(etlContent, "companies");
 
-  let supplierId = SUPPLIER_ID_START;
+  let companyId = SUPPLIER_ID_START;
   const sqlLines = [
-    "-- Seed: ETL Suppliers",
+    "-- Seed: ETL Supplier Companies",
     "-- Transformed from ETL companies data with ID mapping starting from 1000",
-    "-- company_id=1 is the system company (BuildRight Construction)",
+    "-- type='supplier' distinguishes these from client companies",
     "",
-    "-- Columns: id, company_id, name, email, trade_specialty, description, address, phone, notes",
-    "INSERT INTO suppliers (id, company_id, name, email, trade_specialty, description, address, phone, notes) VALUES",
+    "-- Columns: id, name, type, address, phone, email, trade_specialty, description, notes",
+    "INSERT INTO companies (id, name, type, address, phone, email, trade_specialty, description, notes) VALUES",
   ];
 
   const valueRows = [];
@@ -195,32 +195,34 @@ function transformCompanies() {
     const [etlCompanyId, name, description, address, phone, email, comments] =
       row;
 
-    companyIdMap.set(etlCompanyId, supplierId);
+    companyIdMap.set(etlCompanyId, companyId);
 
     const tradeSpecialty = deriveTradeSpecialty(description);
 
     valueRows.push(
-      `(${supplierId}, 1, ${escapeSql(name)}, ${escapeSql(email)}, ${escapeSql(
+      `(${companyId}, ${escapeSql(name)}, 'supplier', ${escapeSql(
+        address
+      )}, ${escapeSql(phone)}, ${escapeSql(email)}, ${escapeSql(
         tradeSpecialty
-      )}, ${escapeSql(description)}, ${escapeSql(address)}, ${escapeSql(
-        phone
-      )}, ${escapeSql(comments)})`
+      )}, ${escapeSql(description)}, ${escapeSql(comments)})`
     );
 
-    supplierId++;
+    companyId++;
   });
 
   sqlLines.push(valueRows.join(",\n") + ";");
 
   fs.writeFileSync(
-    path.join(SEEDS_DIR, "011_seed_etl_suppliers.sql"),
+    path.join(SEEDS_DIR, "011_seed_etl_companies.sql"),
     sqlLines.join("\n")
   );
 
   console.log(
     `  Transformed ${
       companies.length
-    } companies to suppliers (IDs ${SUPPLIER_ID_START}-${supplierId - 1})`
+    } ETL companies to supplier companies (IDs ${SUPPLIER_ID_START}-${
+      companyId - 1
+    })`
   );
 
   // Save ID map for reference
@@ -376,9 +378,9 @@ function transformTransactions() {
     "INSERT INTO rfqs (id, project_id, name, deadline, status, created_by, created_at) VALUES",
   ];
   const rfqSuppliersLines = [
-    "-- Seed: Historical RFQ-Supplier associations",
+    "-- Seed: Historical RFQ-Supplier company associations",
     "",
-    "INSERT INTO rfq_suppliers (rfq_id, supplier_id, status, notified_at, responded_at) VALUES",
+    "INSERT INTO rfq_suppliers (rfq_id, company_id, status, notified_at, responded_at) VALUES",
   ];
   const rfqMaterialsLines = [
     "-- Seed: Historical RFQ-Material associations",
@@ -388,7 +390,7 @@ function transformTransactions() {
   const quotesLines = [
     "-- Seed: Historical Quotes from ETL transactions",
     "",
-    "INSERT INTO quotes (id, rfq_id, supplier_id, duration, status, created_at) VALUES",
+    "INSERT INTO quotes (id, rfq_id, company_id, duration, status, created_at) VALUES",
   ];
   const quoteItemsLines = [
     "-- Seed: Historical Quote Items from ETL transactions",
@@ -536,12 +538,12 @@ function transformTransactions() {
   );
 
   const rfqSuppliersContent = [
-    "-- Seed: Historical RFQ-Supplier associations",
+    "-- Seed: Historical RFQ-Supplier company associations",
     "",
   ].concat(
     createBatchedInserts(
       "rfq_suppliers",
-      "rfq_id, supplier_id, status, notified_at, responded_at",
+      "rfq_id, company_id, status, notified_at, responded_at",
       rfqSuppliersValues
     )
   );
@@ -556,7 +558,7 @@ function transformTransactions() {
   ].concat(
     createBatchedInserts(
       "quotes",
-      "id, rfq_id, supplier_id, duration, status, created_at",
+      "id, rfq_id, company_id, duration, status, created_at",
       quotesValues
     )
   );
@@ -614,9 +616,9 @@ function transformTransactions() {
   console.log(`  Using batch size of ${BATCH_SIZE} rows per INSERT`);
 }
 
-// Generate supplier_materials seed from transactions
-function generateSupplierMaterials() {
-  console.log("Generating supplier_materials relationships...");
+// Generate company_materials seed from transactions
+function generateCompanyMaterials() {
+  console.log("Generating company_materials relationships...");
 
   const etlContent = fs.readFileSync(
     path.join(ETL_DIR, "transactions.sql"),
@@ -624,8 +626,8 @@ function generateSupplierMaterials() {
   );
   const transactions = parseEtlInserts(etlContent, "transactions");
 
-  // Track supplier-material relationships
-  const supplierMaterials = new Map(); // "supplierId-materialId" -> {lastPrice, lastDate, count}
+  // Track company-material relationships
+  const companyMaterials = new Map(); // "companyId-materialId" -> {lastPrice, lastDate, count}
 
   transactions.forEach((row) => {
     const [
@@ -640,20 +642,20 @@ function generateSupplierMaterials() {
       notes,
     ] = row;
 
-    const supplierId = companyIdMap.get(etlCompanyId);
+    const companyId = companyIdMap.get(etlCompanyId);
     const materialId = materialIdMap.get(etlMaterialId);
 
-    if (!supplierId || !materialId) return;
+    if (!companyId || !materialId) return;
 
-    const key = `${supplierId}-${materialId}`;
-    const existing = supplierMaterials.get(key);
+    const key = `${companyId}-${materialId}`;
+    const existing = companyMaterials.get(key);
 
     const price = parseFloat(pricePerUnit) || 0;
     const date = transactionDate || "2020-01-01";
 
     if (!existing || date > existing.lastDate) {
-      supplierMaterials.set(key, {
-        supplierId,
+      companyMaterials.set(key, {
+        companyId,
         materialId,
         lastPrice: price,
         lastDate: date,
@@ -665,32 +667,32 @@ function generateSupplierMaterials() {
   });
 
   const values = [];
-  supplierMaterials.forEach((data) => {
+  companyMaterials.forEach((data) => {
     values.push(
-      `(${data.supplierId}, ${data.materialId}, ${data.lastPrice.toFixed(
-        2
-      )}, '${data.lastDate}', ${data.count})`
+      `(${data.companyId}, ${data.materialId}, ${data.lastPrice.toFixed(2)}, '${
+        data.lastDate
+      }', ${data.count})`
     );
   });
 
   const sqlContent = [
-    "-- Seed: Supplier-Material relationships from ETL transactions",
-    "-- Tracks which suppliers provide which materials",
+    "-- Seed: Company-Material relationships from ETL transactions",
+    "-- Tracks which supplier companies provide which materials",
     "",
   ].concat(
     createBatchedInserts(
-      "supplier_materials",
-      "supplier_id, material_id, last_price, last_transaction_date, transaction_count",
+      "company_materials",
+      "company_id, material_id, last_price, last_transaction_date, transaction_count",
       values
     )
   );
 
   fs.writeFileSync(
-    path.join(SEEDS_DIR, "019_seed_etl_supplier_materials.sql"),
+    path.join(SEEDS_DIR, "019_seed_etl_company_materials.sql"),
     sqlContent.join("\n")
   );
 
-  console.log(`  Generated ${values.length} supplier-material relationships`);
+  console.log(`  Generated ${values.length} company-material relationships`);
 }
 
 // Main execution
@@ -705,7 +707,7 @@ function main() {
   transformCompanies();
   transformMaterials();
   transformTransactions();
-  generateSupplierMaterials();
+  generateCompanyMaterials();
 
   console.log("\n=== Transformation Complete ===");
   console.log(`Generated seed files in: ${SEEDS_DIR}`);

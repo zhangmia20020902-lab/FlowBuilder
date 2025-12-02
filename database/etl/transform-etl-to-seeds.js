@@ -24,7 +24,7 @@ const PO_ID_START = 1000;
 const BATCH_SIZE = 1000;
 
 // Maps for ETL ID -> New ID
-const companyIdMap = new Map(); // ETL company_id -> supplier_id
+const companyIdMap = new Map(); // ETL company_id -> { id: supplier_id, name: company_name }
 const materialIdMap = new Map(); // ETL material_id -> material_id
 
 // Helper function to create batched INSERT statements
@@ -195,7 +195,7 @@ function transformCompanies() {
     const [etlCompanyId, name, description, address, phone, email, comments] =
       row;
 
-    companyIdMap.set(etlCompanyId, companyId);
+    companyIdMap.set(etlCompanyId, { id: companyId, name: name });
 
     const tradeSpecialty = deriveTradeSpecialty(description);
 
@@ -324,10 +324,10 @@ function transformTransactions() {
       notes,
     ] = row;
 
-    const supplierId = companyIdMap.get(etlCompanyId);
+    const supplierData = companyIdMap.get(etlCompanyId);
     const materialId = materialIdMap.get(etlMaterialId);
 
-    if (!supplierId) {
+    if (!supplierData) {
       skippedNoSupplier++;
       return;
     }
@@ -335,6 +335,9 @@ function transformTransactions() {
       skippedNoMaterial++;
       return;
     }
+
+    const supplierId = supplierData.id;
+    const supplierName = supplierData.name;
 
     // Extract year-month from date
     const date = transactionDate ? transactionDate.substring(0, 7) : "2020-01"; // YYYY-MM
@@ -347,6 +350,7 @@ function transformTransactions() {
     groups.get(groupKey).push({
       transactionId,
       supplierId,
+      supplierName,
       materialId,
       quantity: parseInt(quantity) || 1,
       pricePerUnit: parseFloat(pricePerUnit) || 0,
@@ -431,13 +435,14 @@ function transformTransactions() {
 
     // Get supplier name from first transaction
     const firstTxn = txns[0];
+    const supplierName = firstTxn.supplierName;
     const deadline = txns.reduce(
       (latest, t) => (t.transactionDate > latest ? t.transactionDate : latest),
       txns[0].transactionDate
     );
 
     // RFQ
-    const rfqName = `Historical - Supplier ${supplierIdParsed} - ${yearMonthStr}`;
+    const rfqName = `Historical - ${supplierName} - ${yearMonthStr}`;
     rfqValues.push(
       `(${rfqId}, 100, ${escapeSql(rfqName)}, '${
         deadline || "2020-12-31"
@@ -642,10 +647,12 @@ function generateCompanyMaterials() {
       notes,
     ] = row;
 
-    const companyId = companyIdMap.get(etlCompanyId);
+    const companyData = companyIdMap.get(etlCompanyId);
     const materialId = materialIdMap.get(etlMaterialId);
 
-    if (!companyId || !materialId) return;
+    if (!companyData || !materialId) return;
+
+    const companyId = companyData.id;
 
     const key = `${companyId}-${materialId}`;
     const existing = companyMaterials.get(key);

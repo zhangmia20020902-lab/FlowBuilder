@@ -350,7 +350,7 @@ router.get("/projects/:id/po-tracker", requireAuth, async (req, res) => {
 
     // Get POs for this project with pagination
     const pos = await query(
-      `SELECT po.*, q.company_id as supplier_company_id, c.name as supplier_name, r.name as rfq_name
+      `SELECT po.*, q.company_id as supplier_company_id, c.name as supplier_name, r.id as rfq_id, r.name as rfq_name
        FROM pos po 
        JOIN quotes q ON po.quote_id = q.id 
        JOIN companies c ON q.company_id = c.id

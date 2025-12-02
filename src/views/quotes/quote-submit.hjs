@@ -4,6 +4,7 @@
     <nav aria-label="breadcrumb">
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="/dashboard">Dashboard</a></li>
+        <li class="breadcrumb-item"><a href="/supplier/rfqs">My RFQs</a></li>
         <li class="breadcrumb-item active">Submit Quote</li>
       </ol>
     </nav>
@@ -13,14 +14,17 @@
 <div class="alert alert-info">
   <div class="row">
     <div class="col-md-8">
-      <h5 class="alert-heading mb-2"><i class="bi bi-file-text"></i> {{ rfq.name }}</h5>
-      <p class="mb-1"><strong>Project:</strong> {{ rfq.project_name }}</p>
-      <p class="mb-0"><strong>Requested Materials:</strong> {{ materials.length }} item(s)</p>
+      <h5 class="alert-heading mb-2"><i class="bi bi-file-text"></i>
+        {{rfq.name}}</h5>
+      <p class="mb-1"><strong>Project:</strong> {{rfq.project_name}}</p>
+      <p class="mb-0"><strong>Requested Materials:</strong>
+        {{materials.length}}
+        item(s)</p>
     </div>
     <div class="col-md-4 text-end">
       <div class="mb-2">
-        <strong>Deadline:</strong><br>
-        <span class="badge bg-danger fs-6">{{ formatDate rfq.deadline }}</span>
+        <strong>Deadline:</strong><br />
+        <span class="badge bg-danger fs-6">{{formatDate rfq.deadline}}</span>
       </div>
       <small class="text-muted">Please submit your quote before the deadline</small>
     </div>
@@ -34,15 +38,15 @@
     </div>
     <div class="card-body">
       <div class="mb-3">
-        <label for="supplier_id" class="form-label">Supplier *</label>
+        <label class="form-label">Supplier Company</label>
         <input
-          type="number"
+          type="text"
           class="form-control"
-          id="supplier_id"
-          name="supplier_id"
-          required
+          value="{{supplierCompany.name}}"
+          readonly
+          disabled
         />
-        <small class="text-muted">Enter your supplier ID</small>
+        <small class="text-muted">Your company (automatically selected)</small>
       </div>
 
       <div class="mb-3">
@@ -55,6 +59,8 @@
           min="1"
           required
         />
+        <small class="text-muted">How many days to deliver the materials after
+          PO is issued</small>
       </div>
     </div>
   </div>
@@ -62,7 +68,8 @@
   <div class="card mb-4">
     <div class="card-header">
       <h5 class="mb-0">Material Pricing</h5>
-      <small class="text-muted">Enter unit prices for each material. Total will be calculated automatically.</small>
+      <small class="text-muted">Enter unit prices for each material. Total will
+        be calculated automatically.</small>
     </div>
     <div class="card-body">
       <div class="table-responsive">
@@ -93,8 +100,16 @@
                     required
                     data-quantity="{{quantity}}"
                   />
-                  <input type="hidden" name="items[{{id}}][material_id]" value="{{id}}" />
-                  <input type="hidden" name="items[{{id}}][quantity]" value="{{quantity}}" />
+                  <input
+                    type="hidden"
+                    name="items[{{id}}][material_id]"
+                    value="{{id}}"
+                  />
+                  <input
+                    type="hidden"
+                    name="items[{{id}}][quantity]"
+                    value="{{quantity}}"
+                  />
                 </td>
                 <td class="item-total text-end fw-bold">$0.00</td>
               </tr>
@@ -112,7 +127,7 @@
   </div>
 
   <div class="d-flex justify-content-between">
-    <a href="/dashboard" class="btn btn-secondary">Cancel</a>
+    <a href="/supplier/rfqs" class="btn btn-secondary">Cancel</a>
     <button type="submit" class="btn btn-primary">
       <i class="bi bi-check-circle"></i>
       Submit Quote
@@ -121,31 +136,15 @@
 </form>
 
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const priceInputs = document.querySelectorAll('.price-input');
-    
-    function calculateTotals() {
-      let grandTotal = 0;
-      
-      priceInputs.forEach(input => {
-        const row = input.closest('tr');
-        const totalCell = row.querySelector('.item-total');
-        const price = parseFloat(input.value) || 0;
-        const quantity = parseFloat(input.dataset.quantity) || 0;
-        const total = price * quantity;
-        
-        totalCell.textContent = '$' + total.toFixed(2);
-        grandTotal += total;
-      });
-      
-      document.getElementById('grand-total').textContent = '$' + grandTotal.toFixed(2);
-    }
-    
-    priceInputs.forEach(input => {
-      input.addEventListener('input', calculateTotals);
-    });
-    
-    // Initial calculation
-    calculateTotals();
-  });
+  document.addEventListener('DOMContentLoaded', function() { const priceInputs =
+  document.querySelectorAll('.price-input'); function calculateTotals() { let
+  grandTotal = 0; priceInputs.forEach(input => { const row =
+  input.closest('tr'); const totalCell = row.querySelector('.item-total'); const
+  price = parseFloat(input.value) || 0; const quantity =
+  parseFloat(input.dataset.quantity) || 0; const total = price * quantity;
+  totalCell.textContent = '$' + total.toFixed(2); grandTotal += total; });
+  document.getElementById('grand-total').textContent = '$' +
+  grandTotal.toFixed(2); } priceInputs.forEach(input => {
+  input.addEventListener('input', calculateTotals); }); // Initial calculation
+  calculateTotals(); });
 </script>

@@ -20,12 +20,10 @@
       <div class="col-md-6">
         <p class="mb-2"><strong>Project:</strong> {{ rfq.project_name }}</p>
         <p class="mb-2"><strong>Deadline:</strong> {{ formatDate rfq.deadline }}
-          {{#if daysUntilDeadline}}
-          {{#if (daysUntilDeadline > 0)}}
+          {{#if (gt daysUntilDeadline 0)}}
           <span class="badge bg-info text-dark">{{ daysUntilDeadline }} days remaining</span>
           {{else}}
           <span class="badge bg-danger">Deadline passed</span>
-          {{/if}}
           {{/if}}
         </p>
         <p class="mb-0"><strong>Status:</strong> <span class="badge status-{{ rfq.status }}">{{ rfq.status }}</span></p>

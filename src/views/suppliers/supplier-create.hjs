@@ -47,14 +47,16 @@
       <div class="row">
         <div class="col-md-6 mb-3">
           <label for="trade_specialty" class="form-label">Trade Specialty</label>
-          <input
-            type="text"
-            class="form-control"
+          <select
+            class="form-select"
             id="trade_specialty"
             name="trade_specialty"
-            maxlength="100"
-            placeholder="e.g., Concrete, Steel, Electrical"
-          />
+          >
+            <option value="">Select a category...</option>
+            {{#categories}}
+              <option value="{{name}}">{{name}}</option>
+            {{/categories}}
+          </select>
         </div>
       </div>
 
@@ -71,4 +73,3 @@
     </form>
   </div>
 </div>
-

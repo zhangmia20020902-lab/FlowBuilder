@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const bcrypt = require("bcryptjs");
 const { requireAuth } = require("../middleware/auth");
 const { query } = require("../config/database");
 const {
@@ -114,8 +115,14 @@ router.get("/suppliers", requireAuth, async (req, res) => {
 // Create supplier form
 router.get("/suppliers/create", requireAuth, async (req, res) => {
   try {
+    // Get all categories for trade specialty dropdown
+    const categories = await query(
+      "SELECT * FROM categories ORDER BY name ASC"
+    );
+
     res.render("suppliers/supplier-create", {
       title: "Create Supplier - FlowBuilder",
+      categories,
     });
   } catch (error) {
     console.error("Supplier create form error:", error);
@@ -127,21 +134,52 @@ router.get("/suppliers/create", requireAuth, async (req, res) => {
 });
 
 // Create supplier API - creates a new company with type='supplier'
+// Also creates partnership and user account for the supplier
 router.post(
   "/suppliers",
   requireAuth,
   validateSupplierCreation,
   async (req, res) => {
     try {
+      const companyId = req.session.companyId;
       const { name, email, trade_specialty } = req.body;
 
-      await query(
+      // Create the supplier company
+      const result = await query(
         "INSERT INTO companies (name, type, email, trade_specialty) VALUES (?, 'supplier', ?, ?)",
         [name, email || null, trade_specialty || null]
       );
 
+      const newSupplierId = result.insertId;
+
+      // Automatically create partnership between the creating company and the new supplier
+      await query(
+        "INSERT INTO company_partnerships (source_company_id, target_company_id, status, notes) VALUES (?, ?, 'active', 'Auto-created on supplier creation')",
+        [companyId, newSupplierId]
+      );
+
+      // Create a user account for the supplier if email is provided
+      if (email) {
+        // Get the Supplier role ID
+        const roles = await query(
+          "SELECT id FROM roles WHERE name = 'Supplier' LIMIT 1"
+        );
+        if (roles && roles.length > 0) {
+          const supplierRoleId = roles[0].id;
+          // Generate default password (supplier should change this)
+          const defaultPassword = "password123";
+          const hashedPassword = await bcrypt.hash(defaultPassword, 10);
+
+          await query(
+            "INSERT INTO users (company_id, role_id, name, email, password) VALUES (?, ?, ?, ?, ?)",
+            [newSupplierId, supplierRoleId, name, email, hashedPassword]
+          );
+        }
+      }
+
       req.session.flash = {
-        success: "Supplier created successfully",
+        success:
+          "Supplier created successfully with partnership and user account",
       };
       req.session.save((err) => {
         if (err) console.error("Session save error:", err);

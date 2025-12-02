@@ -1,0 +1,184 @@
+<div class="row mb-4">
+  <div class="col">
+    <h2>Supplier Dashboard</h2>
+    <p class="text-muted">Welcome back, {{ user.name }}!</p>
+  </div>
+</div>
+
+<!-- Statistics Cards -->
+<div class="row mb-4">
+  <div class="col-md-3">
+    <div class="card stat-card warning">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <h6 class="text-muted mb-1">Pending RFQs</h6>
+            <h3 class="mb-0">{{ stats.pendingRfqs }}</h3>
+          </div>
+          <div class="fs-1 text-secondary">
+            <i class="bi bi-file-earmark-text"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="col-md-3">
+    <div class="card stat-card info">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <h6 class="text-muted mb-1">Submitted Quotes</h6>
+            <h3 class="mb-0">{{ stats.submittedQuotes }}</h3>
+          </div>
+          <div class="fs-1 text-secondary">
+            <i class="bi bi-send-check"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="col-md-3">
+    <div class="card stat-card success">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <h6 class="text-muted mb-1">Awarded Quotes</h6>
+            <h3 class="mb-0">{{ stats.awardedQuotes }}</h3>
+          </div>
+          <div class="fs-1 text-secondary">
+            <i class="bi bi-trophy"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="col-md-3">
+    <div class="card stat-card primary">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <h6 class="text-muted mb-1">Active POs</h6>
+            <h3 class="mb-0">{{ stats.activePOs }}</h3>
+          </div>
+          <div class="fs-1 text-secondary">
+            <i class="bi bi-receipt"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Recent Activities -->
+<div class="row">
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0"><i class="bi bi-clock-history text-warning"></i> Pending RFQs</h5>
+        <a href="/supplier/rfqs" class="btn btn-sm btn-primary">View All</a>
+      </div>
+      <div class="card-body">
+        {{#pendingRfqs}}
+        <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
+          <div>
+            <strong>{{ name }}</strong>
+            <br>
+            <small class="text-muted">{{ client_name }} - {{ project_name }}</small>
+          </div>
+          <div class="text-end">
+            <span class="badge bg-danger">{{ formatDate deadline }}</span>
+            <br>
+            <a href="/rfqs/{{ id }}/submit-quote" class="btn btn-sm btn-outline-primary mt-1">
+              <i class="bi bi-send"></i> Submit Quote
+            </a>
+          </div>
+        </div>
+        {{/pendingRfqs}}
+        
+        {{^pendingRfqs}}
+        <p class="text-muted text-center mb-0">
+          <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+          No pending RFQ invitations
+        </p>
+        {{/pendingRfqs}}
+      </div>
+    </div>
+  </div>
+  
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0"><i class="bi bi-send-check text-info"></i> Recent Quotes</h5>
+        <a href="/supplier/quotes" class="btn btn-sm btn-primary">View All</a>
+      </div>
+      <div class="card-body">
+        {{#recentQuotes}}
+        <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
+          <div>
+            <strong>Quote #{{ id }}</strong>
+            <br>
+            <small class="text-muted">{{ rfq_name }} - {{ project_name }}</small>
+          </div>
+          <div>
+            {{#ifEquals status "submitted"}}
+            <span class="badge bg-info">Submitted</span>
+            {{/ifEquals}}
+            {{#ifEquals status "awarded"}}
+            <span class="badge bg-success">Awarded</span>
+            {{/ifEquals}}
+            {{#ifEquals status "pending"}}
+            <span class="badge bg-warning text-dark">Pending</span>
+            {{/ifEquals}}
+          </div>
+        </div>
+        {{/recentQuotes}}
+        
+        {{^recentQuotes}}
+        <p class="text-muted text-center mb-0">
+          <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+          No quotes submitted yet
+        </p>
+        {{/recentQuotes}}
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row mt-4">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0"><i class="bi bi-receipt text-primary"></i> Recent Purchase Orders</h5>
+        <a href="/supplier/pos" class="btn btn-sm btn-primary">View All</a>
+      </div>
+      <div class="card-body">
+        {{#recentPOs}}
+        <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
+          <div>
+            <strong><a href="/supplier/pos/{{ id }}">PO #{{ id }}</a></strong>
+            <br>
+            <small class="text-muted">{{ client_name }} - {{ project_name }}</small>
+          </div>
+          <div class="text-end">
+            <span class="badge status-{{ status }}">{{ status }}</span>
+            <br>
+            <a href="/supplier/pos/{{ id }}" class="btn btn-sm btn-outline-primary mt-1">
+              <i class="bi bi-eye"></i> View
+            </a>
+          </div>
+        </div>
+        {{/recentPOs}}
+        
+        {{^recentPOs}}
+        <p class="text-muted text-center mb-0">
+          <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+          No purchase orders yet
+        </p>
+        {{/recentPOs}}
+      </div>
+    </div>
+  </div>
+</div>

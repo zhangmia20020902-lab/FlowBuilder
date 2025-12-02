@@ -124,6 +124,16 @@ app.engine(
       lt: function (a, b) {
         return a < b;
       },
+      // Helper for equality comparison (for subexpressions)
+      eq: function (a, b) {
+        return a == b;
+      },
+      // Helper for logical OR (for subexpressions)
+      or: function (...args) {
+        // Remove the Handlebars options object from args
+        args.pop();
+        return args.some(Boolean);
+      },
     },
   })
 );

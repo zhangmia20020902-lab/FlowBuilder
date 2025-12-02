@@ -8,8 +8,89 @@ const logger = require("../config/logger");
 router.get("/dashboard", requireAuth, async (req, res) => {
   try {
     const companyId = req.session.companyId;
+    const userRole = req.session.userRole;
 
-    // Get statistics
+    // Check if user is a Supplier
+    if (userRole === "Supplier") {
+      // Supplier Dashboard
+      const pendingRfqCount = await query(
+        `SELECT COUNT(*) as count FROM rfq_suppliers rs
+         JOIN rfqs r ON rs.rfq_id = r.id
+         WHERE rs.company_id = ? AND rs.status = 'pending' AND r.status = 'open'`,
+        [companyId]
+      );
+
+      const submittedQuoteCount = await query(
+        "SELECT COUNT(*) as count FROM quotes WHERE company_id = ?",
+        [companyId]
+      );
+
+      const awardedQuoteCount = await query(
+        "SELECT COUNT(*) as count FROM quotes WHERE company_id = ? AND status = 'awarded'",
+        [companyId]
+      );
+
+      const activePOCount = await query(
+        `SELECT COUNT(*) as count FROM pos po
+         JOIN quotes q ON po.quote_id = q.id
+         WHERE q.company_id = ? AND po.status NOT IN ('delivered', 'cancelled')`,
+        [companyId]
+      );
+
+      // Get pending RFQs for supplier
+      const pendingRfqs = await query(
+        `SELECT r.*, p.name as project_name, c.name as client_name, rs.notified_at
+         FROM rfqs r
+         JOIN rfq_suppliers rs ON r.id = rs.rfq_id
+         JOIN projects p ON r.project_id = p.id
+         JOIN companies c ON p.company_id = c.id
+         WHERE rs.company_id = ? AND rs.status = 'pending' AND r.status = 'open'
+         ORDER BY r.deadline ASC
+         LIMIT 5`,
+        [companyId]
+      );
+
+      // Get recent quotes by supplier
+      const recentQuotes = await query(
+        `SELECT q.*, r.name as rfq_name, p.name as project_name
+         FROM quotes q
+         JOIN rfqs r ON q.rfq_id = r.id
+         JOIN projects p ON r.project_id = p.id
+         WHERE q.company_id = ?
+         ORDER BY q.created_at DESC
+         LIMIT 5`,
+        [companyId]
+      );
+
+      // Get supplier's POs
+      const recentPOs = await query(
+        `SELECT po.*, r.name as rfq_name, p.name as project_name, c.name as client_name
+         FROM pos po
+         JOIN quotes q ON po.quote_id = q.id
+         JOIN rfqs r ON q.rfq_id = r.id
+         JOIN projects p ON r.project_id = p.id
+         JOIN companies c ON p.company_id = c.id
+         WHERE q.company_id = ?
+         ORDER BY po.created_at DESC
+         LIMIT 5`,
+        [companyId]
+      );
+
+      return res.render("dashboard/supplier-dashboard", {
+        title: "Supplier Dashboard - FlowBuilder",
+        stats: {
+          pendingRfqs: pendingRfqCount[0].count,
+          submittedQuotes: submittedQuoteCount[0].count,
+          awardedQuotes: awardedQuoteCount[0].count,
+          activePOs: activePOCount[0].count,
+        },
+        pendingRfqs,
+        recentQuotes,
+        recentPOs,
+      });
+    }
+
+    // Construction Company Dashboard (original logic)
     const projectCount = await query(
       "SELECT COUNT(*) as count FROM projects WHERE company_id = ?",
       [companyId]
@@ -32,7 +113,7 @@ router.get("/dashboard", requireAuth, async (req, res) => {
 
     // Get additional statistics
     const supplierCount = await query(
-      "SELECT COUNT(*) as count FROM suppliers WHERE company_id = ?",
+      "SELECT COUNT(*) as count FROM company_partnerships WHERE source_company_id = ?",
       [companyId]
     );
 
@@ -65,7 +146,7 @@ router.get("/dashboard", requireAuth, async (req, res) => {
 
     // Get recent POs
     const recentPOs = await query(
-      "SELECT po.*, p.name as project_name, s.name as supplier_name FROM pos po JOIN quotes q ON po.quote_id = q.id JOIN suppliers s ON q.supplier_id = s.id JOIN rfqs r ON q.rfq_id = r.id JOIN projects p ON r.project_id = p.id WHERE p.company_id = ? ORDER BY po.created_at DESC LIMIT 5",
+      "SELECT po.*, p.name as project_name, c.name as supplier_name FROM pos po JOIN quotes q ON po.quote_id = q.id JOIN companies c ON q.company_id = c.id JOIN rfqs r ON q.rfq_id = r.id JOIN projects p ON r.project_id = p.id WHERE p.company_id = ? ORDER BY po.created_at DESC LIMIT 5",
       [companyId]
     );
 

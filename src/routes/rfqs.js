@@ -7,6 +7,8 @@ const {
   validateRFQCreation,
   validateRFQUpdate,
 } = require("../middleware/validation");
+const { createNotification } = require("../utils/notifications");
+
 
 // Manage RFQs for a project
 router.get("/projects/:id/rfqs", requireAuth, async (req, res) => {
@@ -293,13 +295,14 @@ router.get("/rfqs/:id", requireAuth, async (req, res) => {
     // Get RFQ with project info
     const rfqs = await query(
       `SELECT r.*, p.name as project_name, p.id as project_id, p.company_id,
-              u.name as created_by_name
+          u.name as created_by_name
        FROM rfqs r 
        JOIN projects p ON r.project_id = p.id 
        LEFT JOIN users u ON r.created_by = u.id
-       WHERE r.id = ? AND p.company_id = ?`,
-      [rfqId, companyId]
+       WHERE r.id = ?`,
+      [rfqId]
     );
+
 
     if (!rfqs || rfqs.length === 0) {
       return res.status(404).render("shared/error", {
@@ -761,6 +764,27 @@ router.post("/rfqs/:id/distribute", requireAuth, async (req, res) => {
       "UPDATE rfq_suppliers SET status = 'pending', notified_at = NOW() WHERE rfq_id = ?",
       [rfqId]
     );
+
+    // 取得這個 RFQ 的所有供應商對應的 user 資料
+    const supplierUsers = await query(
+      `SELECT u.id AS user_id, c.name AS company_name
+       FROM users u
+       JOIN companies c ON u.company_id = c.id
+       JOIN rfq_suppliers rs ON rs.company_id = c.id
+       WHERE rs.rfq_id = ?`,
+      [rfqId]
+    );
+
+    // 對這些 user 寫入通知
+    for (const supplier of supplierUsers) {
+      await createNotification(
+        supplier.user_id,           // 通知給哪個 user
+        "RFQ_INVITE",               // 通知類型（你自己定義的字串）
+        rfqId,                      // 參考用的 rfq_id
+        `You have a new RFQ invitation: ${rfq.name}`  // 顯示在畫面上的訊息
+      );
+    }
+
 
     // Log distribution
     logger.info("RFQ distributed", {

@@ -25,27 +25,39 @@
       <div class="list-group-item {{#if is_read}}{{else}}list-group-item-primary{{/if}}">
         <div class="d-flex w-100 justify-content-between">
           <div>
+
             {{#if is_read}}
             <i class="bi bi-envelope-open text-muted"></i>
             {{else}}
             <i class="bi bi-envelope-fill text-primary"></i>
             {{/if}}
-            <span class="{{#if is_read}}text-muted{{else}}fw-bold{{/if}}">
+
+            {{!-- Link 根據角色切換 --}}
+            {{#ifEquals user.role_name "Supplier"}}
+            <a href="/supplier/rfqs/{{reference_id}}" class="{{#if is_read}}text-muted{{else}}fw-bold{{/if}}">
               {{message}}
-            </span>
+            </a>
+            {{else}}
+            <a href="/rfqs/{{reference_id}}" class="{{#if is_read}}text-muted{{else}}fw-bold{{/if}}">
+              {{message}}
+            </a>
+            {{/ifEquals}}
+
+
           </div>
+
           <small class="text-muted">{{formatDate created_at}}</small>
         </div>
+
         {{#if is_read}}{{else}}
-        <button 
-          class="btn btn-sm btn-link p-0 mt-2" 
-          onclick="markAsRead({{id}})">
+        <button class="btn btn-sm btn-link p-0 mt-2" onclick="markAsRead({{id}})">
           Mark as read
         </button>
         {{/if}}
       </div>
       {{/notifications}}
-      
+
+
       {{^notifications}}
       <div class="text-center py-4 text-muted">
         <i class="bi bi-bell-slash fs-1"></i>
@@ -64,13 +76,12 @@
         'Content-Type': 'application/json',
       },
     })
-    .then(response => response.json())
-    .then(data => {
-      if (data.success) {
-        location.reload();
-      }
-    })
-    .catch(error => console.error('Error:', error));
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          location.reload();
+        }
+      })
+      .catch(error => console.error('Error:', error));
   }
 </script>
-

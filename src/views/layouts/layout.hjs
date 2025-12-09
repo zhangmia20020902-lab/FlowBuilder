@@ -36,6 +36,31 @@
   
   <!-- Custom JS -->
   <script src="/js/app.js"></script>
+
+  <script>
+  async function refreshNotificationBadge() {
+    try {
+      const res = await fetch("/notifications/unread-count");
+      const data = await res.json();
+
+      const badge = document.getElementById("notificationBadge");
+
+      if (!badge) return;
+
+      if (data.unread > 0) {
+        badge.style.display = "inline-block";
+        badge.innerText = data.unread;
+      } else {
+        badge.style.display = "none";
+      }
+    } catch (err) {
+      console.error("Notification badge update failed", err);
+    }
+  }
+
+  setInterval(refreshNotificationBadge, 3000);
+</script>
+
 </body>
 </html>
 

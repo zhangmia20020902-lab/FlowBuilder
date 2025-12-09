@@ -79,6 +79,16 @@ async function attachUser(req, res, next) {
         res.locals.user = users[0];
         res.locals.isAuthenticated = true;
 
+        const notifications = await query(
+          `SELECT COUNT(*) AS unread 
+           FROM notifications 
+           WHERE user_id = ? AND is_read = FALSE`,
+          [req.session.userId]
+        );
+
+        res.locals.unreadNotifications = notifications[0].unread;
+
+
         logger.debug("User attached to request", {
           userId: users[0].id,
           userRole: users[0].role_name,

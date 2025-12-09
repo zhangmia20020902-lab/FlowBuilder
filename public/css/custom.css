@@ -461,3 +461,13 @@ textarea:focus {
     padding: 0.25rem 0.5rem;
   }
 }
+.notification-badge {
+  position: absolute;
+  right: 12px;          /* 往左靠近 bell */
+  top: 50%;             /* 往下移動 */
+  transform: translateY(-50%);
+  font-size: 0.75rem;
+  padding: 0.25em 0.5em;
+}
+
+

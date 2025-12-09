@@ -217,6 +217,7 @@ app.use("/", quoteRoutes);
 app.use("/", companyRoutes);
 app.use("/", supplierRoutes);
 app.use("/", materialRoutes);
+app.use("/notifications", require("./routes/notifications.js"));
 app.use("/", poRoutes);
 
 app.use((req, res, next) => {
